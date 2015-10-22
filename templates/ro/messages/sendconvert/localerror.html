@@ -1,0 +1,32 @@
+
+<!-- Error messages for the send and convert tabs-->
+<group ng-switch="error_type">
+  <group ng-switch-when="noDest" class="result-error">
+    <h2 class="tx-status">Transaction failed</h2>
+    <p>Error code: The account you&#39;re trying to send to does not exist [noDest].</p>
+  </group>
+  <group ng-switch-when="noPath" class="result-error">
+    <h2 class="tx-status">Transaction failed</h2>
+    <p>Error code: Ripple was unable to find a path between you and the destination account [noPath].</p>
+  </group>
+  <group ng-switch-when="maxFeeExceeded" class="result-error">
+    <h2 class="tx-status">Transaction failed</h2>
+    <p>Error code: This transaction failed because it exceeded the maximum network fee. [maxfeeExceeded].</p>
+  </group>
+  <group ng-switch-when="invalidTransaction" class="result-error">
+    <h2 class="tx-status">Transaction failed</h2>
+    <p>Error code: The transaction was rejected by the Ripple network [invalidTransaction].</p>
+  </group>
+  <group ng-switch-when="unlockFailed" class="result-error">
+    <h2 class="tx-status">Account unlock failed</h2>
+    <p>Your account cannot be accessed at the moment. Please try again later.</p>
+  </group>
+  <group ng-switch-when="wrongPassword" class="result-error">
+    <h2 class="tx-status">Account unlock failed</h2>
+    <p>Entered password is wrong.</p>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <p class="literal">Ne cerem scuze, însa a apărut o eroare în timpul înregistrării tranzacţiei dvs. Asiguraţi-vă că aveţi o conexiune activă la internet, şi încercaţi din nou.</p>
+    <p class="literal">Înainte să încercaţi din nou, vă rugăm sa vă asiguraţi că tranzacţia nu a fost deja efectuată.</p>
+  </group>
+</group>

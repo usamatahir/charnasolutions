@@ -1,0 +1,18 @@
+
+<div ng-hide="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account" class="widget widget-networth">
+  <h4 ng-click="showWidgetNetworth=!showWidgetNetworth" ng-init="showWidgetNetworth=true"><span>Valeur Nette</span><i ng-class="{'closed': !showWidgetNetworth}" class="fa fa-fw fa-caret-down"></i></h4>
+  <div rp-slide="showWidgetNetworth">
+    <div ng-class="{'blank': !exchangeRatesNonempty}">
+      <div ng-hide="valueMetrics.length &lt; 2" class="row">
+        <div l10n-inc="l10n-inc" class="col-xs-1"><span l10n-inc="l10n-inc" class="desc">In</span></div>
+        <div class="col-xs-7 col-sm-6 col-md-5">
+          <input type="text" rp-combobox="valueMetrics" rp-combobox-select="rp-combobox-select" rp-combobox-small="rp-combobox-small" ng-model="selectedValueMetric" ng-change="changeMetric(this)" class="form-control"/>
+        </div>
+      </div>
+      <div class="desc">Estimé à partir du dernier prix d'échange</div>
+      <div rp-auto-zoom="rp-auto-zoom" rp-auto-zoom-ref=".amount" class="total"><span class="amount">{{ aggregateValueDisplayed }}</span><span ng-show="aggregateValueDisplayedDecimalDot" class="amountDot">.</span><span class="amountFraction">{{ aggregateValueDisplayedDecimal }}</span><span class="amountCurrency"> {{ selectedValueCurrencyShort }}</span></div>
+      <div ng-show="hasNegative" class="desc">(hors soldes négatifs)</div>
+    </div>
+    <div ng-show="showWidgetNetworth &amp;&amp; !exchangeRatesNonempty" class="widget_loader"><img src="img/sections.png" class="loader"/></div>
+  </div>
+</div>

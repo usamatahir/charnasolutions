@@ -1,0 +1,98 @@
+
+<section ng-controller="CadCtrl" class="col-xs-12 content">
+  <group ng-hide="connected" class="disconnected">
+    <p class="literal">You have to be online to see this screen</p>
+  </group>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected">
+    <div class="auth-attention banner">
+      <h4>Welcome to Ripple Trade! Your account needs to be activated. You can activate it in 2 ways:</h4>
+      <ul>
+        <li>Have another user send XRP to your Ripple name (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrust">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+        最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+      </p>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrustWithRippling">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+        無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+      </p>
+    </div>
+  </div>
+  <div ng-show="connected" class="row">
+    <!-- Transaction errors coming from errors.js & transactionerror.jade-->
+    <div ng-show="mode==&quot;error&quot; || mode==&quot;granting&quot; &amp;&amp; account.Balance" class="col-sm-12">
+      <group class="mode-ripplerror">
+        <rp-transaction-status rp-engine-result="{{engine_result}}" rp-engine-result-message="{{engine_result_message}}" rp-accepted="{{engine_status_accepted}}" rp-current-tab="trust"></rp-transaction-status>
+      </group>
+    </div>
+    <div ng-show="notif !== &quot;clear&quot;" ng-hide="!notif" class="col-sm-12">
+      <group class="mode-granted wide">
+        <group ng-switch="notif">
+          <group ng-switch-when="error" class="result-error">
+            <h2 class="tx-status">There was an error while saving your changes.</h2>
+            <p>Please try again later.</p>
+          </group>
+        </group>
+      </group>
+    </div>
+    <div ng-show="account.Balance &amp;&amp; !can_add_trust &amp;&amp; !cadConnected" class="col-sm-12">
+      <div class="alert alert-warning">You must have at least <strong> {{account.reserve_to_add_trust | rpamount:0}} XRP</strong> to add a new trust line. <a href="https://ripple.com/wiki/Reserves" target="_blank">More information</a></div>
+    </div>
+    <div class="col-sm-3">
+      <div class="currencies fund-menu"><a href="#/brl" ng-class="{active: $route.current.tabName == 'brl'}" class="currency-brl"><i class="icon fa fa-money fa-brl"></i>BRL</a><a href="#/btc" ng-class="{active: $route.current.tabName == 'btc'}" class="currency-btc"><i class="icon fa fa-money fa-btc"></i>BTC</a><a href="#/cad" ng-class="{active: $route.current.tabName == 'cad'}" class="currency-cad"><i class="icon fa fa-money fa-cad"></i>CAD</a><a href="#/eur" ng-class="{active: $route.current.tabName == 'eur'}"><i class="icon fa fa-money fa-eur"></i>EUR</a><a href="#/jpy" ng-class="{active: $route.current.tabName == 'jpy'}" class="currency-jpy"><i class="icon fa fa-money fa-jpy"></i>JPY</a><a href="#/mxn" ng-class="{active: $route.current.tabName == 'mxn'}" class="currency-mxn"><i class="icon fa fa-money fa-mxn"></i>MXN</a><a href="#/sgd" ng-class="{active: $route.current.tabName == 'sgd'}" class="currency-sgd"><i class="icon fa fa-money fa-sgd"></i>SGD</a><a href="#/usd" ng-class="{active: $route.current.tabName == 'usd'}"><i class="icon fa fa-money fa-usd"></i>USD</a><a href="#/gold" ng-class="{active: $route.current.tabName == 'gold'}" class="currency-xau"><i class="icon fa fa-money fa-xau"></i>XAU</a></div>
+    </div>
+    <div ng-hide="debug" class="col-sm-9 list">
+      <div class="nameLine">Canadian Dollar Deposit</div>
+      <div class="gateway row">
+        <div class="col-md-3">
+          <div class="title">Gateway</div>
+          <div class="description">
+                       
+            Bluzelle CAD Issuer (~bluzelle)<br/><a href="http://bluzelle.com" target="_blank">bluzelle.com</a>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="title">Availability</div>
+          <div class="description">All countries</div>
+        </div>
+        <div class="col-md-6">
+          <div class="title">Fees</div>
+          <div class="description">
+            <p>Deposit: $1 + 1.5% Max $5. Deposits available during business hours. </p>
+            <p>Withdrawal: $1.50. Withdrawals available during business hours.</p>
+            <p>Trading: 0.1% when transferring.</p>
+          </div>
+        </div>
+      </div>
+      <div class="row fund-tab-description">
+        <div class="col-xs-12 col-md-8 col-lg-6">
+          <div ng-show="!cadConnected" class="descriptor">Ripple Trade has partnered with Bluzelle to provide easier access to CAD. Following this action will enable Bluzelle to hold CAD on your behalf.</div>
+        </div>
+      </div>
+      <div class="row fund-tab-description">
+        <div ng-hide="cadConnected" class="col-xs-7 col-sm-5 col-md-4">
+          <button ng-show="!cadConnected &amp;&amp; !loading &amp;&amp; loadState.account" type="submit" ng-click="save_account()" ng-disabled="!account.Balance || !can_add_trust" class="btn btn-large btn-primary">Add Bluzelle</button>
+          <button ng-show="!cadConnected &amp;&amp; loading" type="submit" ng-disabled="loading" class="btn btn-large btn-primary">Adding...</button>
+        </div>
+        <div ng-hide="loading" class="connect col-xs-5 col-sm-7 col-md-8">
+          <div ng-show="!cadConnected &amp;&amp; account.Balance" class="description"><i class="fa fa-times"></i> Not connected</div>
+          <div ng-show="cadConnected &amp;&amp; account.Balance" class="description"><i class="fa fa-check"></i> Connected</div>
+          <div ng-show="!account.Balance &amp;&amp; loadState.account" class="description">Your account has to be activated before you can add a gateway account.</div>
+          <div ng-show="!loadState.account" class="description"><img src="img/button-s.png" class="loader"/><span class="loading_text">Loading...</span></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

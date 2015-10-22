@@ -1,0 +1,67 @@
+
+<section ng-controller="TxCtrl" ng-switch="state" class="single ddpage content">
+  <group ng-switch-when="loading">
+    <p class="literal"><img src="img/button-s.png" class="loader"/><span class="loading_text">Transactiedetails worden geladen...</span></p>
+  </group>
+  <group ng-switch-when="error">
+    <p class="literal">Er is een fout opgetreden tijdens het laden van de transactiedetails.</p>
+  </group>
+  <group ng-switch-when="loaded">
+    <p class="literal hash"><span>Transactie #</span><span ng-bind="transaction.hash"></span>
+      <div><a href="{{'https://ripplecharts.com/#/graph/' + transaction.hash}}" target="_blank">Toon in grafiek</a></div>
+    </p>
+    <hr/>
+    <p class="literal type">Transaction type:<strong ng-bind="transaction.TransactionType"></strong></p>
+    <group ng-switch="transaction.TransactionType">
+      <group ng-switch-when="Payment">
+        <group class="clearfix">
+          <dl class="details half">
+            <dt><span>Adres afzender</span><span>:</span></dt>
+            <dd ng-bind="transaction.Account"></dd>
+            <dt><span>Verstuurd bedrag</span><span>:</span></dt>
+            <dd>{{transaction.amountSent | rpamount}} {{transaction.amountSent | rpcurrency}}</dd>
+            <dt><span>Verstuurde valuta</span><span>:</span></dt>
+            <dd>{{transaction.amountSent | rpcurrencyfull}}</dd>
+          </dl>
+          <dl class="details half">
+            <dt><span>Ontvangstadres</span><span>:</span></dt>
+            <dd>{{transaction.Destination}}</dd>
+            <dt><span>Ontvangen bedrag</span><span>:</span></dt>
+            <dd>{{transaction.Amount | rpamount}} {{transaction.Amount | rpcurrency}}</dd>
+            <dt><span>Ontvangen valuta</span><span>:</span></dt>
+            <dd>{{transaction.Amount | rpcurrencyfull}}</dd>
+          </dl>
+        </group>
+        <hr/>
+        <group class="clearfix">
+          <dl class="details half">
+            <dt><span>Netwerkheffing betaald</span><span>:</span></dt>
+            <dd>{{transaction.Fee | rpamount}} XRP</dd>
+          </dl>
+          <dl class="details half">
+            <group ng-show="transaction.DestinationTag !== null &amp;&amp; transaction.DestinationTag !== undefined">
+              <dt><span>Bestemmingskenmerk</span><span>:</span></dt>
+              <dd ng-bind="transaction.DestinationTag"></dd>
+            </group>
+          </dl>
+        </group>
+        <hr/>
+        <dl class="details">
+          <dt><span>Grootboeknummer</span><span>:</span></dt>
+          <dd ng-bind="transaction.ledger"></dd>
+        </dl>
+      </group>
+      <group ng-switch-default="ng-switch-default">
+        <group class="clearfix">
+          <dl class="details half">
+            <dt>Verstuurd vanaf adres:</dt>
+            <dd ng-bind="transaction.Account"></dd>
+          </dl>
+          <dl class="details half"></dl>
+        </group>
+        <hr/>
+        <p class="literal">Sorry, we hebben op dit moment nog geen informatiepagina voor dit transactietype.</p>
+      </group>
+    </group>
+  </group>
+</section>

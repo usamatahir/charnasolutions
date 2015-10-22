@@ -1,0 +1,8 @@
+
+<div ng-hide="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account" class="widget widget-assetallocation">
+  <h4 ng-click="showWidgetAssetAllocation=!showWidgetAssetAllocation" ng-init="showWidgetAssetAllocation=true"><span>Werte-Verteilung</span><i ng-class="{'closed': !showWidgetAssetAllocation}" class="fa fa-fw fa-caret-down"></i></h4>
+  <div rp-slide="showWidgetAssetAllocation">
+    <rp-pie-chart ng-class="{'blank': !exchangeRatesNonempty}" rp-size="200" rp-drops="account.Balance" rp-ious="balances" rp-exchange-rates="exchangeRates"></rp-pie-chart>
+    <div ng-show="showWidgetAssetAllocation &amp;&amp; !exchangeRatesNonempty" class="widget_loader"><img src="img/sections.png" class="loader"/></div>
+  </div>
+</div>

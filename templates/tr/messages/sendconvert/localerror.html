@@ -1,0 +1,32 @@
+
+<!-- Error messages for the send and convert tabs-->
+<group ng-switch="error_type">
+  <group ng-switch-when="noDest" class="result-error">
+    <h2 class="tx-status">İşlem başarısız oldu</h2>
+    <p>Hata kodu: Gönderim yapmaya çalıştığınız hesap mevcut değil [noDest].</p>
+  </group>
+  <group ng-switch-when="noPath" class="result-error">
+    <h2 class="tx-status">İşlem başarısız oldu</h2>
+    <p>Hata kodu: Ripple, senle hedef hesap arasında bir yol bulamadı [noPath].</p>
+  </group>
+  <group ng-switch-when="maxFeeExceeded" class="result-error">
+    <h2 class="tx-status">İşlem başarısız oldu</h2>
+    <p>Hata kodu: Maksimum ağ ücretini aşması nedeniyle bu işlem başarısız oldu [maxfeeExceeded].</p>
+  </group>
+  <group ng-switch-when="invalidTransaction" class="result-error">
+    <h2 class="tx-status">İşlem başarısız oldu</h2>
+    <p>Hata kodu: işlem Ripple şebeke tarafından reddedildi [invalidTransaction].</p>
+  </group>
+  <group ng-switch-when="unlockFailed" class="result-error">
+    <h2 class="tx-status">Hesap kilit açma işlemi başarısız oldu</h2>
+    <p>Your account cannot be accessed at the moment. Please try again later.</p>
+  </group>
+  <group ng-switch-when="wrongPassword" class="result-error">
+    <h2 class="tx-status">Hesap kilit açma işlemi başarısız oldu</h2>
+    <p>Girilen parola yanlış.</p>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <p class="literal">Üzgünüz. İşleminizi gerçekleştirirken bir hata oluştu. İnternete bağlı olduğunuzdan emin olun ve tekrar deneyin.</p>
+    <p class="literal">Tekrar denemeden önce, transactionın gerçekleşmemiş olduğundan emin olunuz.</p>
+  </group>
+</group>

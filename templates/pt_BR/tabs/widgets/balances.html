@@ -1,0 +1,33 @@
+
+<div class="widget widget-balances">
+  <h4 ng-click="showWidgetBalances=!showWidgetBalances" ng-init="showWidgetBalances=true"><span>Saldos</span><i ng-class="{'closed': !showWidgetBalances}" class="fa fa-fw fa-caret-down"></i></h4>
+  <div rp-slide="showWidgetBalances">
+    <ul ng-class="{'blank': !balances}" class="fa-ul">
+      <li ng-click="entry.show=!entry.show" ng-init="entry.show=true" class="currency-xrp"><i class="fa-li fa-money"></i>
+        <h5>XRP</h5>
+        <div ng-show="account.Balance"><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Saldo&lt;br&gt;{{ account.Balance | rpamount }} XRP" class="balance">{{ account.Balance | rpamount:{abs_precision: 4} }}</span></div>
+        <div ng-hide="account.Balance">0.00</div>
+        <dl rp-slide="entry.show">
+          <dt><span>Reserva</span>&#32;<i rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-title="Reserva" rp-popover-trigger="hover" data-content="Quantia mínima de XRP necessária para ativar sua conta. Você não pode gastar a reserva." class="fa fa-question-circle"></i></dt>
+          <dd ng-show="account.reserve"><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Quantia de reserva&lt;br&gt;{{ account.reserve | rpamount }} XRP" class="balance">{{ account.reserve | rpamount:{abs_precision: 4} }}</span></dd>
+          <dd ng-hide="account.reserve">0.00</dd>
+          <dt><span>Disponível</span>&#32;<i rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-title="Quantia disponível" rp-popover-trigger="hover" data-content="A quantia total de XRP em sua conta menos o valor de reserva." class="fa fa-question-circle"></i></dt>
+          <dd ng-show="account.max_spend"><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Quantia disponívelt&lt;br&gt;{{ account.max_spend | rpamount }} XRP" class="balance">{{ account.max_spend | rpamount:{abs_precision: 4} }}</span></dd>
+          <dd ng-hide="account.max_spend">0.00</dd>
+        </dl>
+      </li>
+      <li ng-repeat="entry in balances" ng-class="'currency-' + (entry.total | rpcurrency | lowercase)" ng-click="entry.show=!entry.show" ng-init="entry.show=true"><i ng-class="'fa-' + (entry.total | rpcurrency | lowercase)" class="fa-li fa-money"></i>
+        <h5>{{ entry.total | rpcurrency }}</h5>
+        <div><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Saldo&lt;br&gt;{{ entry.total | rpamount:{precision: 30, hard_precision: true} }} {{ entry.total | rpcurrency }}" class="balance">{{ entry.total | rpamount:{tiny_precision: 3} }}</span></div>
+        <dl rp-slide="entry.show">
+          <div ng-repeat="(issuer, component) in entry.components">
+            <dt ng-show="component.gateway.app"><span rp-address-popover="component.gateway.app">{{component.gateway.app.name}}</span></dt>
+            <dt ng-hide="component.gateway.app"><span rp-pretty-identity="issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-address-popover="issuer"></span></dt>
+            <dd><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Saldo&lt;br&gt;{{ component | rpamount:{precision: 30, rel_min_precision: -2, hard_precision: true} }} {{ entry.total | rpcurrency }}" class="balance">{{ component | rpamount:{tiny_precision: 3} }}</span></dd>
+          </div>
+        </dl>
+      </li>
+    </ul>
+    <p ng-show="$route.current.tabName == 'balance'"><a href="#/xrp" class="btn btn-cancel">adicionar gateway</a></p>
+  </div>
+</div>

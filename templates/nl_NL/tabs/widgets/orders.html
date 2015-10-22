@@ -1,0 +1,47 @@
+
+<div class="widget widget-orders">
+  <h4 ng-click="showWidgetOrders=!showWidgetOrders" ng-init="showWidgetOrders=true"><span>Mijn Orders</span><i ng-class="{'closed': !showWidgetOrders}" class="fa fa-fw fa-caret-down"></i></h4>
+  <div rp-slide="showWidgetOrders">
+    <div class="rp-select hidden-md hidden-lg">
+      <div ng-hide="!showWidgetOrders || isEmpty(offers)"><span>Sort by</span>
+        <div class="rp-combobox rp-combobox-small orders-sort-select">
+          <input id="orders_sort_field" name="orders_sort_field" type="text" rp-combobox="ordersSortFieldChoices" rp-combobox-select="rp-combobox-select" rp-combobox-small="rp-combobox-small" ng-model="sortOptions.sortFieldName" class="currency form-control"/>
+        </div>
+      </div>
+    </div>
+    <div class="rp-checkbox hidden-md hidden-lg">
+      <div ng-show="showWidgetOrders &amp;&amp; !isEmpty(offers)">
+        <label>
+          <input type="checkbox" name="reverse" ng-model="sortOptions.reverse"/><span>omkeren</span>
+        </label>
+      </div>
+    </div>
+    <div ng-hide="isEmpty(offers)">
+      <hr class="hidden-md hidden-lg"/>
+    </div>
+    <div ng-show="showWidgetOrders" class="listings offers">
+      <div class="my">
+        <div>
+          <div class="row head hidden-xs hidden-sm">
+            <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="type" class="col-md-1 type"> <i class="fa fa-fw fa-caret-down"></i></div>
+            <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="qty" class="col-md-3"><span>QTY</span><i class="fa fa-fw fa-caret-down"></i></div>
+            <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="base" class="col-md-2"><span>Base</span><i class="fa fa-fw fa-caret-down"></i></div>
+            <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="counter" class="col-md-3"><span>Counter</span><i class="fa fa-fw fa-caret-down"></i></div>
+            <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="limit" class="col-md-3"><span>Limit Price</span><i class="fa fa-fw fa-caret-down"></i></div>
+          </div>
+        </div>
+        <div ng-repeat="entry in offers | rpcurrentpair:sortOptions.currentPairOnly:order.prev_settings | rpvalues | rpsortmyorders:sortOptions.sortField:sortOptions.reverse track by entry.seq" ng-hide="entry.isZero" class="row">
+          <div data-label="Type" class="col-md-1 type"><span class="rp-hidden-md rp-hidden-lg">{{entry.type | rpucfirst}}</span><span class="rp-hidden-xs rp-hidden-sm">{{entry.type | rptruncate:1}}</span></div>
+          <div data-label="QTY" rp-address-popover="rp-address-popover" rp-address-popover-sum="entry.first" class="col-md-3 amount rpamount">{{entry.first | rpamount:{hard_precision: true, precision: 6, tiny_precision: 6} }}</div>
+          <div data-label="BASE" class="col-md-2"><a href="#/trade/?first={{entry.first | rpcurrency}}.{{entry.first | rpissuer}}&amp;amp;second={{entry.second | rpcurrency}}.{{entry.second | rpissuer}}"><span>{{entry.first | rpcurrency}}</span><span ng-show="entry.first.issuer().to_json()" class="issuer">&#46;<span rp-pretty-issuer-or-short="entry.first.issuer().to_json" rp-pretty-issuer="entry.first.issuer().to_json()" rp-pretty-issuer-contacts="userBlob.data.contacts">???</span></span></a></div>
+          <div data-label="Counter" class="col-md-3"><a href="#/trade/?first={{entry.first | rpcurrency}}.{{entry.first | rpissuer}}&amp;amp;second={{entry.second | rpcurrency}}.{{entry.second | rpissuer}}"><span>{{entry.second | rpcurrency}}</span><span ng-show="entry.second.issuer().to_json()" class="issuer">&#46;<span rp-pretty-issuer-or-short="entry.first.issuer().to_json" rp-pretty-issuer="entry.second.issuer().to_json()" rp-pretty-issuer-contacts="userBlob.data.contacts">???</span></span></a></div>
+          <div data-label="Limiet" rp-address-popover="rp-address-popover" rp-address-popover-sum="entry.second | rpamountratio:entry.first" class="col-md-3 price rpamount">{{entry.second | rpamountratio:entry.first | rpamount:{hard_precision: true, precision: 6, tiny_precision: 6} }}</div>
+        </div>
+      </div>
+      <div ng-show="isEmpty(offers)" class="emptyMessage">
+        <p class="rp-base">Geen huidige orders. <a href="" ng-click="view_orders_history()">Bekijk ordergeschiedenis</a></p>
+      </div>
+    </div>
+    <p ng-show="$route.current.tabName == 'balance'"><a href="#/trade" class="btn btn-cancel">valuta verhandelen</a></p>
+  </div>
+</div>

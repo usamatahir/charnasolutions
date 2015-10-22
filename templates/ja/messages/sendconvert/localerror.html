@@ -1,0 +1,32 @@
+
+<!-- Error messages for the send and convert tabs-->
+<group ng-switch="error_type">
+  <group ng-switch-when="noDest" class="result-error">
+    <h2 class="tx-status">取引は失敗しました。</h2>
+    <p>エラーコード： あなたが送ろうとしている口座が存在しません [noDest]</p>
+  </group>
+  <group ng-switch-when="noPath" class="result-error">
+    <h2 class="tx-status">取引は失敗しました。</h2>
+    <p>エラーコード： リップルは、あなたと宛先アカウントの間で経路を見つけることができませんでした[noPath]</p>
+  </group>
+  <group ng-switch-when="maxFeeExceeded" class="result-error">
+    <h2 class="tx-status">取引は失敗しました。</h2>
+    <p>エラーコード:最大のネットワークフィーを超過したので、この取引処理は失敗しました。[maxfeeExceeded]</p>
+  </group>
+  <group ng-switch-when="invalidTransaction" class="result-error">
+    <h2 class="tx-status">取引は失敗しました。</h2>
+    <p>エラーコードは：トランザクションはリップルネットワークによって拒否されました[invalidTransaction]</p>
+  </group>
+  <group ng-switch-when="unlockFailed" class="result-error">
+    <h2 class="tx-status">アカウントのアンロックに失敗しました。</h2>
+    <p>Your account cannot be accessed at the moment. Please try again later.</p>
+  </group>
+  <group ng-switch-when="wrongPassword" class="result-error">
+    <h2 class="tx-status">アカウントのアンロックに失敗しました。</h2>
+    <p>パスワードに誤りがあります。</p>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <p class="literal">申し訳ありません。送信中にエラーが発生しました。インターネットの接続を確認し、しばらく待ってから再実行してください。</p>
+    <p class="literal">再実行する前に、取引処理が既に実行されていないかを確認してください。</p>
+  </group>
+</group>

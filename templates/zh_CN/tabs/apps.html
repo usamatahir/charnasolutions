@@ -1,0 +1,47 @@
+
+<section ng-controller="AppsCtrl" class="col-xs-12 content">
+  <group ng-hide="connected" class="disconnected">
+    <p class="literal">要看到这一界面，你必须在线</p>
+  </group>
+  <group ng-hide="!connected || loadState.account" class="disconnected">
+    <p class="literal">载入中...</p>
+  </group>
+  <div ng-show="connected &amp;&amp; loadState.account">
+    <div class="row">
+      <div class="col-xs-12">
+        <p class="literal">Ripple Apps</p>
+        <hr/>
+      </div>
+    </div>
+    <div ng-show="userBlob.data.apps" ng-repeat="app in userBlob.data.apps">
+      <div class="row">
+        <div ng-bind="app.name" class="col-sm-10"> </div>
+        <div class="col-sm-2">
+          <button ng-click="remove(app.rippleAddress)" class="btn btn-sm btn-block btn-danger">Remove</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-xs-12">
+          <hr/>
+        </div>
+      </div>
+    </div>
+    <form name="addForm" ng-submit="add()" class="row row-padding-small">
+      <div class="col-xs-12">
+        <label for="rippleAddress">Add an app</label>
+      </div>
+      <div class="col-sm-4">
+        <input id="rippleAddress" name="rippleAddress" type="text" placeholder="App Ripple Address" ng-model="app.rippleAddress" required="required" rp-dest="rp-dest" rp-dest-address="rp-dest-address" class="form-control"/>
+        <div ng-messages="addForm.rippleAddress.$dirty &amp;&amp; addForm.rippleAddress.$error" class="errorGroup">
+          <div ng-message="required" class="error">请输入 Ripple 钱包地址</div>
+          <div ng-message="rpDest" class="error">请输入有效的ripple钱包地址</div>
+        </div>
+      </div>
+      <div class="col-sm-2">
+        <button type="submit" ng-disabled="addForm.$invalid" class="btn btn-block btn-success">Add</button>
+      </div>
+      <div ng-show="success &amp;&amp; !error" class="col-sm-2 success">Awesome!</div>
+      <div ng-show="error" ng-bind="error" class="col-sm-2 error"> </div>
+    </form>
+  </div>
+</section>

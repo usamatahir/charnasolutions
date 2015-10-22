@@ -1,0 +1,10 @@
+
+<form role="form">
+  <div class="modal-header">Fout Bij Orderaanpassing</div>
+  <div class="modal-body">
+    <div class="alert alert-danger">Sorry, uw order kon niet worden aangepast.</div><span>Uw oorspronkelijke order is geannuleerd maar de aangepaste order is niet geplaatst. <br/></span><span>De grootte van uw order verminderde met {{order.qtyChangeAfterCancel | rpamount}} voordat de order kon worden aangepast. <br/><br/></span><span>Voor de beveiliging tegen overmatige orderplaatsingen is een nieuwe order nog niet geplaatst. <br/></span><span>Controleer alstublieft uw saldo en geschiedenis voor u handmatig een nieuwe order plaatst. <br/></span>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="cancel()" class="btn btn-default">Sluiten</button>
+  </div>
+</form>

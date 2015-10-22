@@ -1,0 +1,32 @@
+
+<!-- Confirmation messages for the send and convert tabs-->
+<group ng-show="tx_result==&quot;pending&quot;" class="pending">
+  <h2 class="tx-status">Transactie in behandeling.</h2>
+</group>
+<group ng-show="tx_result==&quot;cleared&quot;" class="result-success">
+  <h2 class="tx-status">Transactie geslaagd</h2>
+</group>
+<group ng-show="tx_result==&quot;error&quot;" class="result-error">
+  <h2 class="tx-status">Transactie mislukt</h2>
+  <p>Probeert u het later nog eens.</p>
+</group>
+<group ng-show="tx_result==&quot;malformed&quot;" class="result-malformed">
+  <h2 class="tx-status">Transactie mislukt</h2>
+  <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Foutcode: {{engine_result}} - {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failure&quot;" class="result-malformed">
+  <h2 class="tx-status">Transactie mislukt</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Foutcode: Bestemmingskenmerk vereist. [tefDST_TAG_NEEDED].</span></p>
+</group>
+<group ng-show="tx_result==&quot;claim&quot;" class="result-malformed">
+  <h2 class="tx-status">Transactie mislukt</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Foutcode: Het bestemmingsaccount bestaat niet [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Foutcode: Onvoldoende XRP verstuurd naar bestemming [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Fout: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failed&quot;" class="result-failed">
+  <h2 class="tx-status">Transactie mislukt</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Foutcode: U heeft geen kredietlijn voor deze valuta [terNO_LINE].</span><span ng-switch-default="ng-switch-default">Uw transactie is mislukt: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;local&quot;" class="result-failed">
+  <h2 class="tx-status">Transactie mislukt</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Foutcode: De transactie is mislukt omdat de maximale netwerkheffing is overschreden. Probeert u het later nog eens [telINSUF_FEE_P].</span></p>
+</group>

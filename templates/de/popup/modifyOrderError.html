@@ -1,0 +1,10 @@
+
+<form role="form">
+  <div class="modal-header">Fehler beim Ändern der Order</div>
+  <div class="modal-body">
+    <div class="alert alert-danger">Leider konnte Ihre Order nicht geändert werden.</div><span>Ihre ursprüngliche Order wurde entfernt, doch die geänderte Order wurde nicht gesetzt. <br/></span><span>Die Menge Ihrer Order hat sich um {{order.qtyChangeAfterCancel | rpamount}} geändert, bevor die Order geändert werden konnte. <br/><br/></span><span>Um sicherzugehen, dass kein höheres Volumen gewechselt wird, wurde keine neue Order eingetragen. <br/></span><span>Bitte prüfen Sie Ihr Guthaben und Ihren Kontoverlauf, bevor Sie manuell die neue Order eintragen. <br/></span>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="cancel()" class="btn btn-default">Schließen</button>
+  </div>
+</form>

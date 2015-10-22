@@ -1,0 +1,295 @@
+
+<section ng-controller="TrustCtrl" class="col-xs-12 content">
+  <group ng-hide="connected" class="disconnected">
+    <p class="literal">Você precisa estar online para ver essa página</p>
+  </group>
+  <group ng-hide="!connected || loadState.lines" class="disconnected">
+    <p class="literal">Carregando...</p>
+  </group>
+  <group ng-show="connected &amp;&amp; loadState.lines">
+    <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected">
+      <div class="auth-attention banner">
+        <h4>Bem-vindo ao Ripple Trade! Sua conta precisa ser ativada. Você pode ativá-la de 2 maneiras:</h4>
+        <ul>
+          <li>Pedir a um outro usuário enviar XRP para o seu nome Ripple (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+          <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+        </ul>
+      </div>
+    </div>
+    <div ng-show="hasRTJapanTrust">
+      <div class="warning-attention banner">
+        <h4>警告</h4>
+        <p>
+          リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+          最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+        </p>
+      </div>
+    </div>
+    <div ng-show="hasRTJapanTrustWithRippling">
+      <div class="warning-attention banner">
+        <h4>警告</h4>
+        <p>
+          資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+          無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+        </p>
+      </div>
+    </div>
+    <div class="row">
+      <!-- Transaction errors coming from errors.js & transactionerror.jade-->
+      <div ng-show="account.Balance" class="col-sm-12">
+        <group class="mode-ripplerror">
+          <rp-transaction-status rp-engine-result="{{engine_result}}" rp-engine-result-message="{{engine_result_message}}" rp-accepted="{{engine_status_accepted}}" rp-current-tab="trust"></rp-transaction-status>
+        </group>
+      </div>
+      <div ng-show="notif !== &quot;clear&quot;" ng-hide="!notif" class="col-sm-12">
+        <group class="mode-granted wide">
+          <group ng-switch="notif">
+            <group ng-switch-when="remove_gateway" class="pending">
+              <h2 class="tx-status">Removendo gateway...</h2>
+            </group>
+            <group ng-switch-when="gateway_removed" class="result-success">
+              <h2 class="tx-status">Gateway removido.</h2>
+            </group>
+            <group ng-switch-when="changes_saved" class="result-success">
+              <h2 class="tx-status">Suas alterações foram salvas.</h2>
+            </group>
+            <group ng-switch-when="max_fee" class="result-error">
+              <h2 class="tx-status">Solicitação falhou.</h2>
+              <p>Essa solicitação falhou porque a taxa de rede atual é mais alta do que o limite da sua conta. Você pode ajustar o limite da sua taxa de rede em Configurações &gt Avançado, ou tentar novamente mais tarde. <br>Error code: Network fee exceeded [tejMaxFeeExceeded].</p>
+            </group>
+            <group ng-switch-when="unlock_failed" class="result-error">
+              <h2 class="tx-status">Desbloqueio da conta falhou</h2>
+              <p>Sua conta não pôde ser desbloqueada. Por favor tente de novo mais tarde.</p>
+            </group>
+            <group ng-switch-when="error" class="result-error">
+              <h2 class="tx-status">Houve um erro ao salvar as suas alterações.</h2>
+              <p>Por favor tente mais tarde.</p>
+            </group>
+          </group>
+        </group>
+      </div>
+      <div ng-show="addform_visible &amp;&amp; !can_add_trust" class="col-sm-12">
+        <div class="alert alert-warning">Você precisa ter pelo menos <strong> {{account.reserve_to_add_trust | rpamount:0}} XRP</strong> para adicionar uma nova linha de confiança. <a href="https://ripple.com/wiki/Reserves" target="_blank">More information</a></div>
+      </div>
+    </div>
+    <div ng-show="connected" class="row">
+      <div class="trust-menu">
+        <div ng-hide="true" class="row row-padding-small head">
+          <div class="col-sm-5">Nome / Endereço</div>
+          <div class="col-sm-2"><a href="" ng-click="sorting.predicate = 'currency'; sorting.reverse=!sorting.reverse">Moeda</a></div>
+          <div class="col-sm-2"><a href="" ng-click="sorting.predicate = 'balance'; sorting.reverse=!sorting.reverse">Saldo</a></div>
+          <div class="col-sm-2">Saldo máximo permitido</div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12">
+            <form id="trustForm" name="trustForm" ng-show="mode==&quot;main&quot; &amp;&amp; (addform_visible &amp;&amp; can_add_trust)" class="row-padding-small">
+              <div class="row">
+                <div class="col-xs-12 col-sm-10 col-md-9 form-group">
+                  <label for="trust_counterparty">Nome Ripple ou endereço do Gateway</label>
+                  <input id="trust_counterparty" name="trust_counterparty" type="text" rp-combobox="counterparty_query" rp-combobox-value-as-ripple-name="rp-combobox-value-as-ripple-name" ng-model="counterparty_view" rp-account-exists="rp-account-exists" rp-dest="rp-dest" rp-dest-address="rp-dest-address" rp-dest-contact="rp-dest-contact" rp-not-me="rp-not-me" rp-dest-email="rp-dest-email" rp-dest-ripple-name="rp-dest-ripple-name" rp-dest-model="counterparty" rp-dest-loading="counterparty_loading" required="required" rp-autofill="$routeParams.to" rp-autofill-counterparty_view="rp-autofill-counterparty_view" rp-autofill-on="addform_visible = true" rp-focus="rp-focus" rp-spinner="{{counterparty_loading ? 4 : null}}" class="form-control"/>
+                  <div ng-messages="trustForm.trust_counterparty.$dirty &amp;&amp; trustForm.trust_counterparty.$error" class="errorGroup">
+                    <div ng-show="trustForm.trust_counterparty.$valid">
+                      <div ng-show="counterparty != counterparty_address &amp;&amp; counterparty_name &amp;&amp; !error_account_reserve" class="success">{{counterparty_address}}</div>
+                      <div ng-show="error_account_reserve" class="error"><span>This account does not meet the minimum XRP reserve, so you cannot use it as a gateway.</span></div>
+                    </div>
+                    <div ng-message="required" class="error">Por favor insira um nome Ripple, contato ou endereço.</div>
+                    <div ng-message="rpNotMe" class="error">Você inseriu o seu próprio endereço.</div>
+                    <div ng-message="rpDest" class="error">Por favor insira um nome Ripple válido, contato ou endereço.</div>
+                    <div ng-message="rpAccountExists" class="error">You cannot add an unfunded Ripple account as a gateway.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12 form-group">
+                  <label for="trust_amount" ng-show="globalOptions.advanced_feature_switch">Quantia</label>
+                  <label for="trust_amount" ng-hide="globalOptions.advanced_feature_switch">Moeda</label>
+                  <div ng-show="globalOptions.advanced_feature_switch" class="row">
+                    <div ng-init="amount = $routeParams.amount ? '' : 1000000000" class="col-md-3 col-sm-4 col-xs-3">
+                      <input id="trust_amount" name="trust_amount" type="text" step="any" ng-model="amount" rp-autofill="$routeParams.amount" rp-autofill-amount="rp-autofill-amount" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" rp-max-digits="rp-max-digits" rp-amount-currency="{{amount}}" rp-autofill-on="addform_visible = true" class="form-control value"/>
+                    </div>
+                    <div class="col-md-6 col-sm-6 col-xs-9">
+                      <input id="trust_amount_currency" name="trust_amount_currency" type="text" ng-model="currency" rp-combobox="currency_query" rp-combobox-select="rp-combobox-select" rp-autofill="$routeParams.currency || $routeParams.amount" rp-autofill-currency="rp-autofill-currency" rp-autofill-on="addform_visible = true" rp-not-xrp="rp-not-xrp" required="required" class="form-control currency-field"/>
+                    </div>
+                  </div>
+                  <div ng-hide="globalOptions.advanced_feature_switch" class="row">
+                    <div class="col-md-9 col-sm-10 col-xs-12">
+                      <input id="trust_amount_currency" name="trust_amount_currency" type="text" ng-model="currency" rp-combobox="currency_query" rp-combobox-select="rp-combobox-select" rp-autofill="$routeParams.currency || $routeParams.amount" rp-autofill-currency="rp-autofill-currency" rp-autofill-on="addform_visible = true" rp-not-xrp="rp-not-xrp" required="required" class="form-control currency-field"/>
+                    </div>
+                  </div>
+                  <div ng-messages="trustForm.trust_amount.$dirty &amp;&amp; trustForm.trust_amount.$error" class="errorGroup">
+                    <div ng-message="required" class="error">O campo Quantia é obrigatório</div>
+                    <div ng-message="rpAmount" class="error">Valor inválido.</div>
+                    <div ng-message="rpAmountPositive" class="error">A quantia deve ser maior do que zero</div>
+                    <div ng-message="rpMaxDigits" class="error">Sua quantia tem muitos dígitos. O número máximo de dígitos é 16.</div>
+                  </div>
+                  <div ng-messages="trustForm.trust_amount_currency.$dirty &amp;&amp; trustForm.trust_amount_currency.$error" class="errorGroup">
+                    <div ng-message="rpNotXrp" class="error">XRP pode ser enviado sem criar uma linha de confiança. Se você realmente quer criar uma linha de confiança para XRP, por favor use o código de moeda XRP.</div>
+                    <div ng-message="required" class="error">O campo "Moeda" é obrigatório</div>
+                  </div>
+                </div>
+              </div>
+              <div ng-show="globalOptions.advanced_feature_switch" class="row">
+                <div class="col-xs-12 allow-rippling">
+                  <label for="trust_allowrippling" class="checkbox">
+                    <input id="trust_allowrippling" name="trust_allowrippling" type="checkbox" ng-model="allowrippling"/><span>Permitir Rippling</span>
+                  </label><i rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-title="Permitir Rippling" rp-popover-trigger="click" data-content="Permitir que o saldo desta Linha de Confiança seja transferido para outro Emissor de sua confiança. &lt;a href=https://ripple.com/wiki/No_Ripple target=_blank&gt;Mais informações&lt;/a&gt;" class="fa fa-question-circle help-icon"></i>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-8 col-sm-7 col-md-6">
+                  <rp-popup rp-popup-on-open="grant()"><a href="" rp-popup-link="rp-popup-link" ng-disabled="trustForm.$invalid || trustForm.$pending || verifying" class="btn btn-block btn-primary submit">Salvar</a>
+                    <div rp-popup-content="rp-popup-content" class="connectModal">
+                      <div class="modal-header">
+                        <div id="logo" class="navbar-brand hidden-sm modal-logo"></div>
+                        <div class="modal-title">Conectar</div>
+                      </div>
+                      <div class="modal-body">
+                        <div class="modal-prompt">
+                          <div l10n-inc="l10n-inc">You are connecting a gateway, which means</div>
+                          <div l10n-inc="l10n-inc">{{ counterparty_address | rpripplename:{tilde: true} }} can:</div>
+                        </div>
+                        <div ng-show="globalOptions.advanced_feature_switch" class="grey-focus"><span l10n-inc="l10n-inc" class="modal-permissions">- Hold up to&#32;</span><span rp-pretty-amount="amount_feedback"></span><span l10n-inc="l10n-inc" class="modal-permissions"> on your behalf</span></div>
+                        <div ng-hide="globalOptions.advanced_feature_switch" class="grey-focus"><span l10n-inc="l10n-inc" class="modal-permissions">- Hold&#32;</span><span>{{ currency }}</span><span l10n-inc="l10n-inc" class="modal-permissions"> on your behalf</span></div>
+                        <div class="modal-buttons">
+                          <button data-dismiss="modal" ng-click="grant_confirmed()" ng-disabled="loading" class="modal-btn btn btn-default btn-success btn-md"><img src="img/button-s.png" ng-show="loading" class="loader"/><span ng-show="loading" class="loading_text">Carregando...</span><span ng-hide="loading">Confirmar</span></button>
+                          <button data-dismiss="modal" ng-click="toggle_form()" ng-hide="loading" class="modal-btn btn btn-cancel btn-md btn-cancel">cancelar</button>
+                        </div>
+                      </div>
+                    </div>
+                  </rp-popup>
+                </div>
+                <div class="col-xs-4 col-sm-3 col-md-3">
+                  <button type="button" ng-click="toggle_form()" class="btn btn-block btn-cancel">cancelar</button>
+                </div>
+              </div>
+              <div class="row">
+                <div class="col-xs-12">
+                  <p ng-show="verifying" class="literal verifying"><img src="img/button-s.png" class="loader"/><span class="loading_text">Verificando endereço</span></p>
+                </div>
+              </div>
+            </form>
+          </div>
+        </div>
+        <div class="row">
+          <div ng-hide="account.Balance" class="unfunded literal">Sua conta precisa ser <a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank" l10n-inc="l10n-inc">ativada</a> para poder adicionar um gateway.</div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-sm-4 col-md-3 actions btn-add-trust"><a ng-click="toggle_form()" ng-show="!addform_visible &amp;&amp; account.Balance" ng-disabled="addform_visible" class="btn btn-primary btn-sm btn-block sign">Conectar gateway</a></div>
+        </div>
+        <div ng-repeat="entry in accountLines" ng-class="'currency-' + (entry.components[0].balance._currency._iso_code | lowercase)" class="currencyBox">
+          <div class="row currencyTitle">
+            <div class="col-xs-12"><i ng-class="'fa-' + (entry.components[0].currency | lowercase)" class="icon fa fa-money"></i><span rp-currency="entry.components[0].limit" rp-currency-full="rp-currency-full" class="currency"></span></div>
+          </div>
+          <div class="row head hidden-xs hidden-sm">
+            <div ng-class="{ 'col-md-2': globalOptions.advanced_feature_switch, 'col-md-5': !globalOptions.advanced_feature_switch }">Gateway</div>
+            <div ng-class="{ 'col-md-2': globalOptions.advanced_feature_switch, 'col-md-4': !globalOptions.advanced_feature_switch }">Saldo</div>
+            <div ng-show="globalOptions.advanced_feature_switch" class="col-md-3">Limit</div>
+            <div ng-show="globalOptions.advanced_feature_switch" class="col-md-1">Mín</div>
+            <div ng-show="globalOptions.advanced_feature_switch" class="col-md-2">Rippling</div>
+            <div ng-class="{'col-md-2' : globalOptions.advanced_feature_switch, 'col-md-3': !globalOptions.advanced_feature_switch }">Editar</div>
+          </div>
+          <hr id="divider"/>
+          <div class="lines">
+            <div ng-controller="AccountRowCtrl" ng-repeat="component in entry.components" class="line">
+              <div ng-class="{ 'frozen-account': component.freeze_peer }" class="row">
+                <div class="col-xs-full">
+                  <div ng-class="{ 'col-md-2': globalOptions.advanced_feature_switch, 'col-md-5': !globalOptions.advanced_feature_switch }" data-label="Gateway" class="gateway"><span rp-pretty-identity="component.account" rp-pretty-identity-filters="rpcontactnamefull | rpripplename: {tilde: true}" rp-address-popover="component.account"></span></div>
+                  <div ng-class="{ 'col-md-2': globalOptions.advanced_feature_switch, 'col-md-4': !globalOptions.advanced_feature_switch }" data-label="Saldo"><span rp-address-popover="rp-address-popover" rp-address-popover-sum="component.balance">{{ component.balance | rpamount:{rel_precision: 2} }}</span></div>
+                  <div ng-show="globalOptions.advanced_feature_switch" data-label="Limit" class="col-md-3"><span rp-address-popover="rp-address-popover" rp-address-popover-sum="component.limit">{{ component.limit | rpamount }}</span></div>
+                  <div ng-show="globalOptions.advanced_feature_switch &amp;&amp; component.limit_peer.is_zero()" data-label="Mín" class="col-md-1"><span rp-address-popover="rp-address-popover" rp-address-popover-sum="component.limit_peer">{{ component.limit_peer | rpamount }}</span></div>
+                  <div ng-show="globalOptions.advanced_feature_switch &amp;&amp; !component.limit_peer.is_zero()" ng-hide="component.limit_peer.is_zero() || !globalOptions.advanced_feature_switch" data-label="Mín" class="col-md-1"><span rp-address-popover="rp-address-popover" rp-address-popover-sum="component.limit_peer" rp-address-popover-sum-minus="rp-address-popover-sum-minus">-{{ component.limit_peer | rpamount }}</span></div>
+                  <div ng-show="globalOptions.advanced_feature_switch" data-label="Rippling" class="col-md-2">
+                    <div ng-show="component.no_ripple">Desligar</div>
+                    <div ng-hide="component.no_ripple">Ligar</div>
+                  </div>
+                  <div ng-hide="component.freeze_peer" ng-class="{ 'col-md-2': globalOptions.advanced_feature_switch, 'col-md-3': !globalOptions.advanced_feature_switch }"><span ng-hide="editing" class="visible-xs visible-sm"><a href="" ng-click="edit_account()" class="btn btn-cancel">editar</a></span><a href="" ng-hide="editing" ng-click="edit_account()" class="hidden-xs hidden-sm">editar</a><span ng-show="editing &amp;&amp; !globalOptions.advanced_feature_switch">
+                      <div ng-show="trust.loading &amp;&amp; trust.state==='removing'" class="col-xs-6 col-sm-5">
+                        <div class="row">
+                          <div class="col-xs-16">
+                            <button disabled="disabled" class="btn btn-block btn-danger">Removing...</button>
+                          </div>
+                        </div>
+                      </div><span ng-hide="trust.loading">
+                        <div class="row row-padding-small">
+                          <div class="col-md-7 col-sm-7 col-xs-6"><span ng-show="trust.balance !== &quot;0&quot; &amp;&amp; orderbookStatus === &quot;exists&quot;">
+                              <rp-confirm action-text="Are you sure you want to remove this gateway? Ripple Trade will attempt to convert the remaining balance of {{ trust.balance }} {{ trust.currency }} into XRP. This action can't be undone." action-button-text="Convert balance and remove" action-button-css="btn btn-default btn-danger custom-btn" action-function="delete_account()" cancel-button-css="btn btn-cancel" cancel-button-text="cancel" ng-hide="showPassword==true">
+                                <button type="button" ng-click="load_orderbook()" ng-show="!isIncomingOnly()" class="btn btn-block btn-danger submit">Remover</button><span rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-trigger="hover" rp-popover-title="Linhas de confiança recebidas" data-content="Você não pode editar linhas de confiança recebidas. Outro usuário as criou confiando em você.">
+                                  <button type="button" ng-click="load_orderbook()" ng-show="isIncomingOnly()" disabled="disabled" class="btn btn-block btn-danger submit">Remover</button></span>
+                              </rp-confirm></span><span ng-show="trust.balance !== &quot;0&quot; &amp;&amp; orderbookStatus === &quot;not&quot;">
+                              <rp-confirm action-text="Are you sure you want to remove this gateway? Ripple Trade will return the balance of {{ trust.balance }} {{ trust.currency }} to the issuer. This action can't be undone." action-button-text="Return balance and remove" action-button-css="btn btn-default btn-danger custom-btn" action-function="delete_account()" cancel-button-css="btn btn-cancel" cancel-button-text="cancel" ng-hide="showPassword==true">
+                                <button type="button" ng-click="load_orderbook()" ng-show="!isIncomingOnly()" class="btn btn-block btn-danger submit">Remover</button><span rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-trigger="hover" rp-popover-title="Linhas de confiança recebidas" data-content="Você não pode editar linhas de confiança recebidas. Outro usuário as criou confiando em você.">
+                                  <button type="button" ng-click="load_orderbook()" ng-show="isIncomingOnly()" disabled="disabled" class="btn btn-block btn-danger submit">Remover</button></span>
+                              </rp-confirm></span><span ng-show="trust.balance === &quot;0&quot;">
+                              <button type="button" ng-click="delete_account()" ng-show="!isIncomingOnly()" class="btn btn-block btn-danger submit">Remover</button><span rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-trigger="hover" rp-popover-title="Linhas de confiança recebidas" data-content="Você não pode editar linhas de confiança recebidas. Outro usuário as criou confiando em você.">
+                                <button type="button" ng-click="delete_account()" ng-show="isIncomingOnly()" disabled="disabled" class="btn btn-block btn-danger submit">Remover</button></span></span></div>
+                          <div class="col-md-5 col-sm-5 col-xs-6"><a href="" ng-click="cancel()" ng-disabled="trust.loading" class="btn btn-block btn-cancel">cancelar</a></div>
+                        </div></span></span></div>
+                </div>
+                <div ng-show="component.freeze_peer" class="col-xs-2"><i rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-title="Account Frozen" rp-popover-trigger="click" data-content="This account has been frozen. Please contact the issuer to unfreeze your account. &lt;a href=https://ripple.com/wiki/Freeze target=_blank&gt;More about freezing&lt;/a&gt;" class="fa fa-lock"></i></div>
+              </div>
+              <div ng-show="editing &amp;&amp; globalOptions.advanced_feature_switch" class="row row-padding-small-xs editBox">
+                <form ng-class="{ 'frozen-account': component.freeze_peer }" ng-submit="save_account()">
+                  <ng-form name="accountForm">
+                    <div class="col-sm-1 col-md-1 inputPadding">Limit</div>
+                    <div class="col-sm-2 col-md-3">
+                      <input name="limit" type="text" ng-model="trust.limit" rp-amount="rp-amount" rp-max-digits="rp-max-digits" rp-amount-currency="{{trust.limit}}" ng-disabled="trust.loading" required="required" class="form-control"/>
+                    </div>
+                    <div class="col-sm-2 col-md-2 inputPadding">
+                      <div class="rippling-checkbox">
+                        <label>Rippling 
+                          <input name="rippling" type="checkbox" ng-model="trust.rippling" ng-disabled="trust.balance !== &quot;0&quot; &amp;&amp; isIncomingOnly() &amp;&amp; ripplingEnabled()"/>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-sm-7 col-md-6">
+                      <div class="row row-padding-small">
+                        <div ng-hide="trust.loading &amp;&amp; trust.state==='removing'">
+                          <div ng-hide="showEnableRipplingWarningMessage()" class="col-xs-6 col-sm-5">
+                            <button id="save" type="submit" ng-disabled="accountForm.$invalid || trust.loading" class="btn btn-block btn-primary"><span ng-hide="trust.loading">Salvar</span><span ng-show="trust.loading &amp;&amp; trust.state==='saving'">Salvando...</span></button>
+                          </div>
+                          <div ng-show="showEnableRipplingWarningMessage()" class="col-xs-6 col-sm-5">
+                            <rp-confirm action-text="Are you sure you want to enable rippling? This is an incoming trust line with a balance. If you enable rippling, you will not be able to disable it." action-button-text="Enable rippling and save" action-button-css="btn btn-default btn-danger" action-function="save_account()" cancel-button-css="btn btn-cancel" cancel-button-text="cancel" ng-hide="showPassword==true">
+                              <button id="save" type="submit" ng-disabled="accountForm.$invalid || trust.loading" class="btn btn-block btn-primary"><span ng-hide="trust.loading">Salvar</span><span ng-show="trust.loading &amp;&amp; trust.state==='saving'">Salvando...</span></button>
+                            </rp-confirm>
+                          </div>
+                        </div>
+                        <div ng-show="trust.loading &amp;&amp; trust.state==='removing'" class="col-xs-6 col-sm-5">
+                          <div class="row">
+                            <div class="col-xs-12">
+                              <button disabled="disabled" class="btn btn-block btn-danger">Removing...</button>
+                            </div>
+                          </div>
+                        </div>
+                        <div ng-hide="trust.loading" class="col-xs-3 col-sm-4 col-md-3">
+                          <div class="row text-right">
+                            <div ng-show="trust.balance !== &quot;0&quot; &amp;&amp; orderbookStatus === &quot;exists&quot;" class="col-xs-12">
+                              <rp-confirm action-text="Are you sure you want to remove this gateway? Ripple Trade will attempt to convert the remaining balance of {{ trust.balance }} {{ trust.currency }} into XRP. This action can't be undone." action-button-text="Convert balance and remove" action-button-css="btn btn-default btn-danger" action-function="delete_account()" cancel-button-css="btn btn-cancel" cancel-button-text="cancel" ng-hide="showPassword==true">
+                                <button type="button" ng-click="load_orderbook()" ng-show="!isIncomingOnly()" class="btn btn-block btn-danger btn-xs submit">Remover</button><span rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-trigger="hover" rp-popover-title="Linhas de confiança recebidas" data-content="Você não pode editar linhas de confiança recebidas. Outro usuário as criou confiando em você.">
+                                  <button type="button" ng-click="load_orderbook()" ng-show="isIncomingOnly()" disabled="disabled" class="btn btn-block btn-danger btn-xs submit">Remover</button></span>
+                              </rp-confirm>
+                            </div>
+                            <div ng-show="trust.balance !== &quot;0&quot; &amp;&amp; orderbookStatus === &quot;not&quot;" class="col-xs-12">
+                              <rp-confirm action-text="Are you sure you want to remove this gateway? Ripple Trade will return the balance of {{ trust.balance }} {{ trust.currency }} to the issuer. This action can't be undone." action-button-text="Return balance and remove" action-button-css="btn btn-default btn-danger" action-function="delete_account()" cancel-button-css="btn btn-link" cancel-button-text="cancel" ng-hide="showPassword==true">
+                                <button type="button" ng-click="load_orderbook()" ng-show="!isIncomingOnly()" class="btn btn-block btn-danger btn-xs submit">Remover</button><span rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-trigger="hover" rp-popover-title="Linhas de confiança recebidas" data-content="Você não pode editar linhas de confiança recebidas. Outro usuário as criou confiando em você.">
+                                  <button type="button" ng-click="load_orderbook()" ng-show="isIncomingOnly()" disabled="disabled" class="btn btn-block btn-danger btn-xs submit">Remover</button></span>
+                              </rp-confirm>
+                            </div>
+                            <div ng-show="trust.balance === &quot;0&quot;" class="col-xs-12">
+                              <button type="button" ng-click="delete_account()" ng-show="!isIncomingOnly()" class="btn btn-block btn-danger btn-xs submit">Remover</button><span rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-trigger="hover" rp-popover-title="Linhas de confiança recebidas" data-content="Você não pode editar linhas de confiança recebidas. Outro usuário as criou confiando em você.">
+                                <button type="button" ng-click="delete_account()" ng-show="isIncomingOnly()" disabled="disabled" class="btn btn-block btn-danger btn-xs submit">Remover</button></span>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="col-xs-3"><a href="" ng-click="cancel()" ng-disabled="trust.loading" class="btn btn-block btn-cancel">cancelar</a></div>
+                      </div>
+                    </div>
+                  </ng-form>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </group>
+</section>

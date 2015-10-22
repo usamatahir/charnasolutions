@@ -1,0 +1,10 @@
+
+<form role="form">
+  <div class="modal-header">Modificar Error de Orden</div>
+  <div class="modal-body">
+    <div class="alert alert-danger">Lo sentimos, su orden no ha podido modificarse.</div><span>Su orden original fue cancelada pero su orden modificada no podido ponerse. <br/></span><span>La cantidad de su orden ha cambiado en {{order.qtyChangeAfterCancel | rpamount}} antes de que la orden pudiese ser modificada. <br/><br/></span><span>Para prevenir la posibilidad de sobrecarga la nueva orden no ha sido enviada. <br/></span><span>Por favor compruebe su balance e historial antes de introducir una orden manualmente. <br/></span>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="cancel()" class="btn btn-default">Cerrar</button>
+  </div>
+</form>

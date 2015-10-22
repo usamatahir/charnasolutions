@@ -1,0 +1,233 @@
+
+<section ng-controller="ExchangeCtrl" class="col-xs-12 content">
+  <group ng-hide="connected" class="disconnected">
+    <p class="literal">Vous devez être connecté pour visualiser cette page</p>
+  </group>
+  <group ng-hide="!connected || loadState.account" class="disconnected">
+    <div id="section_loader"><img src="img/sections.png" class="loader"/>
+      <div class="loading_sections">Chargement...</div>
+    </div>
+  </group>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected">
+    <div class="auth-attention banner">
+      <h4>Bienvenue sur Ripple Trade! Votre compte doit être activé. Vous pouvez l'activer de 2 façons:</h4>
+      <ul>
+        <li>Un autre utilisateur peut vous envoyer des XRP à votre nom Ripple (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+    <p class="literal">You have to be funded before you can submit an order.</p>
+  </div>
+  <div ng-show="hasRTJapanTrust">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+        最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+      </p>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrustWithRippling">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+        無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+      </p>
+    </div>
+  </div>
+  <div ng-show="debug">This page is not available in debug mode</div>
+  <div ng-show="connected &amp;&amp; !debug &amp;&amp; account.Balance" class="row">
+    <div class="widgets hidden-xs col-sm-4 col-md-4 col-lg-3">
+      <div class="widget widget-balances">
+        <h4 ng-click="showWidgetBalances=!showWidgetBalances" ng-init="showWidgetBalances=true"><span>Soldes</span><i ng-class="{'closed': !showWidgetBalances}" class="fa fa-fw fa-caret-down"></i></h4>
+        <div rp-slide="showWidgetBalances">
+          <ul ng-class="{'blank': !balances}" class="fa-ul">
+            <li ng-click="entry.show=!entry.show" ng-init="entry.show=true" class="currency-xrp"><i class="fa-li fa-money"></i>
+              <h5>XRP</h5>
+              <div ng-show="account.Balance"><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Solde&lt;br&gt;{{ account.Balance | rpamount }} XRP" class="balance">{{ account.Balance | rpamount:{abs_precision: 4} }}</span></div>
+              <div ng-hide="account.Balance">0.00</div>
+              <dl rp-slide="entry.show">
+                <dt><span>Réserve</span>&#32;<i rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-title="Montant de la réserve" rp-popover-trigger="hover" data-content="Montant minimum de XRP nécessaire pour financer votre compte. Vous ne pouvez pas dépenser la réserve." class="fa fa-question-circle"></i></dt>
+                <dd ng-show="account.reserve"><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Montant de la réserve&lt;br&gt;{{ account.reserve | rpamount }} XRP" class="balance">{{ account.reserve | rpamount:{abs_precision: 4} }}</span></dd>
+                <dd ng-hide="account.reserve">0.00</dd>
+                <dt><span>Disponible</span>&#32;<i rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-title="Montant disponible" rp-popover-trigger="hover" data-content="Montant total de XRP sur votre compte moins le montant de la réserve." class="fa fa-question-circle"></i></dt>
+                <dd ng-show="account.max_spend"><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Montant disponible&lt;br&gt;{{ account.max_spend | rpamount }} XRP" class="balance">{{ account.max_spend | rpamount:{abs_precision: 4} }}</span></dd>
+                <dd ng-hide="account.max_spend">0.00</dd>
+              </dl>
+            </li>
+            <li ng-repeat="entry in balances" ng-class="'currency-' + (entry.total | rpcurrency | lowercase)" ng-click="entry.show=!entry.show" ng-init="entry.show=true"><i ng-class="'fa-' + (entry.total | rpcurrency | lowercase)" class="fa-li fa-money"></i>
+              <h5>{{ entry.total | rpcurrency }}</h5>
+              <div><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Solde&lt;br&gt;{{ entry.total | rpamount:{precision: 30, hard_precision: true} }} {{ entry.total | rpcurrency }}" class="balance">{{ entry.total | rpamount:{tiny_precision: 3} }}</span></div>
+              <dl rp-slide="entry.show">
+                <div ng-repeat="(issuer, component) in entry.components">
+                  <dt ng-show="component.gateway.app"><span rp-address-popover="component.gateway.app">{{component.gateway.app.name}}</span></dt>
+                  <dt ng-hide="component.gateway.app"><span rp-pretty-identity="issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-address-popover="issuer"></span></dt>
+                  <dd><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Solde&lt;br&gt;{{ component | rpamount:{precision: 30, rel_min_precision: -2, hard_precision: true} }} {{ entry.total | rpcurrency }}" class="balance">{{ component | rpamount:{tiny_precision: 3} }}</span></dd>
+                </div>
+              </dl>
+            </li>
+          </ul>
+          <p ng-show="$route.current.tabName == 'balance'"><a href="#/xrp" class="btn btn-cancel">ajouter passerelle</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">
+      <div class="nameLine">Acheter (Ordre de marché)</div>
+      <div class="instructions">Soumettre un ordre d'achat au taux actuel du marché. Les ordres seront exécutés instantanément.</div>
+      <form id="exchangeForm" name="exchangeForm" ng-show="mode==&quot;form&quot;" ng-submit="exchange_prepared()" class="mode-form">
+        <div class="form-group">
+          <label for="amount">Je veux acheter</label>
+          <div class="row row-padding-small amount">
+            <div class="col-sm-3 col-md-3 col-xs-3">
+              <input id="amount" name="amount" type="text" ng-model="exchange.amount" required="required" rp-autofill="$routeParams.amount" rp-autofill-amount="rp-autofill-amount" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" rp-amount-xrp-limit="rp-amount-xrp-limit" rp-amount-currency="{{exchange.currency_name}}" rp-max-digits="rp-max-digits" class="value form-control"/>
+            </div>
+            <div class="col-sm-6 col-md-4 col-xs-9">
+              <input id="amount_currency" name="amount_currency" type="text" rp-combobox="currency_choices" rp-combobox-select="rp-combobox-select" ng-model="exchange.currency_name" rp-autofill="$routeParams.amount" rp-autofill-currency="rp-autofill-currency" class="currency form-control"/>
+            </div>
+            <div class="col-sm-3 col-md-3 col-xs-12 pull-left">
+              <button ng-click="gotoFund()" class="btn btn-cancel btn-block">ajouter passerelle</button>
+            </div>
+          </div>
+          <div ng-messages="exchangeForm.amount.$dirty &amp;&amp; exchangeForm.amount.$error" class="errorGroup">
+            <div ng-message="required" class="error">Veuillez entrer un montant.</div>
+            <div ng-message="rpAmount" class="error">Ce montant n'est pas valide.</div>
+            <div ng-message="rpAmountXrpLimit" class="error">
+              You are either trying to buy too little or too much XRP.
+              Minimum amount is 0.000001 XRP and maximum amount is 100 billion XRP.
+            </div>
+            <div ng-message="rpMaxDigits" class="error">Votre montant a trop de chiffres. Le nombre maximum de chiffres est de 16.</div>
+            <div ng-message="rpAmountPositive" class="error">Veuillez entrer un montant supérieur à zéro.</div>
+          </div>
+          <p ng-show="exchange.path_status == 'waiting'" class="literal"></p>
+          <p ng-show="exchange.path_status == 'pending'" class="literal"><img src="img/button-s.png" class="loader"/> Calculating...</p>
+          <p ng-show="exchange.path_status == 'no-path' &amp;&amp; exchange.currency_code != 'XRP'" class="literal">Cannot buy {{exchange.amount}} {{exchange.currency_name}}. Please make sure your account has enough funds, and a&#32;<a href="https://ripple.com/knowledge_center/how-to-connect-to-a-gateway-2/" target="_blank">connection</a>&#32;to a {{exchange.currency_name}} gateway.</p>
+          <p ng-show="exchange.path_status == 'no-path' &amp;&amp; exchange.currency_code == 'XRP'" class="literal">Sorry! Cannot buy {{exchange.amount}} {{exchange.currency_name}}. Please make sure your account has enough funds.</p>
+          <p ng-show="exchange.path_status == 'error'" class="literal">Error while calculating price.</p>
+        </div>
+        <div class="currency_sets">
+          <div ng-if="exchange.path_status == 'done'" class="row row-padding-small">
+            <div class="col-xs-12">Vendre</div>
+          </div>
+          <div class="row row-padding-small alternatives">
+            <div ng-repeat="alt in exchange.alternatives" class="col-xs-12 col-sm-6 col-md-4">
+              <div class="am">
+                <div class="amnt">{{alt.amount | rpamount:{rel_precision: 7} }}</div><span class="currency"> {{alt.amount | rpcurrency }}</span><span ng-hide="alt.amount.is_native() || alt.amount.issuer().to_json() == account.Account">.<span rp-pretty-issuer="alt.amount.issuer().to_json()" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></span></span>
+                <div class="ex">(<span class="rate">{{alt.rate | rpamount:{rel_precision: 4} }}</span><span class="pair">{{alt.amount | rpcurrency}}/{{exchange.currency_code}}</span>)</div>
+              </div>
+              <button type="submit" ng-disabled="exchangeForm.$invalid" ng-click="exchange.alt = alt" class="btn btn-block btn-success">Sell {{ alt.amount | rpcurrency }}<span ng-hide="alt.amount.is_native() || alt.amount.issuer().to_json() == account.Account"> (<span rp-pretty-issuer="alt.amount.issuer().to_json()" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></span>)</span></button>
+            </div>
+          </div>
+          <div ng-show="exchange.alternatives.length &amp;&amp; lastUpdate" class="row pathupdate">
+            <div class="col-xs-12">Price last updated&#32;<span ng-bind="lastUpdate"></span><span ng-show="lastUpdate &gt; '1'" l10n-inc="l10n-inc"> seconds</span><span ng-show="lastUpdate == '1'" l10n-inc="l10n-inc"> second</span> ago</div>
+          </div>
+        </div>
+      </form>
+      <group ng-show="mode==&quot;wait_path&quot; &amp;&amp; account.Balance" class="mode-wait-path">
+        <p class="literal"><img src="img/button-s.png" class="loader"/><span class="loading_text">Ripple is calculating the price for your order.</span></p>
+      </group>
+      <group ng-show="mode==&quot;confirm&quot; &amp;&amp; account.Balance" class="mode-confirm"><span>
+          <p l10n-inc="l10n-inc" class="literal">You are selling</p>
+          <p class="amount_feedback"><span class="value">{{exchange.alt.amount | rpamount}} &#32;</span><span class="currency">{{exchange.alt.amount | rpcurrency}}</span></p>
+          <p l10n-inc="l10n-inc" class="literal">for</p>
+          <p rp-pretty-amount="exchange.amount_feedback" class="amount_feedback"></p>
+          <p l10n-inc="l10n-inc" class="literal">You will sell at most</p>
+          <p class="amount_feedback"><span class="value">{{exchange.alt.amount | rpamount}} &#32;</span><span class="currency">{{exchange.alt.amount | rpcurrency}} &#32;</span><span>&plus; {{exchangeMaxDeviation}}%</span></p>
+          <p><span l10n-inc="l10n-inc" class="literal">Exchange rate: &#32;</span><span class="value">{{exchange.alt.rate | rpamount:{rel_precision: 4} }} &#32;</span><span class="currency">{{exchange.alt.amount | rpcurrency}} per {{exchange.currency_code}}</span></p><span l10n-inc="l10n-inc" class="literal">Ripple network fee: &#32;</span><span rp-pretty-amount="networkFee" class="currency"></span>
+          <form ng-submit="exchange_confirmed()" class="call-to-action">
+            <p l10n-inc="l10n-inc" class="literal">Are you sure? Ripple network transactions cannot be undone.</p>
+            <div class="row row-padding-small">
+              <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+                <button type="submit" ng-disabled="confirm_wait" class="btn btn-block btn-success submit">Confirmer</button>
+              </div>
+              <div class="col-xs-6 col-sm-4 col-md-3 col-lg-2">
+                <button ng-click="cancelConfirm()" class="btn btn-link btn-default back">annuler</button>
+              </div>
+            </div>
+          </form></span></group>
+      <group ng-show="mode==&quot;sending&quot; &amp;&amp; account.Balance" class="mode-sending">
+        <!-- Waiting message for the send and convert tabs-->
+        <p class="literal"><img src="img/button-s.png" class="loader"/><span class="loading_text">Envoi de la transaction au réseau Ripple</span></p>
+        <hr/>
+      </group>
+      <group ng-show="mode==&quot;error&quot; &amp;&amp; account.Balance" class="mode-error">
+        <!-- Error messages for the send and convert tabs-->
+        <group ng-switch="error_type">
+          <group ng-switch-when="noDest" class="result-error">
+            <h2 class="tx-status">La transaction a échoué</h2>
+            <p>Code d'erreur: Le compte auquel vous essayez d'envoyer n'existe pas [noDest].</p>
+          </group>
+          <group ng-switch-when="noPath" class="result-error">
+            <h2 class="tx-status">La transaction a échoué</h2>
+            <p>Code d'erreur: Ripple n'a pas pu trouver de chemin entre vous et le compte destinataire. [noPath].</p>
+          </group>
+          <group ng-switch-when="maxFeeExceeded" class="result-error">
+            <h2 class="tx-status">La transaction a échoué</h2>
+            <p>Code d'erreur: Cette transaction a échoué parce qu'elle a dépassé les frais de réseau maximum. [maxfeeExceeded].</p>
+          </group>
+          <group ng-switch-when="invalidTransaction" class="result-error">
+            <h2 class="tx-status">La transaction a échoué</h2>
+            <p>Code d'erreur: la transaction a été rejetée par le réseau Ripple [invalidTransaction].</p>
+          </group>
+          <group ng-switch-when="unlockFailed" class="result-error">
+            <h2 class="tx-status">Le déverrouillage du compte a échoué</h2>
+            <p>Your account cannot be accessed at the moment. Please try again later.</p>
+          </group>
+          <group ng-switch-when="wrongPassword" class="result-error">
+            <h2 class="tx-status">Le déverrouillage du compte a échoué</h2>
+            <p>Le mot de passe entré est erroné.</p>
+          </group>
+          <group ng-switch-default="ng-switch-default">
+            <p class="literal">Désolé, une erreur s'est produite lors de l'envoi de votre transaction.Assurez-vous que vous êtes connecté à Internet et réessayez plus tard.</p>
+            <p class="literal">Avant d'essayer à nouveau, veuillez vous assurer que la transaction n'a pas déjà été exécutée.</p>
+          </group>
+        </group>
+        <p>
+          <button ng-click="cancelConfirm()" class="btn btn-link btn-default">annuler</button>
+        </p>
+      </group>
+      <group ng-show="mode==&quot;rippleerror&quot; &amp;&amp; account.Balance" class="mode-ripplerror">
+        <rp-transaction-status rp-engine-result="{{engine_result}}" rp-engine-result-message="{{engine_result_message}}" rp-accepted="{{engine_status_accepted}}" rp-current-tab="send_convert"></rp-transaction-status>
+      </group>
+      <group ng-show="mode==&quot;status&quot; &amp;&amp; account.Balance" class="mode-status">
+        <!-- Confirmation messages for the send and convert tabs-->
+        <group ng-show="tx_result==&quot;pending&quot;" class="pending">
+          <h2 class="tx-status">Transaction en attente.</h2>
+        </group>
+        <group ng-show="tx_result==&quot;cleared&quot;" class="result-success">
+          <h2 class="tx-status">Transaction réussie</h2>
+        </group>
+        <group ng-show="tx_result==&quot;error&quot;" class="result-error">
+          <h2 class="tx-status">La transaction a échoué</h2>
+          <p>Veuillez réessayer ultérieurement.</p>
+        </group>
+        <group ng-show="tx_result==&quot;malformed&quot;" class="result-malformed">
+          <h2 class="tx-status">La transaction a échoué</h2>
+          <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Code d'erreur: {{engine_result}} - {{engine_result_message}}</span></p>
+        </group>
+        <group ng-show="tx_result==&quot;failure&quot;" class="result-malformed">
+          <h2 class="tx-status">La transaction a échoué</h2>
+          <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Code d'erreur: Étiquette de destination nécessaire [tefDST_TAG_NEEDED].</span></p>
+        </group>
+        <group ng-show="tx_result==&quot;claim&quot;" class="result-malformed">
+          <h2 class="tx-status">La transaction a échoué</h2>
+          <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Code d'erreur: Le compte de destination n'existe pas [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Code d'erreur: Pas assez de XRP envoyés à destination [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Erreur: {{engine_result_message}}</span></p>
+        </group>
+        <group ng-show="tx_result==&quot;failed&quot;" class="result-failed">
+          <h2 class="tx-status">La transaction a échoué</h2>
+          <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Code d'erreur: Vous n'avez pas de ligne de confiance dans cette devise [terNO_LINE].</span><span ng-switch-default="ng-switch-default">Votre transaction a échoué: {{engine_result_message}}</span></p>
+        </group>
+        <group ng-show="tx_result==&quot;local&quot;" class="result-failed">
+          <h2 class="tx-status">La transaction a échoué</h2>
+          <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Code d'erreur: Cette transaction a échoué parce qu'elle a dépassé les frais de réseau maximum, veuillez réessayer ultérieurement [telINSUF_FEE_P].</span></p>
+        </group>
+        <group class="actions">
+          <hr/>
+          <div class="actionLink"><a href="" ng-click="reset()">Submit another buy order </a></div>
+          <div class="actionLink"><a href="" ng-click="reset_goto('balance')">Revenir au solde</a></div>
+          <hr/>
+        </group>
+      </group>
+    </div>
+  </div>
+</section>

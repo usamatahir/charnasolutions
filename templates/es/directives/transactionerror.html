@@ -1,0 +1,157 @@
+
+<group ng-switch="tab">
+  <!-- All fund -> individual currency tab errors-->
+  <group ng-switch-when="trust">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Conectando pasarela a su cuenta...</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Pasarela conectada.</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Ha habido un problema conectando con la pasarela. Por favor inténtelo más tarde.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Código de error: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Petición fallida</h2>
+            <p><span>Su petición ha expirado, por favor inténtelo de nuevo.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Petición fallida</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Código de error: Etiqueta de destino requerida [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Petición fallida</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Código de error: Esta petición ha fallado porque supera la comisión máxima de red, por favor inténtelo más tarde [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Petición fallida</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Código de error: No tiene ninguna pasarela conectada para esta divisa [terNO_LINE].</span><span ng-switch-when="tecINSUF_RESERVE_LINE">Código de error: Reserva insuficiente para conectar con pasarela [tecINSUF_RESERVE_LINE].</span><span ng-switch-when="tecNO_LINE_INSUF_RESERVE">Código de error: Su reserva es insuficiente para conectar con pasarela [tecNO_LINE_INSUF_RESERVE]. <a href="https://ripple.com/wiki/Reserves">Más información</a></span><span ng-switch-default="ng-switch-default">Error: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Petición fallida</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Código de error: No tiene linea de crédito en esta moneda [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Su peticion ha fallado: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Petición fallida</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Código de error: La petición no se pudo enviar [tejLost]. </span><span ng-switch-when="tejMaxFeeExceeded">Esta peticion ha fallado porque la comision de red actual es superior a su limite de cuenta. Puede ajustar su comision maxima de red en Ajustes &gt Avanzado, o intentarlo de nuevo mas tarde. <br>Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Su peticion no ha podido ser enviada: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <!-- All send & convert errors-->
+  <group ng-switch-when="send_convert">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Pago pendiente</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Pago efectuado</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Pago fallido</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Código de error: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Pago fallido [tefMAX_LEDGER].</h2>
+            <p ng-switch="engine_result"><span>Su pago ha expirado, por favor inténtelo de nuevo.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Pago fallido</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Código de error: Etiqueta de destino requerida [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Pago fallido</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Código de error: Esta transacción ha fallado porque supera la comisión máxima de red, por favor inténtelo más tarde [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Pago fallido</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Código de error: No hay destino [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Código de error: Cantidad de XRP enviados al destino insuficiente [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Error: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Pago fallido</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Código de error: No tiene linea de crédito en esta moneda [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Su pago ha fallado: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Pago fallido</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Código de error: La transaccóin no se pudo enviar [tejLost]. </span><span ng-switch-when="tejMaxFeeExceeded">Esta peticion ha fallado porque la comision de red actual es superior a su limite de cuenta. Puede ajustar su comision maxima de red en Ajustes &gt Avanzado, o intentarlo de nuevo mas tarde. <br>Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Su pago no ha podido ser enviado: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-when="trade">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">La petición no esta bien hecha.</h2>
+        <p>Su peticion no es valida, motivo: {{engine_result_message}} - {{engine_result_message}}</p>
+      </group>
+      <group ng-switch-when"tec="ng-switch-when"tec" class="result-malformed">
+        <h2 class="tx-status">Transacción fallida.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecUNFUNDED_ORDER">No tiene suficentes fondos para crear esta orden [tecUNFUNDED_ORDER].</span><span ng-switch-when="tecINSUF_RESERVE_OFFER">Cantidad de reserva insuficiente para emitir una orden [tecINSUF_RESERVE_OFFER].</span><span ng-switch-when="tejMaxFeeExceeded">Esta transaccion ha fallado porque la comision de red actual es superior a su limite de cuenta. Puede ajustar su comision maxima de red en Ajustes &gt Avanzado, o intentarlo de nuevo mas tarde. <br>Error code: Network fee exceeded [tejMaxFeeExceeded]. <a href="https://ripple.com/wiki/Reserves" target="_blank">Más información.</a></span><span ng-switch-default="ng-switch-default">Error: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Cambio fallido.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">El Cambio ha fallado, motivo: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Transacción fallida.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">El servidor al que envio la transaccion estaba demasiado ocupado para procesar o redirigir su transaccion con la comision que ha incluido [telINSUF_FEE_P].</span></p>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Petición pendiente</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Petición efectuada</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Petición fallida</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Código de error: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Petición fallida</h2>
+            <p ng-switch="engine_result"><span>Su petición ha expirado, por favor inténtelo de nuevo.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Petición fallida</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Código de error: Etiqueta de destino requerida [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Petición fallida</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Código de error: Esta petición ha fallado porque supera la comisión máxima de red, por favor inténtelo más tarde [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Petición fallida</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Código de error: No hay destino [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Código de error: Cantidad de XRP enviados al destino insuficiente [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Error: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Petición fallida</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Código de error: No tiene linea de crédito en esta moneda [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Su peticion ha fallado: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Petición fallida</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Código de error: La petición no se pudo enviar [tejLost]. </span><span ng-switch-when="tejMaxFeeExceeded">Esta peticion ha fallado porque la comision de red actual es superior a su limite de cuenta. Puede ajustar su comision maxima de red en Ajustes &gt Avanzado, o intentarlo de nuevo mas tarde. <br>Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Su peticion no ha podido ser enviada: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+</group>

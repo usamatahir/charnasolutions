@@ -1,0 +1,27 @@
+
+<div ng-hide="twoFactor || 'verifying' === verifyStatus" class="form-group"></div>
+<div ng-hide="twoFactor" class="breaker">
+  <label for="login_username">Ripple 名</label>
+  <div class="input-group"><span class="input-group-addon ripple-addon">~</span>
+    <input id="login_username" name="login_username" type="text" ng-model="username" required="required" rp-focus-on-empty="rp-focus-on-empty" rp-autofill="$routeParams.username" ng-disabled="ajax_loading" class="form-control"/>
+  </div>
+</div>
+<div ng-hide="twoFactor || 'verifying' === verifyStatus" class="form-group">
+  <label for="login_password">パスワード</label>
+  <input id="login_password" name="login_password" type="password" ng-model="password" required="required" rp-focus="rp-focus" class="form-control"/>
+</div>
+<div ng-show="twoFactor" class="row row-padding-small twoFactor">
+  <div class="form-group col-xs-12"><span ng-show="twoFactor.via === 'sms'" class="status verifyText">お使いのデバイスに送信されたSMSメッセージの検証コードを入力してください：</span><span ng-show="twoFactor.via === 'app'" class="status verifyText">お使いのデバイスにインストールされているAuthyアプリの検証コードを入力してください：</span><span ng-bind="maskedPhone" class="maskedPhone"></span><span>
+      <button type="button" ng-click="requestToken()" class="btn btn-cancel btn-nomargin-xs"><span ng-show="twoFactor.via === 'sms'">再送する</span><span ng-show="twoFactor.via === 'app'">SMS経由で送信</span></button></span></div>
+  <div class="label-wrapper col-xs-12">
+    <label for="token">検証コード</label>
+  </div>
+  <div class="form-group col-xs-12">
+    <input type="number" name="token" ng-model="token" rp-focus="rp-focus" class="form-control"/>
+  </div>
+  <div class="input-group col-xs-12">
+    <label>
+      <input name="rememberMe" type="checkbox" ng-model="rememberMe" class="rememberMe"/><span for="rememberMe">30日間このデバイス上パスワードを記憶する</span>
+    </label>
+  </div>
+</div>

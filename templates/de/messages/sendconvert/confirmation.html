@@ -1,0 +1,32 @@
+
+<!-- Confirmation messages for the send and convert tabs-->
+<group ng-show="tx_result==&quot;pending&quot;" class="pending">
+  <h2 class="tx-status">Transaktion ausstehend.</h2>
+</group>
+<group ng-show="tx_result==&quot;cleared&quot;" class="result-success">
+  <h2 class="tx-status">Transaktion erfolgreich</h2>
+</group>
+<group ng-show="tx_result==&quot;error&quot;" class="result-error">
+  <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+  <p>Bitte versuchen Sie es später noch einmal.</p>
+</group>
+<group ng-show="tx_result==&quot;malformed&quot;" class="result-malformed">
+  <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+  <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Fehlercode: {{engine_result}} - {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failure&quot;" class="result-malformed">
+  <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Fehlercode: Zielmarker erforderlich [tefDST_TAG_NEEDED].</span></p>
+</group>
+<group ng-show="tx_result==&quot;claim&quot;" class="result-malformed">
+  <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Fehlercode: Das Ziel-Konto existiert nicht [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Fehlercode: Nicht ausreichende XRP an Ziel gesendet [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Fehler: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failed&quot;" class="result-failed">
+  <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Fehlercode: Sie haben keine Vertrauens-Linie in dieser Währung [terNO_LINE].</span><span ng-switch-default="ng-switch-default">Ihre Transaktion ist fehlgeschlagen: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;local&quot;" class="result-failed">
+  <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Fehlercode: Diese Transaktion ist fehlgeschlagen, da die maximale Netzwerkgebühr überschritten wurde, bitte versuchen Sie es später erneut [tellNSUF_FEE_P].</span></p>
+</group>

@@ -1,0 +1,32 @@
+
+<!-- Confirmation messages for the send and convert tabs-->
+<group ng-show="tx_result==&quot;pending&quot;" class="pending">
+  <h2 class="tx-status">保留中の取引</h2>
+</group>
+<group ng-show="tx_result==&quot;cleared&quot;" class="result-success">
+  <h2 class="tx-status">取引は成功しました。</h2>
+</group>
+<group ng-show="tx_result==&quot;error&quot;" class="result-error">
+  <h2 class="tx-status">取引は失敗しました。</h2>
+  <p>後で再実行してください。</p>
+</group>
+<group ng-show="tx_result==&quot;malformed&quot;" class="result-malformed">
+  <h2 class="tx-status">取引は失敗しました。</h2>
+  <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">エラーコード: {{engine_result}} - {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failure&quot;" class="result-malformed">
+  <h2 class="tx-status">取引は失敗しました。</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">エラーコード:相手先が必要です[tefDST_TAG_NEEDED]</span></p>
+</group>
+<group ng-show="tx_result==&quot;claim&quot;" class="result-malformed">
+  <h2 class="tx-status">取引は失敗しました。</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">エラーコード： 宛先アカウントが、存在しません [tecNO_DST]</span><span ng-switch-when="tecNO_DST_INSUF_XRP">エラーコード: 宛先に送金するために必要なXRPが不足しています [tecNO_DST_INSUF_XRP]。</span><span ng-switch-default="ng-switch-default">エラー:{{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failed&quot;" class="result-failed">
+  <h2 class="tx-status">取引は失敗しました。</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">エラーコード:あなたはこの通貨にトラストラインを持っていません [terNO_LINE]</span><span ng-switch-default="ng-switch-default">取引処理は失敗しました: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;local&quot;" class="result-failed">
+  <h2 class="tx-status">取引は失敗しました。</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">エラーコード: ネットワーク手数料の最大値を超過しているため、このトランザクションは失敗しました。後ほど再度お試しください[telINSUF_FEE_P]。</span></p>
+</group>

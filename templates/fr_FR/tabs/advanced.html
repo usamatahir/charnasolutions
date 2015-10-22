@@ -1,0 +1,300 @@
+
+<section ng-controller="AdvancedCtrl" class="col-xs-12 content">
+  <div ng-show="debug">This page is not available in debug mode</div>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected &amp;&amp; !debug">
+    <div class="auth-attention banner">
+      <h4>Bienvenue sur Ripple Trade! Votre compte doit être activé. Vous pouvez l'activer de 2 façons:</h4>
+      <ul>
+        <li>Un autre utilisateur peut vous envoyer des XRP à votre nom Ripple (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrust">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+        最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+      </p>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrustWithRippling">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+        無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+      </p>
+    </div>
+  </div>
+  <div ng-show="!debug" class="row">
+    <div class="col-sm-12 notification-wrapper">
+      <div ng-show="success.blobvault" class="alert alert-success">Your blobvault has been changed successfully.</div>
+      <div ng-show="success.saveConfirmation.send" class="alert alert-success">Send confirmation settings have been changed successfully.</div>
+      <div ng-show="success.saveConfirmation.exchange" class="alert alert-success">Simple trade confirmation settings have been changed successfully.</div>
+      <div ng-show="success.saveConfirmation.trade" class="alert alert-success">Advanced trade confirmation settings have been changed successfully.</div>
+      <div ng-show="success.maxNetworkFee" class="alert alert-success">Les frais de réseau maximum ont été changés avec succès.</div>
+      <div ng-show="success.historyApi" class="alert alert-success">History API has been changed successfully.</div>
+      <div ng-show="success.addServer &amp;&amp; success.saveServer" class="alert alert-success">A server has been successfully added.</div>
+      <div ng-show="success.removeServer" class="alert alert-success">Un serveur a été supprimé avec succès.</div>
+      <div ng-show="!success.addServer &amp;&amp; success.saveServer" class="alert alert-success">Un serveur a été modifié avec succès.</div>
+    </div>
+    <div class="col-sm-3">
+      <div class="settingPage"><a href="#/security" ng-class="{active: $route.current.tabName == 'security'}">Sécurité</a><a href="#/settingstrade" ng-class="{active: $route.current.tabName == 'settingstrade'}">Échanger</a><a href="#/advanced" ng-class="{active: $route.current.tabName == 'advanced'}">Network and servers</a><a href="#/settingsgateway" ng-class="{active: $route.current.tabName == 'settingsgateway'}">Gateways and trust lines</a>
+      </div>
+    </div>
+    <div class="col-sm-9 list">
+      <section id="servers" class="content">
+        <h4 id="networkSettings">Paramètres réseau</h4>
+        <form name="maxnetworkfeeForm" ng-submit="save(&quot;maxNetworkFee&quot;)">
+          <div class="descriptor">Frais de réseau maximum</div>
+          <div ng-hide="edit.maxNetworkFee" class="row advanced-form-row">
+            <div class="col-xs-9 col-sm-8 col-md-6">
+              <div class="description">{{max_tx_network_fee_human}} {{xrp.code}}</div>
+            </div>
+            <div class="col-xs-1"></div>
+            <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="edit.maxNetworkFee = true" class="btn btn-block btn-cancel">éditer</a></div>
+          </div>
+          <div ng-show="edit.maxNetworkFee" class="row row-padding-small field-edit-row">
+            <div class="col-xs-12 col-sm-9 col-md-6 input-group">
+              <input id="maxNetworkFee" name="maxNetworkFee" type="text" ng-model="max_tx_network_fee_human" required="required" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" rp-amount-xrp-limit="rp-amount-xrp-limit" rp-amount-currency="{{xrp.name}}" class="form-control maxNetworkFee"/><span ng-bind="xrp.name" class="input-group-addon"></span>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-3">
+              <button id="saveMaxNetworkFee" type="submit" ng-disabled="maxnetworkfeeForm.$invalid" class="btn btn-block btn-success btn-xs submit">Sauvegarder</button>
+            </div>
+            <div id="cancel" class="col-xs-3 col-sm-3 col-md-1 text-center"><a href="" ng-click="cancelEdit(&quot;maxNetworkFee&quot;)" class="btn btn-cancel btn-block">annuler</a></div>
+          </div>
+        </form>
+        <form name="sendMaxForm" ng-submit="save(&quot;sendMax&quot;)">
+          <div class="descriptor">Send: max deviation from specified amount</div>
+          <div ng-hide="edit.sendMax" class="row advanced-form-row">
+            <div class="col-xs-9 col-sm-8 col-md-6">
+              <div class="description">{{sendMaxDeviation}} %</div>
+            </div>
+            <div class="col-xs-1"></div>
+            <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="edit.sendMax = true" class="btn btn-block btn-cancel">éditer</a></div>
+          </div>
+          <div ng-show="edit.sendMax" class="row row-padding-small field-edit-row">
+            <div class="col-xs-12 col-sm-9 col-md-6 input-group">
+              <input id="sendMaxDeviation" name="sendMax" type="text" ng-model="sendMaxDeviation" required="required" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" class="form-control maxNetworkFee"/><span class="input-group-addon">%</span>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-3">
+              <button id="sendMaxDeviationSubmit" type="submit" ng-disabled="sendMaxForm.$invalid" class="btn btn-block btn-success btn-xs submit">Sauvegarder</button>
+            </div>
+            <div id="sendMaxDeviationCancel" class="col-xs-3 col-sm-3 col-md-1 text-center"><a href="" ng-click="cancelEdit(&quot;sendMax&quot;)" class="btn btn-cancel btn-block">annuler</a></div>
+          </div>
+        </form>
+        <form name="exchangeMaxForm" ng-submit="save(&quot;exchangeMax&quot;)">
+          <div class="descriptor">Simple Trade: max deviation from specified amount</div>
+          <div ng-hide="edit.exchangeMax" class="row advanced-form-row">
+            <div class="col-xs-9 col-sm-8 col-md-6">
+              <div class="description">{{exchangeMaxDeviation}} %</div>
+            </div>
+            <div class="col-xs-1"></div>
+            <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="edit.exchangeMax = true" class="btn btn-block btn-cancel">éditer</a></div>
+          </div>
+          <div ng-show="edit.exchangeMax" class="row row-padding-small field-edit-row">
+            <div class="col-xs-12 col-sm-9 col-md-6 input-group">
+              <input id="exchangeMaxDeviation" name="exchangeMax" type="text" ng-model="exchangeMaxDeviation" required="required" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" class="form-control maxNetworkFee"/><span class="input-group-addon">%</span>
+            </div>
+            <div class="col-xs-6 col-sm-6 col-md-3">
+              <button id="exchangeMaxDeviationSubmit" type="submit" ng-disabled="exchangeMaxForm.$invalid" class="btn btn-block btn-success btn-xs submit">Sauvegarder</button>
+            </div>
+            <div id="exchangeMaxDeviationCancel" class="col-xs-3 col-sm-3 col-md-1 text-center"><a href="" ng-click="cancelEdit(&quot;exchangeMax&quot;)" class="btn btn-cancel btn-block">annuler</a></div>
+          </div>
+        </form>
+        <h4 id="confirmationSettings">Confirmation Page settings</h4>
+                <form name="sendConfirmationForm" ng-submit="saveConfirmation(&quot;send&quot;)">
+                  <div class="descriptor">Send confirmation settings</div>
+                  <div class="row"></div>
+                  <label>If you hide your send confirmation page, you will not see a confirmation page when sending money. You might pay up to .1% more than you originally specified.</label>
+                  <div ng-hide="editConfirmation.send" class="row advanced-form-row">
+                    <div class="col-xs-9 col-sm-8 col-md-6">
+                      <div ng-show="options.confirmation.send" class="description">Afficher</div>
+                      <div ng-hide="options.confirmation.send" class="description">Masquer</div>
+                    </div>
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="editConfirmation.send = true" class="btn btn-cancel btn-block">éditer</a></div>
+                  </div>
+                  <div ng-show="editConfirmation.send" class="row row-padding-small edit-trust-line">
+                    <div class="col-xs-9 col-sm-8 col-md-6">
+                      <div class="helperInput">
+                        <label>
+                          <input type="checkbox" name="sendConfirmationBox" ng-model="options.confirmation.send" ng-click="confirmationChanged.send = true"/><span>Afficher</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-3">
+                      <button id="save" type="submit" ng-disabled="serverForm.$invalid" class="btn btn-block btn-success btn-xs submit">Sauvegarder</button>
+                    </div>
+                    <div ng-show="hasRemove()" class="col-xs-3">
+                      <button id="delete" type="button" ng-click="remove()" ng-show="hasRemove()" class="btn btn-block btn-danger btn-xs submit">Supprimer</button>
+                    </div>
+                    <div id="cancel" class="col-xs-3 col-sm-3 col-md-2 text-center"><a href="" ng-click="cancelEditConfirmation(&quot;send&quot;)" class="btn btn-cancel btn-block">annuler</a></div>
+                  </div>
+                </form>
+                <form name="exchangeConfirmationForm" ng-submit="saveConfirmation(&quot;exchange&quot;)">
+                  <div class="descriptor">Simple trade confirmation settings</div>
+                  <div class="row"></div>
+                  <label>If you hide the simple trade confirmation page, you will not see a confirmation page when placing a simple trade. You might pay up to .1% more than you originally specified.</label>
+                  <div ng-hide="editConfirmation.exchange" class="row advanced-form-row">
+                    <div class="col-xs-9 col-sm-8 col-md-6">
+                      <div ng-show="options.confirmation.exchange" class="description">Afficher</div>
+                      <div ng-hide="options.confirmation.exchange" class="description">Masquer</div>
+                    </div>
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="editConfirmation.exchange = true" class="btn btn-cancel btn-block">éditer</a></div>
+                  </div>
+                  <div ng-show="editConfirmation.exchange" class="row row-padding-small edit-trust-line">
+                    <div class="col-xs-9 col-sm-8 col-md-6">
+                      <div class="helperInput">
+                        <label>
+                          <input type="checkbox" name="exchangeConfirmationBox" ng-model="options.confirmation.exchange" ng-click="confirmationChanged.exchange = true"/><span>Afficher</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-3">
+                      <button id="save" type="submit" ng-disabled="serverForm.$invalid" class="btn btn-block btn-success btn-xs submit">Sauvegarder</button>
+                    </div>
+                    <div ng-show="hasRemove()" class="col-xs-3">
+                      <button id="delete" type="button" ng-click="remove()" ng-show="hasRemove()" class="btn btn-block btn-danger btn-xs submit">Supprimer</button>
+                    </div>
+                    <div id="cancel" class="col-xs-3 col-sm-3 col-md-2 text-center"><a href="" ng-click="cancelEditConfirmation(&quot;exchange&quot;)" class="btn btn-cancel btn-block">annuler</a></div>
+                  </div>
+                </form>
+                <form name="tradeConfirmationForm" ng-submit="saveConfirmation(&quot;trade&quot;)">
+                  <div class="descriptor">Advanced trade confirmation settings</div>
+                  <div class="row"></div>
+                  <label>If you hide the advanced trade confirmation page, you will not see a confirmation page when placing orders.</label>
+                  <div ng-hide="editConfirmation.trade" class="row advanced-form-row">
+                    <div class="col-xs-9 col-sm-8 col-md-6">
+                      <div ng-show="options.confirmation.trade" class="description">Afficher</div>
+                      <div ng-hide="options.confirmation.trade" class="description">Masquer</div>
+                    </div>
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="editConfirmation.trade = true" class="btn btn-cancel btn-block">éditer</a></div>
+                  </div>
+                  <div ng-show="editConfirmation.trade" class="row row-padding-small edit-trust-line">
+                    <div class="col-xs-9 col-sm-8 col-md-6">
+                      <div class="helperInput">
+                        <label>
+                          <input type="checkbox" name="tradeConfirmationBox" ng-model="options.confirmation.trade" ng-click="confirmationChanged.trade = true"/><span>Afficher</span>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-3">
+                      <button id="save" type="submit" ng-disabled="serverForm.$invalid" class="btn btn-block btn-success btn-xs submit">Sauvegarder</button>
+                    </div>
+                    <div ng-show="hasRemove()" class="col-xs-3">
+                      <button id="delete" type="button" ng-click="remove()" ng-show="hasRemove()" class="btn btn-block btn-danger btn-xs submit">Supprimer</button>
+                    </div>
+                    <div id="cancel" class="col-xs-3 col-sm-3 col-md-2 text-center"><a href="" ng-click="cancelEditConfirmation(&quot;trade&quot;)" class="btn btn-cancel btn-block">annuler</a></div>
+                  </div>
+                </form>
+        <h4 id="serverSettings">Paramètres serveur</h4>
+                <form name="blobForm" ng-submit="save(&quot;blobvault&quot;)">
+                  <div class="descriptor">Blob vault</div>
+                  <div ng-hide="edit.blobvault" class="row advanced-form-row">
+                    <div class="col-xs-9 col-sm-8 col-md-6">
+                      <div class="description">{{options.blobvault}}</div>
+                    </div>
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="edit.blobvault = true" class="btn btn-block btn-cancel">éditer</a></div>
+                  </div>
+                  <div ng-show="edit.blobvault" class="row row-padding-small field-edit-row">
+                    <div class="col-xs-12 col-sm-9 col-md-6">
+                      <input id="blobIp" name="blobIp" type="text" ng-model="options.blobvault" required="required" class="form-control blobIp"/>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-3">
+                      <button id="save" type="submit" ng-disabled="blobForm.$invalid" class="btn btn-block btn-success btn-xs submit">Sauvegarder</button>
+                    </div>
+                    <div class="col-xs-3 col-sm-3 col-md-2">
+                      <button id="delete" type="button" ng-click="deleteUrl(&quot;blobvault&quot;)" class="btn btn-block btn-danger btn-xs submit">Supprimer</button>
+                    </div>
+                    <div id="cancel" class="col-xs-3 col-sm-3 col-md-1 text-center"><a href="" ng-click="cancelEdit(&quot;blobvault&quot;)" class="btn btn-cancel btn-block">annuler</a></div>
+                  </div>
+                </form>
+                <form name="historyApiForm" ng-submit="save(&quot;historyApi&quot;)">
+                  <div class="descriptor">History API</div>
+                  <div ng-hide="edit.historyApi" class="row advanced-form-row">
+                    <div class="col-xs-9 col-sm-8 col-md-6">
+                      <div class="description">{{options.historyApi}}</div>
+                    </div>
+                    <div class="col-xs-1"></div>
+                    <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="edit.historyApi = true" class="btn btn-block btn-cancel">éditer</a></div>
+                  </div>
+                  <div ng-show="edit.historyApi" class="row row-padding-small field-edit-row">
+                    <div class="col-xs-12 col-sm-9 col-md-6">
+                      <input id="historyAPI" name="historyAPI" type="text" ng-model="options.historyApi" required="required" class="form-control historyAPI"/>
+                    </div>
+                    <div class="col-xs-6 col-sm-6 col-md-3">
+                      <button id="save" type="submit" ng-disabled="historyApiForm.$invalid" class="btn btn-block btn-success btn-xs submit">Sauvegarder</button>
+                    </div>
+                    <div id="cancel" class="col-xs-3 col-sm-3 col-md-1 text-center"><a href="" ng-click="cancelEdit(&quot;historyApi&quot;)" class="btn btn-cancel btn-block">annuler</a></div>
+                  </div>
+                </form>
+        <form ng-controller="ServerRowCtrl" ng-repeat="(index, server) in options.server.servers" ng-submit="save()" class="server-row-form">
+          <ng-form name="serverForm">
+            <div class="row">
+              <div class="col-xs-6 col-sm-5 col-md-3">
+                <div class="descriptor">Nom d'hôte WebSocket</div>
+              </div>
+              <div class="port col-xs-4 col-sm-7 col-md-9">
+                <div class="descriptor portNumber">Numéro de port</div>
+              </div>
+            </div>
+            <div ng-show="editing" class="row row-padding-small">
+              <div class="col-xs-6 col-sm-5 col-md-3 hostname-wrapper">
+                <input name="host" type="text" ng-model="server.host" ng-model-options="{ debounce: 500 }" rp-websocket="rp-websocket" rp-websocket-port="{{server.port}}" rp-websocket-secure="{{server.secure}}" rp-spinner="rp-spinner" class="form-control host"/>
+                <div ng-show="serverForm.$dirty" class="errorGroup">
+                  <div ng-messages="serverForm.host.$error">
+                    <div ng-message="rpWebsocket" class="error">Socket ip or hostname is invalid or is down.</div>
+                  </div>
+                  <div ng-messages="serverForm.port.$error">
+                    <div ng-message="rpPortNumber" class="error">Numéro de port invalide.</div>
+                  </div>
+                </div>
+              </div>
+              <div class="col-xs-3 col-sm-2 col-md-2">
+                <input name="port" type="text" ng-model="server.port" ng-model-options="{ debounce: 500 }" rp-port-number="rp-port-number" class="form-control socketPort"/>
+              </div>
+              <div id="secureSocket" class="col-xs-3 col-md-1 col-sm-2 editable">
+                <div class="helperInput">
+                  <label>
+                    <input type="checkbox" name="secure" ng-model="server.secure"/><span>Sécurisé</span>
+                  </label>
+                </div>
+              </div>
+              <div class="col-xs-6 col-sm-6 col-md-3">
+                <button id="save" type="submit" ng-disabled="serverForm.$invalid || serverForm.$pending" class="btn btn-block btn-success btn-xs submit">Sauvegarder</button>
+              </div>
+              <div ng-show="hasRemove()" class="col-xs-3 col-sm-3 col-md-1">
+                <button id="delete" type="button" ng-click="remove()" ng-show="hasRemove()" class="btn btn-block btn-danger btn-xs submit">Supprimer</button>
+              </div>
+              <div id="cancel" class="col-xs-3 col-sm-3 col-md-1 text-center"><a href="" ng-click="cancel()" ng-hide="noCancel()" class="btn btn-cancel btn-block">annuler</a></div>
+            </div>
+            <div ng-hide="editing" class="row advanced-form-row">
+              <div class="col-xs-6 col-sm-5 col-md-3">
+                <div ng-bind="server.host" class="description"> </div>
+              </div>
+              <div class="col-xs-3 col-sm-3 col-md-2 port-wrapper">
+                <div ng-bind="server.port" class="description"> </div>
+              </div>
+              <div id="secureSocket" class="col-xs-3 col-sm-2 col-md-2">
+                <div ng-show="server.secure" class="description">Sécurisé</div>
+                <div ng-hide="server.secure" class="description">Non sécurisé</div>
+              </div>
+              <div class="col-xs-3 col-sm-2 col-md-2"><a href="" ng-click="editing = true" class="btn btn-cancel btn-block">éditer</a></div>
+            </div>
+          </ng-form>
+        </form>
+        <div class="row">
+          <div class="col-xs-12 col-sm-6 col-md-3">
+            <button id="newServer" type="button" ng-click="addServer()" class="btn btn-block btn-primary">Ajouter un nouveau serveur</button>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>

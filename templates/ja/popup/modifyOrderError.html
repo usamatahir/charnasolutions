@@ -1,0 +1,10 @@
+
+<form role="form">
+  <div class="modal-header">注文の誤りを修正してください</div>
+  <div class="modal-body">
+    <div class="alert alert-danger">申しわけございません、あなたのオーダーを変更できませんでした。</div><span>あなたの当初の注文は取り消され、変更された注文はされませんでした。 <br/></span><span>注文の前で{{order.qtyChangeAfterCancel | rpamount}}によって変更されたあなたの注文金額は修正されました。<br/><br/></span><span>これは新しい注文で溢れる可能性に対するセーフガードであるため、注文されなかった <br/></span><span>どうぞ、手動で新しい注文をする前に、あなたのバランスと履歴をチェックしてください。</span>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="cancel()" class="btn btn-default">閉じる</button>
+  </div>
+</form>

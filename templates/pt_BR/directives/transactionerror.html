@@ -1,0 +1,157 @@
+
+<group ng-switch="tab">
+  <!-- All fund -> individual currency tab errors-->
+  <group ng-switch-when="trust">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Conectando um gateway à sua conta...</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Gateway conectado.</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Houve um problema ao conectar com o gateway. Por favor tente mais tarde.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Código do erro: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">O pedido falhou</h2>
+            <p><span>O seu pedido expirou, por favor tente de novo.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">O pedido falhou</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Código do erro: Tag do destinatário requerida [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">O pedido falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Código do erro: Esta transação falhou porque excedeu a taxa máxima da rede, por favor tente mais tarde [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">O pedido falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Você não tem um gateway conectado para essa moeda [terNO_LINE].</span><span ng-switch-when="tecINSUF_RESERVE_LINE">Código do erro: Reserva insuficiente para conectar um gateway [tecINSUF_RESERVE_LINE].</span><span ng-switch-when="tecNO_LINE_INSUF_RESERVE">Código do erro: Reserva insuficiente para conectar um gateway [tecNO_LINE_INSUF_RESERVE]. <a href="https://ripple.com/wiki/Reserves">Mais informações</a></span><span ng-switch-default="ng-switch-default">Erro: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">O pedido falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Código do erro: Você não tem uma linha de confiança para esta moeda [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">O seu pagamento falhou: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">O pedido falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Código do erro: A transação não pôde ser submetida [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Essa solicitação falhou porque a taxa de rede atual é mais alta do que o limite da sua conta. Você pode ajustar o limite da sua taxa de rede em Configurações &gt Avançado, ou tentar novamente mais tarde. <br>Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Sua solicitação não pôde ser submetida: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <!-- All send & convert errors-->
+  <group ng-switch-when="send_convert">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Pagamento pendente</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Pagamento concluído</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Pagamento falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Código do erro: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">O pagamento falhou [tefMAX_LEDGER].</h2>
+            <p ng-switch="engine_result"><span>O seu pagamento expirou, por favor tente de novo.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Pagamento falhou</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Código do erro: Tag do destinatário requerida [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Pagamento falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Código do erro: Esta transação falhou porque excedeu a taxa máxima da rede, por favor tente mais tarde [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Pagamento falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Código do erro: Não há destinatário [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Código do erro: Quantia de XRP enviada é insuficiente [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Erro: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Pagamento falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Código do erro: Você não tem uma linha de confiança para esta moeda [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">O seu pagamento falhou: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Pagamento falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Código do erro: A transação não pôde ser submetida [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Essa solicitação falhou porque a taxa de rede atual é mais alta do que o limite da sua conta. Você pode ajustar o limite da sua taxa de rede em Configurações &gt Avançado, ou tentar novamente mais tarde. <br>Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">O seu pagamento não pôde ser submetido: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-when="trade">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">O pedido foi mal formado.</h2>
+        <p>Seu pedido é inválido, motivo: {{engine_result_message}} - {{engine_result_message}}</p>
+      </group>
+      <group ng-switch-when"tec="ng-switch-when"tec" class="result-malformed">
+        <h2 class="tx-status">A transação falhou.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecUNFUNDED_ORDER">Você não tem fundos suficientes para criar essa ordem [tecUNFUNDED_ORDER].</span><span ng-switch-when="tecINSUF_RESERVE_OFFER">Reserva insuficiente para criar uma ordem [tecINSUF_RESERVE_OFFER].</span><span ng-switch-when="tejMaxFeeExceeded">Essa solicitação falhou porque a taxa de rede atual é mais alta do que o limite da sua conta. Você pode ajustar o limite da sua taxa de rede em Configurações &gt Avançado, ou tentar novamente mais tarde. <br>Error code: Network fee exceeded [tejMaxFeeExceeded]. <a href="https://ripple.com/wiki/Reserves" target="_blank">Mais informações.</a></span><span ng-switch-default="ng-switch-default">Erro: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">A negociação falhou.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Negociação falhou, motivo: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">A transação falhou.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">O servidor ao qual a transação foi enviada estava muito ocupado para encaminhá-la ou processá-la pelo valor da taxa incluída [telINSUF_FEE_P].</span></p>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Solicitação pendente</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Solicitação concluída</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">O pedido falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Código do erro: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">O pedido falhou</h2>
+            <p ng-switch="engine_result"><span>O seu pedido expirou, por favor tente de novo.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">O pedido falhou</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Código do erro: Tag do destinatário requerida [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">O pedido falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Código do erro: Esta transação falhou porque excedeu a taxa máxima da rede, por favor tente mais tarde [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">O pedido falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Código do erro: Não há destinatário [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Código do erro: Quantia de XRP enviada é insuficiente [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Erro: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">O pedido falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Código do erro: Você não tem uma linha de confiança para esta moeda [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">O seu pagamento falhou: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">O pedido falhou</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Código do erro: A transação não pôde ser submetida [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Essa solicitação falhou porque a taxa de rede atual é mais alta do que o limite da sua conta. Você pode ajustar o limite da sua taxa de rede em Configurações &gt Avançado, ou tentar novamente mais tarde. <br>Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Sua solicitação não pôde ser submetida: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+</group>

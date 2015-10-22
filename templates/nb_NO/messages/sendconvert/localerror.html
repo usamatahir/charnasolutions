@@ -1,0 +1,32 @@
+
+<!-- Error messages for the send and convert tabs-->
+<group ng-switch="error_type">
+  <group ng-switch-when="noDest" class="result-error">
+    <h2 class="tx-status">Transaksjonen mislyktes</h2>
+    <p>Feilkode: Kontoen du prøver å sende til, eksisterer ikke [noDest].</p>
+  </group>
+  <group ng-switch-when="noPath" class="result-error">
+    <h2 class="tx-status">Transaksjonen mislyktes</h2>
+    <p>Feilkode: Ripple fant ingen bane mellom deg og målkontoen [noPath].</p>
+  </group>
+  <group ng-switch-when="maxFeeExceeded" class="result-error">
+    <h2 class="tx-status">Transaksjonen mislyktes</h2>
+    <p>Feilkode: Transaksjonen mislyktes fordi den overskred det maksimale nettverksgebyret. [maxfeeExceeded].</p>
+  </group>
+  <group ng-switch-when="invalidTransaction" class="result-error">
+    <h2 class="tx-status">Transaksjonen mislyktes</h2>
+    <p>Feilkode: Transaksjonen ble avvist av Ripple-nettverket [invalidTransaction].</p>
+  </group>
+  <group ng-switch-when="unlockFailed" class="result-error">
+    <h2 class="tx-status">Kunne ikke låse opp kontoen</h2>
+    <p>Your account cannot be accessed at the moment. Please try again later.</p>
+  </group>
+  <group ng-switch-when="wrongPassword" class="result-error">
+    <h2 class="tx-status">Kunne ikke låse opp kontoen</h2>
+    <p>Feil passord.</p>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <p class="literal">En feil oppsto da transaksjonen skulle sendes inn. Sørg for at du er koblet til Internett og prøv senere.</p>
+    <p class="literal">Forsikre deg om at transaksjonen ikke allerede er gjennomført før du prøver igjen.</p>
+  </group>
+</group>

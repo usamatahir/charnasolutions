@@ -1,0 +1,157 @@
+
+<group ng-switch="tab">
+  <!-- All fund -> individual currency tab errors-->
+  <group ng-switch-when="trust">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Connexion de la passerelle à votre compte...</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Passerelle connectée.</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Il y a eu un problème lors de la connexion de la passerelle. Veuillez réessayer ultérieurement.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Code d'erreur: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">La demande a échoué</h2>
+            <p><span>Votre demande a expiré, veuillez réessayer.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">La demande a échoué</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Code d'erreur: Étiquette de destination nécessaire [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">La demande a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Code d'erreur: Cette demande a échoué parce qu'elle a dépassé les frais de réseau maximum, veuillez réessayer ultérieurement [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">La demande a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Code d'erreur: Vous n'avez pas de passerelle connectée dans cette devise [terNO_LINE].</span><span ng-switch-when="tecINSUF_RESERVE_LINE">Code d'erreur: Réserve insuffisante pour connecter la passerelle [tecINSUF_RESERVE_LINE].</span><span ng-switch-when="tecNO_LINE_INSUF_RESERVE">Code d'erreur: Vous avez un montant de réserve insuffisant pour connecter une passerelle [tecNO_LINE_INSUF_RESERVE]. <a href="https://ripple.com/wiki/Reserves">Plus d'informations</a></span><span ng-switch-default="ng-switch-default">Erreur: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">La demande a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Code d'erreur: Vous n'avez pas de ligne de confiance dans cette devise [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Votre demande a échoué: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">La demande a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Code d'erreur: la demande n'a pas pu être envoyée [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Cette demande a échoué car les frais de réseau actuels sont plus élevés que la limite de votre compte. Vous pouvez régler vos frais de réseau maximum dans Paramètres &gt Avancé, ou réessayer plus tard. <br>Code d'erreur: Frais Réseau dépassés [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Votre demande n'a pas pu être envoyée: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <!-- All send & convert errors-->
+  <group ng-switch-when="send_convert">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Paiement en attente</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Paiement réussi</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Le paiement a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Code d'erreur: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Le paiement a échoué [tefMAX_LEDGER].</h2>
+            <p ng-switch="engine_result"><span>Votre paiement a expiré, veuillez essayer à nouveau.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Le paiement a échoué</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Code d'erreur: Étiquette de destination nécessaire [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Le paiement a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Code d'erreur: Cette transaction a échoué parce qu'elle a dépassé les frais de réseau maximum, veuillez réessayer ultérieurement [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Le paiement a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Code d'erreur: Aucune destination [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Code d'erreur: Pas assez de XRP envoyés à destination [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Erreur: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Le paiement a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Code d'erreur: Vous n'avez pas de ligne de confiance dans cette devise [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Votre paiement a échoué: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Le paiement a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Code d'erreur: La transaction n'a pas pu être envoyée [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Cette transaction a échoué car les frais de réseau actuels sont plus élevés que la limite de votre compte. Vous pouvez régler vos frais de réseau maximum dans Paramètres &gt Avancé, ou réessayer plus tard. <br>Code d'erreur: Frais Réseau dépassés [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Votre paiement n'a pas pu être envoyé: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-when="trade">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">La demande est malformée.</h2>
+        <p>Votre demande est invalide, raison: {{engine_result_message}} - {{engine_result_message}}</p>
+      </group>
+      <group ng-switch-when"tec="ng-switch-when"tec" class="result-malformed">
+        <h2 class="tx-status">La transaction a échoué.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecUNFUNDED_ORDER">Vous n'avez pas suffisamment de fonds pour créer cet ordre [tecUNFUNDED_ORDER].</span><span ng-switch-when="tecINSUF_RESERVE_OFFER">Montant de la réserve insuffisant pour soumettre un ordre [tecINSUF_RESERVE_OFFER].</span><span ng-switch-when="tejMaxFeeExceeded">Cette transaction a échoué car les frais de réseau actuels sont plus élevés que la limite de votre compte. Vous pouvez régler vos frais de réseau maximum dans Paramètres &gt Avancé, ou réessayer plus tard. <br>Code d'erreur: Frais Réseau dépassés [tejMaxFeeExceeded]. <a href="https://ripple.com/wiki/Reserves" target="_blank">Plus d'informations.</a></span><span ng-switch-default="ng-switch-default">Erreur: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">L'échange a échoué.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Échec de l'échange, raison: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">La transaction a échoué.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Le serveur concerné auquel vous avez envoyé la transaction était trop occupé pour transmettre ou traiter votre transaction au niveau de frais que vous avez inclus [telINSUF_FEE_P].</span></p>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Demande en attente</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Demande réussie</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">La demande a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Code d'erreur: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">La demande a échoué</h2>
+            <p ng-switch="engine_result"><span>Votre demande a expiré, veuillez réessayer.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">La demande a échoué</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Code d'erreur: Étiquette de destination nécessaire [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">La demande a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Code d'erreur: Cette demande a échoué parce qu'elle a dépassé les frais de réseau maximum, veuillez réessayer ultérieurement [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">La demande a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Code d'erreur: Aucune destination [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Code d'erreur: Pas assez de XRP envoyés à destination [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Erreur: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">La demande a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Code d'erreur: Vous n'avez pas de ligne de confiance dans cette devise [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Votre demande a échoué: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">La demande a échoué</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Code d'erreur: la demande n'a pas pu être envoyée [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Cette demande a échoué car les frais de réseau actuels sont plus élevés que la limite de votre compte. Vous pouvez régler vos frais de réseau maximum dans Paramètres &gt Avancé, ou réessayer plus tard. <br>Code d'erreur: Frais Réseau dépassés [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Votre demande n'a pas pu être envoyée: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+</group>

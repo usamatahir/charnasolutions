@@ -1,0 +1,32 @@
+
+<!-- Confirmation messages for the send and convert tabs-->
+<group ng-show="tx_result==&quot;pending&quot;" class="pending">
+  <h2 class="tx-status">Transaction en attente.</h2>
+</group>
+<group ng-show="tx_result==&quot;cleared&quot;" class="result-success">
+  <h2 class="tx-status">Transaction réussie</h2>
+</group>
+<group ng-show="tx_result==&quot;error&quot;" class="result-error">
+  <h2 class="tx-status">La transaction a échoué</h2>
+  <p>Veuillez réessayer ultérieurement.</p>
+</group>
+<group ng-show="tx_result==&quot;malformed&quot;" class="result-malformed">
+  <h2 class="tx-status">La transaction a échoué</h2>
+  <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Code d'erreur: {{engine_result}} - {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failure&quot;" class="result-malformed">
+  <h2 class="tx-status">La transaction a échoué</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Code d'erreur: Étiquette de destination nécessaire [tefDST_TAG_NEEDED].</span></p>
+</group>
+<group ng-show="tx_result==&quot;claim&quot;" class="result-malformed">
+  <h2 class="tx-status">La transaction a échoué</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Code d'erreur: Le compte de destination n'existe pas [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Code d'erreur: Pas assez de XRP envoyés à destination [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Erreur: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failed&quot;" class="result-failed">
+  <h2 class="tx-status">La transaction a échoué</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Code d'erreur: Vous n'avez pas de ligne de confiance dans cette devise [terNO_LINE].</span><span ng-switch-default="ng-switch-default">Votre transaction a échoué: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;local&quot;" class="result-failed">
+  <h2 class="tx-status">La transaction a échoué</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Code d'erreur: Cette transaction a échoué parce qu'elle a dépassé les frais de réseau maximum, veuillez réessayer ultérieurement [telINSUF_FEE_P].</span></p>
+</group>

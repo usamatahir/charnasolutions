@@ -1,0 +1,32 @@
+
+<!-- Error messages for the send and convert tabs-->
+<group ng-switch="error_type">
+  <group ng-switch-when="noDest" class="result-error">
+    <h2 class="tx-status">Транзакция не удалась</h2>
+    <p>Код ошибки: Аккаунт на который вы пытаетесь отправить не существует [noDest].</p>
+  </group>
+  <group ng-switch-when="noPath" class="result-error">
+    <h2 class="tx-status">Транзакция не удалась</h2>
+    <p>Код ошибки: Ripple был не в состоянии найти путь между вами и адресом назначения [noPath].</p>
+  </group>
+  <group ng-switch-when="maxFeeExceeded" class="result-error">
+    <h2 class="tx-status">Транзакция не удалась</h2>
+    <p>Код ошибки: Эта транзакция не удалась, поскольку она превысила максимальную комиссию сети. [maxfeeExceeded].</p>
+  </group>
+  <group ng-switch-when="invalidTransaction" class="result-error">
+    <h2 class="tx-status">Транзакция не удалась</h2>
+    <p>Код ошибки: Транзакция была отклонена сетью Ripple [invalidTransaction].</p>
+  </group>
+  <group ng-switch-when="unlockFailed" class="result-error">
+    <h2 class="tx-status">Разблокировка аккаунта не удалась</h2>
+    <p>Your account cannot be accessed at the moment. Please try again later.</p>
+  </group>
+  <group ng-switch-when="wrongPassword" class="result-error">
+    <h2 class="tx-status">Разблокировка аккаунта не удалась</h2>
+    <p>Введен неверный пароль.</p>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <p class="literal">Извините, произошла ошибка при подтверждении Вашей транзакции. Убедитесь, что вы подключены к Интернету и повторите попытку позже.</p>
+    <p class="literal">Прежде чем попытаться снова, пожалуйста, убедитесь, что транзакция не была выполнена ранее.</p>
+  </group>
+</group>

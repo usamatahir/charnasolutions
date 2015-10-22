@@ -1,0 +1,149 @@
+
+<section ng-controller="UsdCtrl" class="col-xs-12 content">
+  <group ng-hide="connected" class="disconnected">
+    <p class="literal">You have to be online to see this screen</p>
+  </group>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected">
+    <div class="auth-attention banner">
+      <h4>Welcome to Ripple Trade! Your account needs to be activated. You can activate it in 2 ways:</h4>
+      <ul>
+        <li>Have another user send XRP to your Ripple name (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+  </div>
+  <div ng-show="connected" class="row">
+    <div ng-show="hasRTJapanTrust">
+      <div class="warning-attention banner">
+        <h4>警告</h4>
+        <p>
+          リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+          最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+        </p>
+      </div>
+    </div>
+    <div ng-show="hasRTJapanTrustWithRippling">
+      <div class="warning-attention banner">
+        <h4>警告</h4>
+        <p>
+          資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+          無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="currencies fund-menu"><a href="#/brl" ng-class="{active: $route.current.tabName == 'brl'}" class="currency-brl"><i class="icon fa fa-money fa-brl"></i>BRL</a><a href="#/btc" ng-class="{active: $route.current.tabName == 'btc'}" class="currency-btc"><i class="icon fa fa-money fa-btc"></i>BTC</a><a href="#/cad" ng-class="{active: $route.current.tabName == 'cad'}" class="currency-cad"><i class="icon fa fa-money fa-cad"></i>CAD</a><a href="#/eur" ng-class="{active: $route.current.tabName == 'eur'}"><i class="icon fa fa-money fa-eur"></i>EUR</a><a href="#/jpy" ng-class="{active: $route.current.tabName == 'jpy'}" class="currency-jpy"><i class="icon fa fa-money fa-jpy"></i>JPY</a><a href="#/mxn" ng-class="{active: $route.current.tabName == 'mxn'}" class="currency-mxn"><i class="icon fa fa-money fa-mxn"></i>MXN</a><a href="#/sgd" ng-class="{active: $route.current.tabName == 'sgd'}" class="currency-sgd"><i class="icon fa fa-money fa-sgd"></i>SGD</a><a href="#/usd" ng-class="{active: $route.current.tabName == 'usd'}"><i class="icon fa fa-money fa-usd"></i>USD</a><a href="#/gold" ng-class="{active: $route.current.tabName == 'gold'}" class="currency-xau"> <i class="icon fa fa-money fa-xau"></i>XAU</a></div>
+    </div>
+    <form id="usdDepositForm" action="" method="post" name="usdDeposit" ng-submit="getQuote()" class="col-sm-9 list">
+      <div class="nameLine">USD instant deposit</div>
+      <!--ol.breadcrumb
+      <li ng-if="mode == 'step1'" class="active">Step 1 (Amount)</li>
+      <li ng-if="mode != 'step1'"><a href="" ng-click="step1()">Step 1 (Amount)</a></li>
+      <li ng-class="{active: mode == 'step2'}">Step 2 (Confirmation)</li>
+      <li ng-class="{active: mode == 'step3'}">Step 3 (Complete deposit)</li>
+      -->
+      <div ng-show="mode &amp;&amp; mode!='noKyc'" class="row">
+        <div class="col-md-4 steps"><span ng-class="{ 'selected': mode == 'step1' }">STEP 1: AMOUNT</span></div>
+        <div class="col-md-4 steps"><span ng-class="{ 'selected': mode == 'step2' }">STEP 2: CONFIRMATION</span></div>
+        <div class="col-md-4 steps"><span ng-class="{ 'selected': mode == 'step3' }">STEP 3: COMPLETE DEPOSIT</span></div>
+      </div><br/>
+      <div ng-show="mode == 'step1'" class="results">
+        <div ng-show="$routeParams.result == 'success'" class="result-success">
+          <h2 class="tx-status">Success! You've completed your USD deposit. Your funds should be available within a few minutes.</h2>
+        </div>
+        <div ng-show="$routeParams.result == 'cancel'">
+          <h2 class="tx-status">You cancelled your deposit.</h2>
+        </div>
+        <div ng-show="$routeParams.result == 'failure'" class="result-error">
+          <h2 class="tx-status">Your deposit failed. Your bank account was not charged. Please contact&#32;<a href="mailto:support@snapswap.us">support@snapswap.us</a>.</h2>
+        </div>
+      </div>
+      <div ng-show="mode=='noKyc'" class="noKyc">
+        Verify your identity to deposit USD (US-only).
+        &#32;<a href="#/kyc">Verify identity.</a>
+      </div>
+      <div ng-show="mode=='step1'" class="step1">
+        <div class="row">
+          <div class="col-sm-6">
+            <h5>Beløp</h5>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <div class="input-group input-margin-group"><span class="input-group-addon ripple-addon">$</span>
+              <input id="amount" name="amount" type="number" placeholder="e.g. 100" ng-model="usdAmount" required="required" min="1" class="form-control amount"/>
+            </div>
+            <div ng-messages="usdDeposit.amount.$error" class="errorGroup">
+              <div ng-message="maxAmount" class="error">{{error}}</div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-4">
+            <h5>Select your bank</h5>
+            <div class="select-dropdown-wrapper">
+              <select id="bank" name="bank" ng-model="bank" required="required" class="form-control">
+                <option value="" disabled="disabled" selected="selected">Select your bank</option>
+                <option value="BOFAUS">Bank of America</option>
+                <option value="HIBKUS">Capital One</option>
+                <option value="INGBUS">Capital One 360</option>
+                <option value="CHASUS">Chase</option>
+                <option value="CITIUS">Citibank</option>
+                <option value="PNCCUS">PNC</option>
+                <option value="J447US">TD Bank</option>
+                <option value="USBKUS">US Bank</option>
+                <option value="PNBPUS">Wells Fargo</option>
+              </select><span class="dropdown-arrow-wrapper"> <i class="fa fa-caret-down"></i></span>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-12 col-md-12 col-lg-12">
+            <div class="description ssText">
+              Ripple Trade has partnered with SnapSwap to make USD deposits
+               easier. By continuing, you agree to SnapSwap's&#32;<a href="https://snapswap.us/terms" onclick="window.open('https://snapswap.us/terms', 'newWindow', 'width= 550, height=500, top=120, left=200'); return false;">Terms of Service.&#32;</a>To contact support, email&#32;<a href="mailto:support@snapswap.us">support@snapswap.us</a>.
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-sm-3">
+            <button type="submit" ng-disabled="usdDeposit.$invalid" class="btn btn-block knox-payments-button btn-primary">Continue</button>
+          </div>
+        </div>
+      </div>
+      <div ng-show="mode=='step2'" class="step2">
+        <div ng-hide="error || calculating || !total" class="row">
+          <div class="col-xs-12">Confirm the total amount.
+            <h5>Beløp</h5>
+            <div class="nameLine">$ {{ usdAmount }}</div>
+            <h5>Gebyr</h5>
+            <div class="nameLine">$ {{ fee }}</div>
+            <h5>Total</h5>
+            <div class="nameLine">$ {{ total }}</div>
+          </div>
+        </div>
+        <div ng-show="calculating" class="row">
+          <div class="col-xs-12">Beregner...</div>
+        </div>
+        <div ng-show="!calculating &amp;&amp; error" class="row">
+          <div ng-show="inProcess" class="col-xs-12 error">
+            You already have an incomplete
+             deposit request. Please cancel it before initiating a second deposit.
+             Your bank account will not be charged for the incomplete deposit.
+          </div>
+          <div ng-hide="inProcess" class="col-xs-12 error">{{error}}</div><br/><br/>
+        </div>
+        <div ng-show="!calculating" class="row">
+          <div class="col-xs-6 col-sm-3 col-lg-2"><a href="" ng-click="step1()" class="btn btn-block btn-cancel">Tilbake</a></div>
+          <div ng-hide="error" class="col-xs-6 col-sm-4 col-lg-3"><a href="" ng-click="confirm()" class="btn btn-block btn-success">Bekreft</a></div>
+          <div ng-show="inProcess" class="col-xs-6 col-sm-4 col-lg-3"><a ng-click="cancel()" class="btn btn-danger btn-block">Cancel processing</a></div>
+        </div>
+      </div>
+      <div ng-show="mode=='step3'" class="step3">
+        <div class="row">
+          <iframe id="knoxFrame" name="knoxFrame" class="col-sm-12"></iframe>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

@@ -1,0 +1,157 @@
+
+<group ng-switch="tab">
+  <!-- All fund -> individual currency tab errors-->
+  <group ng-switch-when="trust">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Gateway wordt verbonden met uw account...</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Gateway verbonden.</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Bij het verbinden met de gateway is een probleem ontstaan. Probeert u het later nog eens.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Foutcode: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Aanvraag mislukt</h2>
+            <p><span>De tijd voor uw aanvraag is verstreken, probeer het later nog eens.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Aanvraag mislukt</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Foutcode: Bestemmingskenmerk vereist. [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Aanvraag mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Foutcode: De transactie is mislukt omdat het de maximale netwerkheffing overschreed, probeer het later nog eens [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Aanvraag mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Foutcode: U heeft geen gateway verbonden voor deze valuta [terNO_LINE].</span><span ng-switch-when="tecINSUF_RESERVE_LINE">Foutcode: Onvoldoende reserve om met de gateway te verbinden [tecINSUF_RESERVE_LINE].</span><span ng-switch-when="tecNO_LINE_INSUF_RESERVE">Foutcode: U heeft onvoldoende reserve om met de gateway te verbinden [tecINSUF_RESERVE_LINE]. <a href="https://ripple.com/wiki/Reserves">Meer informatie</a></span><span ng-switch-default="ng-switch-default">Fout: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Aanvraag mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Foutcode: U heeft geen kredietlijn voor deze valuta [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Uw aanvraag is mislukt: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Aanvraag mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Foutcode: Aanvraag kon niet worden verzonden [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Deze aanvraag is mislukt omdat de huidige netwerkheffing hoger is dan de limiet voor uw account. U kunt de maximum netwerkheffing aanpassen in Instellingen &gt Geavanceerd, of het later nog eens proberen. <br>Foutcode: Netwerkheffing overschreden [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Uw aanvraag kon niet worden verzonden: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <!-- All send & convert errors-->
+  <group ng-switch-when="send_convert">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Betaling in behandeling</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Betaling succesvol</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Betaling mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Foutcode: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Betaling mislukt [tefMAX_LEDGER].</h2>
+            <p ng-switch="engine_result"><span>De tijd voor uw betaling is verstreken. Probeert u het later nog eens.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Betaling mislukt</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Foutcode: Bestemmingskenmerk vereist. [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Betaling mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Foutcode: De transactie is mislukt omdat de maximale netwerkheffing is overschreden. Probeert u het later nog eens [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Betaling mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Foutcode: Geen bestemming [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Foutcode: Onvoldoende XRP verstuurd naar bestemming [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Fout: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Betaling mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Foutcode: U heeft geen kredietlijn voor deze valuta [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Uw betaling is mislukt: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Betaling mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Foutcode: Transactie kon niet worden verzonden [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Deze transactie is mislukt omdat de huidige netwerkheffing hoger is dan de limiet voor uw account. U kunt de maximum netwerkheffing aanpassen in Instellingen &gt Geavanceerd, of het later nog eens proberen. <br>Foutcode: Netwerkheffing overschreden [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Uw betaling kon niet worden verzonden: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-when="trade">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Verzoek is onjuist samengesteld.</h2>
+        <p>Uw aanvraag is ongeldig, reden: {{engine_result_message}} - {{engine_result_message}}</p>
+      </group>
+      <group ng-switch-when"tec="ng-switch-when"tec" class="result-malformed">
+        <h2 class="tx-status">Transactie mislukt.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecUNFUNDED_ORDER">U heeft onvoldoende saldo om deze order aan te maken [tecUNFUNDED_ORDER].</span><span ng-switch-when="tecINSUF_RESERVE_OFFER">Onvoldoende hoeveelheid reserve om een order aan te maken [tecINSUF_RESERVE_OFFER].</span><span ng-switch-when="tejMaxFeeExceeded">Deze transactie is mislukt omdat de huidige netwerkheffing hoger is dan de limiet voor uw account. U kunt de maximum netwerkheffing aanpassen in Instellingen &gt Geavanceerd, of het later nog eens proberen. <br>Foutcode: Netwerkheffing overschreden [tejMaxFeeExceeded]. <a href="https://ripple.com/wiki/Reserves" target="_blank">Meer informatie.</a></span><span ng-switch-default="ng-switch-default">Fout: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Handel mislukt.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Handel mislukt, reden: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Transactie mislukt.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">De server waar u de transactie naar verzond was te druk om deze door te sturen of te verwerken tegen de meegegeven heffing [telINSUF_FEE_P].</span></p>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Aanvraag in behandeling</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Aanvraag succesvol</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Aanvraag mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Foutcode: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Aanvraag mislukt</h2>
+            <p ng-switch="engine_result"><span>De tijd voor uw aanvraag is verstreken, probeer het later nog eens.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Aanvraag mislukt</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Foutcode: Bestemmingskenmerk vereist. [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Aanvraag mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Foutcode: De transactie is mislukt omdat het de maximale netwerkheffing overschreed, probeer het later nog eens [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Aanvraag mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Foutcode: Geen bestemming [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Foutcode: Onvoldoende XRP verstuurd naar bestemming [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Fout: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Aanvraag mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Foutcode: U heeft geen kredietlijn voor deze valuta [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Uw aanvraag is mislukt: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Aanvraag mislukt</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Foutcode: Aanvraag kon niet worden verzonden [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Deze aanvraag is mislukt omdat de huidige netwerkheffing hoger is dan de limiet voor uw account. U kunt de maximum netwerkheffing aanpassen in Instellingen &gt Geavanceerd, of het later nog eens proberen. <br>Foutcode: Netwerkheffing overschreden [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Uw aanvraag kon niet worden verzonden: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+</group>

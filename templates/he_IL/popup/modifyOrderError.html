@@ -1,0 +1,10 @@
+
+<form role="form">
+  <div class="modal-header">Modify Order Error</div>
+  <div class="modal-body">
+    <div class="alert alert-danger">Sorry, your order could not be modified.</div><span>Your original order was cancelled but the modified order was not placed. <br/></span><span>The quantity of your order changed by {{order.qtyChangeAfterCancel | rpamount}} before the order could be modified. <br/><br/></span><span>To safeguard against the possibility of overfills a new order has not been placed. <br/></span><span>Please check your balance and history before placing the new order manually. <br/></span>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="cancel()" class="btn btn-default">לסגור </button>
+  </div>
+</form>

@@ -1,0 +1,54 @@
+
+<section ng-controller="SettingsTradeCtrl" class="col-xs-12 content">
+  <div ng-show="debug">This page is not available in debug mode</div>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected &amp;&amp; !debug">
+    <div class="auth-attention banner">
+      <h4>Bienvenue sur Ripple Trade! Votre compte doit être activé. Vous pouvez l'activer de 2 façons:</h4>
+      <ul>
+        <li>Un autre utilisateur peut vous envoyer des XRP à votre nom Ripple (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrust">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+        最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+      </p>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrustWithRippling">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+        無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+      </p>
+    </div>
+  </div>
+  <div ng-show="!debug" class="row">
+    <div class="col-sm-12"></div>
+    <div class="col-sm-3">
+      <div class="settingPage"><a href="#/security" ng-class="{active: $route.current.tabName == 'security'}">Sécurité</a><a href="#/settingstrade" ng-class="{active: $route.current.tabName == 'settingstrade'}">Échanger</a><a href="#/advanced" ng-class="{active: $route.current.tabName == 'advanced'}">Network and servers</a><a href="#/settingsgateway" ng-class="{active: $route.current.tabName == 'settingsgateway'}">Gateways and trust lines</a>
+      </div>
+    </div>
+    <div class="col-sm-9 list">
+      <section>
+        <h4>Paramètres d'échange</h4>
+        <div class="section">
+          <div class="descriptor">Échanger paire de devises</div>
+          <div ng-show="!pairs || (pairs &amp;&amp; pairs.length == 0)">No trade pairs in this account. To add a pair, go to the <a href="#/trade" l10n-inc="l10n-inc">Trade &gt; Advanced </a>section.</div>
+          <div ng-if="pairs">
+            <div as-sortable="dragControlListeners" ng-model="pairs">
+              <div ng-repeat="entry in pairs track by entry.name" as-sortable-item="as-sortable-item" class="pair">
+                <div as-sortable-item-handle="as-sortable-item-handle" class="col-xs-12"><i class="grip"></i><span ng-bind="entry.name" class="description"></span><a href="" ng-click="deletePair($index)"><span class="delete">remove</span></a></div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </div>
+  </div>
+</section>

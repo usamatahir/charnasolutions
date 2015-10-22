@@ -1,0 +1,32 @@
+
+<!-- Confirmation messages for the send and convert tabs-->
+<group ng-show="tx_result==&quot;pending&quot;" class="pending">
+  <h2 class="tx-status">Transazione pendente.</h2>
+</group>
+<group ng-show="tx_result==&quot;cleared&quot;" class="result-success">
+  <h2 class="tx-status">Transazione eseguita</h2>
+</group>
+<group ng-show="tx_result==&quot;error&quot;" class="result-error">
+  <h2 class="tx-status">Transazione non riuscita</h2>
+  <p>Per favore riprova più tardi.</p>
+</group>
+<group ng-show="tx_result==&quot;malformed&quot;" class="result-malformed">
+  <h2 class="tx-status">Transazione non riuscita</h2>
+  <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Errore: {{engine_result}} - {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failure&quot;" class="result-malformed">
+  <h2 class="tx-status">Transazione non riuscita</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Errore: Manca l'etichetta del destinatario [tefDST_TAG_NEEDED].</span></p>
+</group>
+<group ng-show="tx_result==&quot;claim&quot;" class="result-malformed">
+  <h2 class="tx-status">Transazione non riuscita</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Errore: L'account del destinatario non esiste [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Errore: Non sono stati inviati abbastanza XRP al destinatario [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Errore: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failed&quot;" class="result-failed">
+  <h2 class="tx-status">Transazione non riuscita</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Errore: Non hai una linea di fiducia per questa valuta [terNO_LINE].</span><span ng-switch-default="ng-switch-default">La tua transazione non è riuscita: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;local&quot;" class="result-failed">
+  <h2 class="tx-status">Transazione non riuscita</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Errore: La transazione non è riuscita perchè supera il limite massimo delle commissioni del network, per favore riprova più tardi [telINSUF_FEE_P].</span></p>
+</group>

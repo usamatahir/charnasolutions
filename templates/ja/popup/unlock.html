@@ -1,0 +1,20 @@
+
+<form name="unlockForm" role="form" ng-submit="confirm()" ng-keyup="onKeyUp($event)">
+  <div class="modal-header">アカウントのロックを解除</div>
+  <div class="modal-body">
+    <div class="form-group">
+      <label for="popup_unlock_password">パスワード</label>
+      <input id="popup_unlock_password" type="password" name="popup_unlock_password" ng-model="unlock.password" ng-model-options="{ debounce: 300 }" required="required" rp-focus="rp-focus" class="form-control"/>
+    </div>
+    <p ng-switch="unlock.purpose" class="help-block"><span ng-switch-when="showSecret">シークレット・キーを表示するには、パスワードを入力してください。</span><span ng-switch-default="ng-switch-default">取引を確認するには、パスワードを入力してください。</span></p>
+    <div ng-show="unlock.error == 'password'" class="alert alert-danger">パスワードに誤りがあります。再実行してください。</div>
+    <div ng-show="unlock.error == 'server'" class="alert alert-danger">Your account cannot be accessed at the moment. Please try again later.</div>
+    <p ng-show="unlock.isConfirming" class="literal"><img src="img/button-s.png" class="loader"/><span class="loading_text">パスワードを確認中</span></p>
+  </div>
+  <div class="modal-footer">
+    <div class="unlock-btns-wrapper">
+      <button type="submit" ng-disabled="unlockForm.$invalid || isConfirming" class="btn btn-primary modal-submit-btn">送信</button>
+      <button type="button" ng-click="cancel()" class="btn btn-default modal-close-btn">閉じる</button>
+    </div>
+  </div>
+</form>

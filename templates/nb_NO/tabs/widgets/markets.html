@@ -1,0 +1,32 @@
+
+<div class="widget widget-markets">
+  <h4 ng-click="showWidgetMarkets=!showWidgetMarkets" ng-init="showWidgetMarkets=true"><span>Markets</span><i ng-class="{'closed': !showWidgetMarkets}" class="fa fa-fw fa-caret-down"></i></h4>
+  <div rp-slide="showWidgetMarkets">
+    <div class="row align-with-chart-y-axis">
+      <div class="col-xs-9 col-md-5 col-lg-4">
+        <div class="row">
+          <div class="col-xs-5">
+            <input type="text" rp-combobox="currencies" rp-combobox-select="rp-combobox-select" rp-combobox-small="rp-combobox-small" ng-pattern="validationPatternCurrency" ng-model="firstCurrencySelected" class="form-control"/>
+          </div>
+          <div class="col-xs-7">
+            <input type="text" ng-disabled="disableFirstIssuer" rp-combobox="firstIssuer" rp-combobox-select="rp-combobox-select" rp-combobox-small="rp-combobox-small" ng-model="firstIssuerSelected" class="form-control"/>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-9 col-md-5 col-lg-4">
+        <div class="row">
+          <div class="col-xs-5">
+            <input type="text" rp-combobox="currencies" rp-combobox-select="rp-combobox-select" rp-combobox-small="rp-combobox-small" ng-pattern="validationPatternCurrency" ng-model="secondCurrencySelected" class="form-control"/>
+          </div>
+          <div class="col-xs-7">
+            <input type="text" ng-disabled="disableSecondIssuer" rp-combobox="secondIssuer" rp-combobox-select="rp-combobox-select" rp-combobox-small="rp-combobox-small" ng-model="secondIssuerSelected" class="form-control"/>
+          </div>
+        </div>
+      </div>
+      <div class="col-xs-3 col-md-2">
+        <button ng-click="flipCurrencies() " class="btn flip btn-cancel btn-block">snu</button>
+      </div>
+    </div>
+    <rp-market-chart base-currency="{{ firstCurrencySelected }}" base-currency-issuer="{{ issuerNameToAddress(firstIssuerSelected, firstCurrencySelected) }}" counter-currency="{{ secondCurrencySelected }}" counter-currency-issuer="{{ issuerNameToAddress(secondIssuerSelected, secondCurrencySelected) }}"></rp-market-chart>
+  </div>
+</div>

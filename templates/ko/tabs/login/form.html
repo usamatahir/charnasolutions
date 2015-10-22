@@ -1,0 +1,27 @@
+
+<div ng-hide="twoFactor || 'verifying' === verifyStatus" class="form-group"></div>
+<div ng-hide="twoFactor" class="breaker">
+  <label for="login_username">리플 아이디</label>
+  <div class="input-group"><span class="input-group-addon ripple-addon">~</span>
+    <input id="login_username" name="login_username" type="text" ng-model="username" required="required" rp-focus-on-empty="rp-focus-on-empty" rp-autofill="$routeParams.username" ng-disabled="ajax_loading" class="form-control"/>
+  </div>
+</div>
+<div ng-hide="twoFactor || 'verifying' === verifyStatus" class="form-group">
+  <label for="login_password">비밀번호</label>
+  <input id="login_password" name="login_password" type="password" ng-model="password" required="required" rp-focus="rp-focus" class="form-control"/>
+</div>
+<div ng-show="twoFactor" class="row row-padding-small twoFactor">
+  <div class="form-group col-xs-12"><span ng-show="twoFactor.via === 'sms'" class="status verifyText">휴대폰에 온 인증코드를 입력하세요:</span><span ng-show="twoFactor.via === 'app'" class="status verifyText">Authy 앱의 인증코드를 입력하세요:</span><span ng-bind="maskedPhone" class="maskedPhone"></span><span>
+      <button type="button" ng-click="requestToken()" class="btn btn-cancel btn-nomargin-xs"><span ng-show="twoFactor.via === 'sms'">재전송</span><span ng-show="twoFactor.via === 'app'">SMS로 보내기</span></button></span></div>
+  <div class="label-wrapper col-xs-12">
+    <label for="token">인증코드</label>
+  </div>
+  <div class="form-group col-xs-12">
+    <input type="number" name="token" ng-model="token" rp-focus="rp-focus" class="form-control"/>
+  </div>
+  <div class="input-group col-xs-12">
+    <label>
+      <input name="rememberMe" type="checkbox" ng-model="rememberMe" class="rememberMe"/><span for="rememberMe">30일동안 인증코드를 기억하도록 하겠습니까?</span>
+    </label>
+  </div>
+</div>

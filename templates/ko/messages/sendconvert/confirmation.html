@@ -1,0 +1,32 @@
+
+<!-- Confirmation messages for the send and convert tabs-->
+<group ng-show="tx_result==&quot;pending&quot;" class="pending">
+  <h2 class="tx-status">거래 승인중</h2>
+</group>
+<group ng-show="tx_result==&quot;cleared&quot;" class="result-success">
+  <h2 class="tx-status">거래 완료</h2>
+</group>
+<group ng-show="tx_result==&quot;error&quot;" class="result-error">
+  <h2 class="tx-status">거래 실패</h2>
+  <p>다시 시도해 주세요.</p>
+</group>
+<group ng-show="tx_result==&quot;malformed&quot;" class="result-malformed">
+  <h2 class="tx-status">거래 실패</h2>
+  <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">에러 코드:  {{engine_result}} - {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failure&quot;" class="result-malformed">
+  <h2 class="tx-status">거래 실패</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">에러 코드: 대상 태그 필요 [tefDST_TAG_NEEDED].</span></p>
+</group>
+<group ng-show="tx_result==&quot;claim&quot;" class="result-malformed">
+  <h2 class="tx-status">거래 실패</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">에러 코드: 대상 지갑이 존재 하지 않습니다 [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">에러 코드: 불충분한 XRP 를 보냅니다[tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">에러: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failed&quot;" class="result-failed">
+  <h2 class="tx-status">거래 실패</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">에러 코드: 해당 통화와 연결된 게이트웨이가 없습니다 [terNO_LINE].</span><span ng-switch-default="ng-switch-default">거래가 실패했습니다: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;local&quot;" class="result-failed">
+  <h2 class="tx-status">거래 실패</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">에러 코드: 네트워크 최대 수수료를 초과하였습니다. 요청이 실패하였으니 다시 시도해 주세요. [telINSUF_FEE_P].</span></p>
+</group>

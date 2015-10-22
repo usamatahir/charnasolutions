@@ -1,0 +1,139 @@
+
+<section ng-controller="SgdCtrl" class="col-xs-12 content">
+  <group ng-hide="connected" class="disconnected">
+    <p class="literal">You have to be online to see this screen</p>
+  </group>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected">
+    <div class="auth-attention banner">
+      <h4>Bem-vindo ao Ripple Trade! Sua conta precisa ser ativada. Você pode ativá-la de 2 maneiras:</h4>
+      <ul>
+        <li>Pedir a um outro usuário enviar XRP para o seu nome Ripple (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrust">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+        最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+      </p>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrustWithRippling">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+        無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+      </p>
+    </div>
+  </div>
+  <div ng-show="connected" class="row">
+    <!-- Transaction errors coming from errors.js & transactionerror.jade-->
+    <div ng-show="mode==&quot;error&quot; || mode==&quot;granting&quot; &amp;&amp; account.Balance" class="col-sm-12">
+      <group class="mode-ripplerror">
+        <rp-transaction-status rp-engine-result="{{engine_result}}" rp-engine-result-message="{{engine_result_message}}" rp-accepted="{{engine_status_accepted}}" rp-current-tab="trust"></rp-transaction-status>
+      </group>
+    </div>
+    <div ng-show="notif !== &quot;clear&quot;" ng-hide="!notif" class="col-sm-12">
+      <group class="mode-granted wide">
+        <group ng-switch="notif">
+          <group ng-switch-when="error" class="result-error">
+            <h2 class="tx-status">Houve um erro ao salvar as suas alterações.</h2>
+            <p>Por favor tente mais tarde.</p>
+          </group>
+        </group>
+      </group>
+    </div>
+    <div ng-show="account.Balance &amp;&amp; !can_add_trust &amp;&amp; !sgdConnected" class="col-sm-12">
+      <div class="alert alert-warning">Você precisa ter pelo menos <strong> {{account.reserve_to_add_trust | rpamount:0}} XRP</strong> para adicionar uma nova linha de confiança. <a href="https://ripple.com/wiki/Reserves" target="_blank">More information</a></div>
+    </div>
+    <div class="col-sm-3">
+      <div class="currencies fund-menu"><a href="#/brl" ng-class="{active: $route.current.tabName == 'brl'}" class="currency-brl"><i class="icon fa fa-money fa-brl"></i>BRL</a><a href="#/btc" ng-class="{active: $route.current.tabName == 'btc'}" class="currency-btc"><i class="icon fa fa-money fa-btc"></i>BTC</a><a href="#/cad" ng-class="{active: $route.current.tabName == 'cad'}" class="currency-cad"><i class="icon fa fa-money fa-cad"></i>CAD</a><a href="#/eur" ng-class="{active: $route.current.tabName == 'eur'}"><i class="icon fa fa-money fa-eur"></i>EUR</a><a href="#/jpy" ng-class="{active: $route.current.tabName == 'jpy'}" class="currency-jpy"><i class="icon fa fa-money fa-jpy"></i>JPY</a><a href="#/mxn" ng-class="{active: $route.current.tabName == 'mxn'}" class="currency-mxn"><i class="icon fa fa-money fa-mxn"></i>MXN</a><a href="#/sgd" ng-class="{active: $route.current.tabName == 'sgd'}" class="currency-sgd"><i class="icon fa fa-money fa-sgd"></i>SGD</a><a href="#/usd" ng-class="{active: $route.current.tabName == 'usd'}"><i class="icon fa fa-money fa-usd"></i>USD</a><a href="#/gold" ng-class="{active: $route.current.tabName == 'gold'}" class="currency-xau"><i class="icon fa fa-money fa-xau"></i>XAU</a></div>
+    </div>
+    <div ng-hide="debug" class="col-sm-9 list">
+      <div class="nameLine">Singapore Dollar Deposit</div>
+      <div class="gateway row">
+        <div class="col-md-3">
+          <div class="title">Gateway</div>
+          <div class="description">
+                       
+            Ripple Singapore (~ripplesingapore)<br/><a href="https://ripplesingapore.com" target="_blank">www.ripplesingapore.com</a>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="title">Disponibilidade</div>
+          <div class="description">All countries except US sanctioned countries</div>
+        </div>
+        <div class="col-md-3">
+          <div class="title">Taxas</div>
+          <div class="description">
+            <p>Between S$ 5 - 50&#32;</p>
+            <p><a href="https://www.ripplesingapore.com/Home/Fees" target="_blank">more details </a></p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="title">Avaliação</div>
+          <div class="description"><a href="https://coinist.co/ripple/gateways/ripple-singapore" target="_blank">read reviews</a></div>
+        </div>
+      </div>
+      <div class="row fund-tab-description">
+        <div class="col-xs-12 col-md-8 col-lg-6">
+          <div ng-show="!sgdConnected" class="descriptor">Ripple Trade has partnered with Ripple Singapore to provide easier access to SGD. Following this action will enable Ripple Singapore to hold SGD on your behalf.</div>
+        </div>
+      </div>
+      <div class="row fund-tab-description">
+        <div class="col-xs-7 col-sm-5 col-md-4">
+          <button ng-show="!sgdConnected &amp;&amp; !loading &amp;&amp; loadState.account" type="submit" ng-click="save_account()" ng-disabled="!account.Balance || !can_add_trust" class="btn btn-large btn-primary">Add Ripple Singapore</button>
+          <button ng-show="!sgdConnected &amp;&amp; loading" type="submit" ng-disabled="loading" class="btn btn-large btn-primary">Adicionando...</button>
+          <button ng-show="showInstructions &amp;&amp; sgdConnected" type="submit" ng-click="toggle_instructions()" class="btn btn-large btn-primary">Ocultar instruções</button>
+          <button ng-show="sgdConnected &amp;&amp; !showInstructions" type="submit" ng-click="toggle_instructions()" class="btn btn-large btn-primary">Mostrar instruções</button>
+        </div>
+        <div ng-hide="loading" class="connect col-xs-5 col-sm-7 col-md-8">
+          <div ng-show="!sgdConnected &amp;&amp; account.Balance" class="description"><i class="fa fa-times"></i>Não conectado</div>
+          <div ng-show="sgdConnected &amp;&amp; account.Balance" class="description"><i class="fa fa-check"></i> Connected</div>
+          <div ng-show="!account.Balance &amp;&amp; loadState.account" class="description">Sua conta precisa ser ativada para poder adicionar um gateway.</div>
+          <div ng-show="!loadState.account" class="description"><img src="img/button-s.png" class="loader"/><span class="loading_text">Carregando...</span></div>
+        </div>
+      </div>
+      <div ng-show="showInstructions &amp;&amp; sgdConnected" class="row">
+        <div class="instructions col-md-10"><a href="" id="hide" ng-click="toggle_instructions()" class="dismiss">×</a>
+          <div class="title">To Initiate Singapore Dollar Deposits and Withdrawals</div>
+          <div class="description">
+             
+            Register or login to your Ripple Singapore account. You will need:&#32;
+            <ul>
+              <li>
+                <p>A valid non-US, government-issued ID (passport, driver’s license, etc)</p>
+              </li>
+              <li>
+                <p>Proof of address</p>
+              </li>
+              <li>
+                <p>Verification is required for deposits or withdrawals</p>
+              </li>
+            </ul>
+          </div>
+          <div class="title">Deposit Options</div>
+          <div class="description">
+            <ul> 
+              <li>
+                <p>Users can deposit SGD by entering bank credentials and initiating a bank wire transfer from user’s bank account to Ripple Singapore.</p>
+              </li>
+            </ul>
+          </div>
+          <div class="title">Withdrawal Options</div>
+          <div class="description">
+            <ul>
+              <li>
+                <p>Users can withdraw SGD by sending funds from their Ripple address to Ripple Singapore’s Ripple address. Ripple Singapore will send the funds to a user’s bank account using a bank wire transfer.</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

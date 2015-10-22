@@ -1,0 +1,55 @@
+
+<section ng-controller="AccountCtrl" class="col-xs-12 content">
+  <div ng-show="debug">This page is not available in debug mode</div>
+  <div ng-show="!debug" class="row">
+    <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected">
+      <div class="auth-attention banner">
+        <h4>Welcome to Ripple Trade! Your account needs to be activated. You can activate it in 2 ways:</h4>
+        <ul>
+          <li>Have another user send XRP to your Ripple name (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+          <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+        </ul>
+      </div>
+    </div>
+    <div ng-show="hasRTJapanTrust">
+      <div class="warning-attention banner">
+        <h4>警告</h4>
+        <p>
+          リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+          最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+        </p>
+      </div>
+    </div>
+    <div ng-show="hasRTJapanTrustWithRippling">
+      <div class="warning-attention banner">
+        <h4>警告</h4>
+        <p>
+          資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+          無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-3">
+      <div class="accountPage"><a href="#/account/public" ng-class="{active: $routeParams.route == 'public'}">Public Information</a>
+      </div>
+    </div>
+    <div class="col-sm-9 list">
+      <div>
+        <div ng-show="$routeParams.route == 'public'" class="showPublic">
+          <h4>Account settings</h4>
+          <div class="section">
+            <div class="descriptor">Ripple name</div>
+            <div class="row public-account-row">
+              <div class="col-xs-9 col-sm-6 username">~{{userCredentials.username}}</div>
+              <div class="col-xs-3 col-sm-3 edit-account-btn-wrapper"><a href="{{globalOptions.ids_url}}/identity" target="_blank" class="btn btn-cancel btn-block">editează</a></div>
+            </div>
+          </div>
+          <div class="section">
+            <div id="address" class="descriptor">Ripple address</div>
+            <div ng-bind="address"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

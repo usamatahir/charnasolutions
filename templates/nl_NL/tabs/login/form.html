@@ -1,0 +1,27 @@
+
+<div ng-hide="twoFactor || 'verifying' === verifyStatus" class="form-group"></div>
+<div ng-hide="twoFactor" class="breaker">
+  <label for="login_username">Ripple-naam</label>
+  <div class="input-group"><span class="input-group-addon ripple-addon">~</span>
+    <input id="login_username" name="login_username" type="text" ng-model="username" required="required" rp-focus-on-empty="rp-focus-on-empty" rp-autofill="$routeParams.username" ng-disabled="ajax_loading" class="form-control"/>
+  </div>
+</div>
+<div ng-hide="twoFactor || 'verifying' === verifyStatus" class="form-group">
+  <label for="login_password">Wachtwoord</label>
+  <input id="login_password" name="login_password" type="password" ng-model="password" required="required" rp-focus="rp-focus" class="form-control"/>
+</div>
+<div ng-show="twoFactor" class="row row-padding-small twoFactor">
+  <div class="form-group col-xs-12"><span ng-show="twoFactor.via === 'sms'" class="status verifyText">Voer hier de verificatiecode in van het SMS-bericht dat naar uw apparaat is verzonden:</span><span ng-show="twoFactor.via === 'app'" class="status verifyText">Voer hier de verificatiecode in van de Authy app die op uw apparaat is geinstalleerd:</span><span ng-bind="maskedPhone" class="maskedPhone"></span><span>
+      <button type="button" ng-click="requestToken()" class="btn btn-cancel btn-nomargin-xs"><span ng-show="twoFactor.via === 'sms'">Opnieuw verzenden</span><span ng-show="twoFactor.via === 'app'">Via SMS Versturen</span></button></span></div>
+  <div class="label-wrapper col-xs-12">
+    <label for="token">Verificatiecode</label>
+  </div>
+  <div class="form-group col-xs-12">
+    <input type="number" name="token" ng-model="token" rp-focus="rp-focus" class="form-control"/>
+  </div>
+  <div class="input-group col-xs-12">
+    <label>
+      <input name="rememberMe" type="checkbox" ng-model="rememberMe" class="rememberMe"/><span for="rememberMe">Onthoud mij op dit apparaat voor de komende 30 dagen</span>
+    </label>
+  </div>
+</div>

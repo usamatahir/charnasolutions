@@ -1,0 +1,215 @@
+
+<section ng-controller="EurCtrl" class="col-xs-12 content">
+  <group ng-hide="connected" class="disconnected">
+    <p class="literal">You have to be online to see this screen</p>
+  </group>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected">
+    <div class="auth-attention banner">
+      <h4>Welcome to Ripple Trade! Your account needs to be activated. You can activate it in 2 ways:</h4>
+      <ul>
+        <li>Have another user send XRP to your Ripple name (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrust">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+        最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+      </p>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrustWithRippling">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+        無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+      </p>
+    </div>
+  </div>
+  <div ng-show="connected" class="row">
+    <!-- Transaction errors coming from errors.js & transactionerror.jade-->
+    <div ng-show="mode==&quot;error&quot; || mode==&quot;granting&quot; &amp;&amp; account.Balance" class="col-sm-12">
+      <group class="mode-ripplerror">
+        <rp-transaction-status rp-engine-result="{{engine_result}}" rp-engine-result-message="{{engine_result_message}}" rp-accepted="{{engine_status_accepted}}" rp-current-tab="trust"></rp-transaction-status>
+      </group>
+    </div>
+    <div ng-show="notif !== &quot;clear&quot;" ng-hide="!notif" class="col-sm-12">
+      <group class="mode-granted wide">
+        <group ng-switch="notif">
+          <group ng-switch-when="error" class="result-error">
+            <h2 class="tx-status">Feil under lagring av endringene dine.</h2>
+            <p>Prøv senere.</p>
+          </group>
+        </group>
+      </group>
+    </div>
+    <div ng-show="account.Balance &amp;&amp; !can_add_trust &amp;&amp; !eurConnected" class="col-sm-12">
+      <div class="alert alert-warning">Du må ha minst <strong> {{account.reserve_to_add_trust | rpamount:0}} XRP</strong> for en ny kredittlinje. <a href="https://ripple.com/wiki/Reserves" target="_blank">More information</a></div>
+    </div>
+    <div class="col-sm-3">
+      <div class="currencies fund-menu"><a href="#/brl" ng-class="{active: $route.current.tabName == 'brl'}" class="currency-brl"><i class="icon fa fa-money fa-brl"></i>BRL</a><a href="#/btc" ng-class="{active: $route.current.tabName == 'btc'}" class="currency-btc"><i class="icon fa fa-money fa-btc"></i>BTC</a><a href="#/cad" ng-class="{active: $route.current.tabName == 'cad'}" class="currency-cad"><i class="icon fa fa-money fa-cad"></i>CAD</a><a href="#/eur" ng-class="{active: $route.current.tabName == 'eur'}"><i class="icon fa fa-money fa-eur"></i>EUR</a><a href="#/jpy" ng-class="{active: $route.current.tabName == 'jpy'}" class="currency-jpy"><i class="icon fa fa-money fa-jpy"></i>JPY</a><a href="#/mxn" ng-class="{active: $route.current.tabName == 'mxn'}" class="currency-mxn"><i class="icon fa fa-money fa-mxn"></i>MXN</a><a href="#/sgd" ng-class="{active: $route.current.tabName == 'sgd'}" class="currency-sgd"><i class="icon fa fa-money fa-sgd"></i>SGD</a><a href="#/usd" ng-class="{active: $route.current.tabName == 'usd'}"><i class="icon fa fa-money fa-usd"></i>USD</a><a href="#/gold" ng-class="{active: $route.current.tabName == 'gold'}" class="currency-xau"> <i class="icon fa fa-money fa-xau"></i>XAU</a></div>
+    </div>
+    <div ng-hide="debug" class="col-sm-9 list">
+      <div class="nameLine">Euro Deposit</div>
+      <div class="gateway row">
+        <div class="col-md-3">
+          <div class="title">Portal</div>
+          <div class="description">SnapSwap EU (~SnapSwap)<br/><a href="https://snapswap.eu" target="_blank">www.snapswap.eu</a></div>
+        </div>
+        <div class="col-md-3">
+          <div class="title">Availability</div>
+          <div class="description">All countries, except USA</div>
+        </div>
+        <div class="col-md-3">
+          <div class="title">Fees</div>
+          <div class="description"> 
+            <p>€ 0.31 – € 15.00&#32;</p>
+            <p><a href="https://snapswap.eu/fees" target="_blank">more details </a></p>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="title">Rating</div>
+          <div class="description"><a href="https://coinist.co/ripple/assets/eur-snapswap-eu" target="_blank">read reviews</a></div>
+        </div>
+      </div>
+      <div class="row fund-tab-description">
+        <div class="col-xs-12 col-md-8 col-lg-6">
+          <div ng-show="!eurConnected" class="descriptor">Ripple Trade has partnered with SnapSwap to provide easier access to EUR. Following this action will enable SnapSwap to hold EUR on your behalf.</div>
+        </div>
+      </div>
+      <div class="row fund-tab-description">
+        <div class="col-xs-7 col-sm-5 col-md-4">
+          <button ng-show="!eurConnected &amp;&amp; !loading &amp;&amp; loadState.account" type="submit" ng-click="save_account()" ng-disabled="!account.Balance || !can_add_trust" class="btn btn-large btn-primary">Add SnapSwap.eu</button>
+          <button ng-show="!eurConnected &amp;&amp; loading" type="submit" ng-disabled="loading" class="btn btn-large btn-primary">Adding...</button>
+          <button ng-show="showInstructions &amp;&amp; eurConnected" type="submit" ng-click="toggle_instructions()" class="btn btn-large btn-primary">Hide instructions</button>
+          <button ng-show="eurConnected &amp;&amp; !showInstructions" type="submit" ng-click="toggle_instructions()" class="btn btn-large btn-primary">Show instructions</button>
+        </div>
+        <div ng-hide="loading" class="connect col-xs-5 col-sm-7 col-md-8">
+          <div ng-show="!eurConnected &amp;&amp; account.Balance" class="description fa fa-times">Not connected</div>
+          <div ng-show="eurConnected &amp;&amp; account.Balance" class="description fa fa-check">Connected</div>
+          <div ng-show="!account.Balance &amp;&amp; loadState.account" class="description">Your account has to be activated before you can add a gateway account.</div>
+          <div ng-show="!loadState.account" class="description"><img src="img/button-s.png" class="loader"/><span class="loading_text">Henter...</span></div>
+        </div>
+      </div>
+      <div ng-show="showInstructions &amp;&amp; eurConnected" class="row">
+        <div class="instructions col-md-10"><a href="" id="hide" ng-click="toggle_instructions()" class="dismiss"> ×</a>
+          <div class="title">NEW CUSTOMERS- SIGN UP AT SNAPSWAP.EU</div>
+          <div class="description">
+             
+            Register and verify your account at SnapSwap EU. You will need:&#32;
+            <ul>
+              <li>
+                <p>A valid government-issued ID: driver license, passport, ID card, or visa stamp.</p>
+              </li>
+              <li>
+                <p>A proof of address: driver license, utility bill, bank statement, etc.</p>
+              </li>
+            </ul>
+          </div>
+          <div class="title">EXISTING SNAPSWAP EU CUSTOMERS</div>
+          <div class="description"> 
+            <ul> 
+              <li>
+                <p>Login to your account&#32;<a href="https://snapswap.eu/signin" target="_blank">here.</a></p>
+              </li>
+            </ul>
+          </div>
+          <div class="title">DEPOSITS AND WITHDRAWALS:</div>
+          <div class="description">
+            <ul>
+              <li>
+                <p>Deposit from your bank (2-4 business days)</p>
+              </li>
+              <li>
+                <p>Withdraw to your bank account in SEPA (2-4 business days)</p>
+              </li>
+              <li>
+                <p>Withdraw to SmartyCash Card (instant)</p>
+              </li>
+            </ul>
+          </div>
+        </div>
+      </div><br/>
+      <div class="gateway row">
+        <div class="col-md-3">
+          <div class="title">Portal</div>
+          <div class="description">
+             
+            Gatehub (~gatehub)<br/><a href="https://www.gatehub.net" target="_blank">www.gatehub.net</a>
+          </div>
+        </div>
+        <div class="col-md-3">
+          <div class="title">Availability</div>
+          <div class="description">All countries</div>
+        </div>
+        <div class="col-md-6">
+          <div class="title">Fees</div>
+          <div class="description">Deposit/withdrawal and when transferring .2%&#32;</div>
+        </div>
+      </div>
+      <div class="row fund-tab-description">
+        <div class="col-xs-12 col-md-8 col-lg-6">
+          <div ng-show="!eur3Connected" class="descriptor">Ripple Trade has partnered with Gatehub to provide easier access to EUR. Following this action will enable Gatehub to hold EUR on your behalf.</div>
+        </div>
+      </div>
+      <div class="row fund-tab-description">
+        <div class="col-xs-7 col-sm-5 col-md-4">
+          <button ng-show="!eur3Connected &amp;&amp; !eur3loading &amp;&amp; loadState.account" type="submit" ng-click="save_gatehub_account()" ng-disabled="!account.Balance || !can_add_trust" class="btn btn-large btn-primary">Add Gatehub</button>
+          <button ng-show="!eur3Connected &amp;&amp; eur3loading" type="submit" ng-disabled="eur3loading" class="btn btn-large btn-primary">Adding...</button>
+          <button ng-show="show3Instructions &amp;&amp; eur3Connected" type="submit" ng-click="toggle_gatehub_instructions()" class="btn btn-large btn-primary">Hide instructions</button>
+          <button ng-show="eur3Connected &amp;&amp; !show3Instructions" type="submit" ng-click="toggle_gatehub_instructions()" class="btn btn-large btn-primary">Show instructions</button>
+        </div>
+        <div ng-hide="eur3loading" class="connect col-xs-5 col-sm-7 col-md-8">
+          <div ng-show="!eur3Connected &amp;&amp; account.Balance" class="description fa fa-times">Not connected</div>
+          <div ng-show="eur3Connected &amp;&amp; account.Balance" class="description fa fa-check">Connected</div>
+          <div ng-show="!account.Balance &amp;&amp; loadState.account" class="description">Your account has to be activated before you can add a gateway account.</div>
+          <div ng-show="!loadState.account" class="description"><img src="img/button-s.png" class="loader"/><span class="loading_text">Henter...</span></div>
+        </div>
+      </div>
+      <div ng-show="show3Instructions &amp;&amp; eur3Connected" class="row">
+        <div class="instructions col-md-10"><a href="" id="hide" ng-click="toggle_gatehub_instructions()" class="dismiss"> ×</a>
+          <div class="title">NEW CUSTOMERS- SIGN UP AT GATEHUB</div>
+          <div class="description">
+             
+            Register and verify your account at <a href="https://www.gatehub.net" target="_blank">www.gatehub.net</a>. You will need:&#32;
+            <ul>
+              <li>
+                <p>A valid government-issued ID: driver's license, international passport, or national ID card.</p>
+              </li>
+              <li>
+                <p>A proof of residency: tax return, council tax, utility bill, bank statement, certificate of residency issued by a government authority, etc.</p>
+              </li>
+            </ul>
+          </div>
+          <div class="title">DEPOSIT OPTIONS</div>
+          <div class="description">
+            <ul>
+              <li>
+                <p>International wire transfer (.1% deposit fee on our side (minimum fee = $15); takes 2 - 5 business days to credit)</p>
+              </li>
+              <li>
+                <p>SEPA (free of charge. 1-3 business days)</p>
+              </li>
+            </ul>
+          </div>
+          <div class="title">WITHDRAWAL OPTIONS</div>
+          <div class="description">
+            <ul>
+              <li>
+                <p>International wire transfer (.1% fee on our side (minimum fee = $15); takes 2 - 5 business days)</p>
+              </li>
+              <li>
+                <p>SEPA (1-3 business days)</p>
+              </li>
+            </ul>
+          </div>
+          <div class="description">If you have any questions, please feel free to contact Gatehub at <a href="support@gatehub.net" target="_blank">support@gatehub.net</a></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

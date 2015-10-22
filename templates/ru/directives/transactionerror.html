@@ -1,0 +1,170 @@
+
+<group ng-switch="tab">
+  <!-- All fund -> individual currency tab errors-->
+  <group ng-switch-when="trust">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Подключение шлюза к Вашему аккаунту...</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Шлюз подключен</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Проблема подключения к шлюзу. Попробуйте еще раз позже.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Код ошибки: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Запрос не удался</h2>
+            <p><span>Превышено время ожидания по Вашему запросу. Пожалуйста, попробуйте еще раз.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Запрос не удался</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Код ошибки: Необходим тег назначения [tefDST_TAG_NEEDED]:</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Запрос не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Error code: This request failed because it exceeded the maximum network fee, please try again later [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Запрос не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Код ошибки: у Вас нет шлюза в этой валюте [terNO_LINE].</span><span ng-switch-when="tecINSUF_RESERVE_LINE">Error code: Insufficient reserve to connect gateway [tecINSUF_RESERVE_LINE].</span><span ng-switch-when="tecNO_LINE_INSUF_RESERVE">Error code: You have an insufficient reserve amount to connect a gateway [tecNO_LINE_INSUF_RESERVE].&#32;<a href="https://ripple.com/wiki/Reserves">Дополнительная информация</a></span><span ng-switch-default="ng-switch-default">Ошибка: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Запрос не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Код ошибки: У вас нет линии доверия в этой валюте [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Your request failed: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Запрос не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Код ошибки: запрос не может быть выполнен [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">
+            This request failed because the current network fee is higher than your account limit. You can adjust your maximum network fee in Settings &gt Advanced, or try again later. <br>
+            Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Your request could not be submitted: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <!-- All send & convert errors-->
+  <group ng-switch-when="send_convert">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Платеж в обработке</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Платеж прошел успешно</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Плаеж не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Код ошибки: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Платеж не удался [tefMAX_LEDGER].</h2>
+            <p ng-switch="engine_result"><span>Превышено время ожидания по вашему платежу, пожалуйста повторите еще раз.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Плаеж не удался</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Код ошибки: Необходим тег назначения [tefDST_TAG_NEEDED]:</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Плаеж не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Код ошибки: Эта транзакция не удалась, поскольку она превысила максимальную комиссию сети, повторите попытку позже [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Плаеж не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Код ошибки: Нет назначения [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Код ошибки: Недостаточно XRP отправлено по назначению [tecNO_DST_INSUF_XRP]</span><span ng-switch-default="ng-switch-default">Ошибка: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Плаеж не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Код ошибки: У вас нет линии доверия в этой валюте [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Ваш платеж не удался: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Плаеж не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Код ошибки: Транзакция не может быть соврешена [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">
+            This transaction failed because the current network fee is higher than your account limit. You can adjust your maximum network fee in Settings &gt Advanced, or try again later. <br>
+            Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Ваш платеж не может быть выполенен: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-when="trade">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Запрос некорректен.</h2>
+        <p>
+          Your request is invalid, reason: {{engine_result_message}}
+           - {{engine_result_message}}
+        </p>
+      </group>
+      <group ng-switch-when"tec="ng-switch-when"tec" class="result-malformed">
+        <h2 class="tx-status">Транзакция не удалась.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecUNFUNDED_ORDER">У Вас не достаточно средств для создания заявки [tecUNFUNDED_ORDER].</span><span ng-switch-when="tecINSUF_RESERVE_OFFER">Insufficient reserve amount to submit an order [tecINSUF_RESERVE_OFFER].&#32;</span><span ng-switch-when="tejMaxFeeExceeded">
+            This transaction failed because the current network fee is higher than your account limit. You can adjust your maximum network fee in Settings &gt Advanced, or try again later. <br>
+            Error code: Network fee exceeded [tejMaxFeeExceeded].&#32;<a href="https://ripple.com/wiki/Reserves" target="_blank">Дополнительная информация.</a></span><span ng-switch-default="ng-switch-default">Ошибка: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Обмен не удался.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Обмен не удался, причина: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Транзакция не удалась.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">
+            The particular server you sent the transaction to was too busy to forward or process
+             your transaction at the fee you included in it [telINSUF_FEE_P].</span></p>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Запрос в обработке</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Запрос прошел успешно</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Запрос не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Код ошибки: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Запрос не удался</h2>
+            <p ng-switch="engine_result"><span>Превышено время ожидания по Вашему запросу. Пожалуйста, попробуйте еще раз.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Запрос не удался</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Код ошибки: Необходим тег назначения [tefDST_TAG_NEEDED]:</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Запрос не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Error code: This request failed because it exceeded the maximum network fee, please try again later [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Запрос не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Код ошибки: Нет назначения [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Код ошибки: Недостаточно XRP отправлено по назначению [tecNO_DST_INSUF_XRP]</span><span ng-switch-default="ng-switch-default">Ошибка: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Запрос не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Код ошибки: У вас нет линии доверия в этой валюте [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Your request failed: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Запрос не удался</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Код ошибки: запрос не может быть выполнен [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">
+            This request failed because the current network fee is higher than your account limit. You can adjust your maximum network fee in Settings &gt Advanced, or try again later. <br>
+            Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Your request could not be submitted: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+</group>

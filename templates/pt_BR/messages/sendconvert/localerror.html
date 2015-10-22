@@ -1,0 +1,32 @@
+
+<!-- Error messages for the send and convert tabs-->
+<group ng-switch="error_type">
+  <group ng-switch-when="noDest" class="result-error">
+    <h2 class="tx-status">Transação falhou</h2>
+    <p>Código do erro: A conta para a qual está tentando enviar não existe [noDest].</p>
+  </group>
+  <group ng-switch-when="noPath" class="result-error">
+    <h2 class="tx-status">Transação falhou</h2>
+    <p>Código do erro: Ripple não achou um caminho entre você e a conta destinatária [noPath].</p>
+  </group>
+  <group ng-switch-when="maxFeeExceeded" class="result-error">
+    <h2 class="tx-status">Transação falhou</h2>
+    <p>Código do erro: Esta transação falhou porque excedeu a taxa de rede máxima. [maxfeeExceeded].</p>
+  </group>
+  <group ng-switch-when="invalidTransaction" class="result-error">
+    <h2 class="tx-status">Transação falhou</h2>
+    <p>Código do erro: A transação foi rejeitada pela rede Ripple [invalidTransaction].</p>
+  </group>
+  <group ng-switch-when="unlockFailed" class="result-error">
+    <h2 class="tx-status">Desbloqueio da conta falhou</h2>
+    <p>Your account cannot be accessed at the moment. Please try again later.</p>
+  </group>
+  <group ng-switch-when="wrongPassword" class="result-error">
+    <h2 class="tx-status">Desbloqueio da conta falhou</h2>
+    <p>A senha digitada está errada.</p>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <p class="literal">Desculpe, ocorreu um erro ao submeter sua transação. Certifique-se que está conectado a internet e tente novamente mais tarde.</p>
+    <p class="literal">Antes de tentar novamente, verifique se a sua transação já não foi executada.</p>
+  </group>
+</group>

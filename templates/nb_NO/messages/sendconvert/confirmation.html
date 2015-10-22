@@ -1,0 +1,32 @@
+
+<!-- Confirmation messages for the send and convert tabs-->
+<group ng-show="tx_result==&quot;pending&quot;" class="pending">
+  <h2 class="tx-status">Transaksjonen gjennomføres</h2>
+</group>
+<group ng-show="tx_result==&quot;cleared&quot;" class="result-success">
+  <h2 class="tx-status">Transaksjonen er gjennomført</h2>
+</group>
+<group ng-show="tx_result==&quot;error&quot;" class="result-error">
+  <h2 class="tx-status">Transaksjonen mislyktes</h2>
+  <p>Prøv senere.</p>
+</group>
+<group ng-show="tx_result==&quot;malformed&quot;" class="result-malformed">
+  <h2 class="tx-status">Transaksjonen mislyktes</h2>
+  <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Feilkode: {{engine_result}} - {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failure&quot;" class="result-malformed">
+  <h2 class="tx-status">Transaksjonen mislyktes</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Feilkode: Trenger referansenummer [tefDST_TAG_NEEDED].</span></p>
+</group>
+<group ng-show="tx_result==&quot;claim&quot;" class="result-malformed">
+  <h2 class="tx-status">Transaksjonen mislyktes</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Feilkode: Målkontoen eksisterer ikke [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Feilkode: For lite XRP sendt til målet [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Feil: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failed&quot;" class="result-failed">
+  <h2 class="tx-status">Transaksjonen mislyktes</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Feilkode: Du har ingen kredittlinje for denne valutaen [terNO_LINE].</span><span ng-switch-default="ng-switch-default">Transaksjonen mislyktes: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;local&quot;" class="result-failed">
+  <h2 class="tx-status">Transaksjonen mislyktes</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Feilkode: Transaksjonen mislyktes fordi den overskred det maksimale nettverksgebyret, prøv senere [telINSUF_FEE_P].</span></p>
+</group>

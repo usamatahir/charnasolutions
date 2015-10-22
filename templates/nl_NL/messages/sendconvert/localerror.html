@@ -1,0 +1,32 @@
+
+<!-- Error messages for the send and convert tabs-->
+<group ng-switch="error_type">
+  <group ng-switch-when="noDest" class="result-error">
+    <h2 class="tx-status">Transactie mislukt</h2>
+    <p>Foutcode: Het account waar u naar probeert te versturen bestaat niet [noDest].</p>
+  </group>
+  <group ng-switch-when="noPath" class="result-error">
+    <h2 class="tx-status">Transactie mislukt</h2>
+    <p>Foutcode: Ripple was niet in staat een pad te vinden tussen jou en het bestemmingsaccount [noPath].</p>
+  </group>
+  <group ng-switch-when="maxFeeExceeded" class="result-error">
+    <h2 class="tx-status">Transactie mislukt</h2>
+    <p>Foutcode: De transactie is mislukt omdat de maximale netwerkheffing is overschreden. [maxfeeExceeded].</p>
+  </group>
+  <group ng-switch-when="invalidTransaction" class="result-error">
+    <h2 class="tx-status">Transactie mislukt</h2>
+    <p>Foutcode: De transactie is afgekeurd door het Ripple-netwerk [invalidTransaction].</p>
+  </group>
+  <group ng-switch-when="unlockFailed" class="result-error">
+    <h2 class="tx-status">Accountontgrendeling is mislukt</h2>
+    <p>Your account cannot be accessed at the moment. Please try again later.</p>
+  </group>
+  <group ng-switch-when="wrongPassword" class="result-error">
+    <h2 class="tx-status">Accountontgrendeling is mislukt</h2>
+    <p>Het opgegeven wachtwoord is incorrect.</p>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <p class="literal">Onze excuses, er was een fout tijdens het verzenden van uw transactie. Controleer of u met het internet bent verbonden en probeer het later nog eens.</p>
+    <p class="literal">Controleer alstublieft of de transactie niet al is uitgevoerd voor u het nogmaals probeert.</p>
+  </group>
+</group>

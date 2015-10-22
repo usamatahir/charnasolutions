@@ -1,0 +1,101 @@
+
+<section ng-controller="NotificationsCtrl" class="col-xs-12 content">
+  <div ng-show="connected" class="row">
+    <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected" class="col-xs-12">
+      <div class="auth-attention banner">
+        <h4>Welcome to Ripple Trade! Your account needs to be activated. You can activate it in 2 ways:</h4>
+        <ul>
+          <li>Have another user send XRP to your Ripple name (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+          <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+        </ul>
+      </div>
+    </div>
+  </div>
+  <div ng-show="connected" class="row">
+    <div class="col-sm-12 notification-wrapper">
+      <div ng-show="state.alert == 'saved_successfully'" class="alert alert-success">Your notification settings have been changed successfully.</div>
+      <div ng-show="state.alert == 'saved_with_errors'" class="alert alert-danger">Something went wrong, please try again later.</div>
+    </div>
+    <div ng-show="connected" class="col-sm-4 col-md-3 col-xs-12">
+      <div class="settingPage"><a href="#/security" ng-class="{active: $route.current.tabName == 'security'}">אבטחה</a><a href="#/settingstrade" ng-class="{active: $route.current.tabName == 'settingstrade'}">סחר</a><a href="#/advanced" ng-class="{active: $route.current.tabName == 'advanced'}">Network and servers</a><a href="#/settingsgateway" ng-class="{active: $route.current.tabName == 'settingsgateway'}">Gateways and trust lines</a>
+      </div>
+    </div>
+    <div ng-show="connected" class="col-sm-8 col-md-9 col-xs-12 list">
+      <div ng-show="settingsPage == 'notifications'" class="showSecurity">
+        <div>
+          <h4>Notifications settings</h4>
+          <div class="row">
+            <div class="col-xs-4 col-sm-3 col-md-5">
+              <div class="descriptor">Notification types</div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2">
+              <div class="descriptor">Email</div>
+            </div>
+            <div class="col-xs-4 col-sm-2 col-md-2">
+              <div class="descriptor">Push</div>
+            </div>
+          </div>
+          <div class="row">
+            <div class="col-xs-12">
+              <div class="helperInput">
+                <form name="persistNotificationsForm" ng-submit="persistNotifications()">
+                  <ng-form name="serverForm"></ng-form>
+                  <div class="row edit-all">
+                    <div class="col-xs-4 col-sm-4 col-md-5">
+                      <div class="description">Enable/disable all</div>
+                    </div>
+                    <div class="col-xs-4 col-sm-2 col-md-2">
+                      <div class="helperInput description">
+                        <label>
+                          <input type="checkbox" name="all" ng-checked="allChecked('email')" ng-click="allClicked('email')"/>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-xs-4 col-sm-2 col-md-2">
+                      <div class="helperInput description">
+                        <label>
+                          <input type="checkbox" name="all" ng-checked="allChecked('push')" ng-click="allClicked('push')"/>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div ng-repeat="nType in notificationTypes" class="row">
+                    <div class="col-xs-4 col-sm-4 col-md-5">
+                      <div class="description">{{nType.title}}</div>
+                    </div>
+                    <div class="col-xs-4 col-sm-2 col-md-2">
+                      <div class="helperInput description">
+                        <label>
+                          <input type="checkbox" name="{{nType.name}}" ng-model="nType.checked.email" ng-click="state.notificationsChanged = true"/>
+                        </label>
+                      </div>
+                    </div>
+                    <div class="col-xs-4 col-sm-2 col-md-2">
+                      <div class="helperInput description">
+                        <label>
+                          <input type="checkbox" name="{{nType.name}}" ng-model="nType.checked.push" ng-click="state.notificationsChanged = true"/>
+                        </label>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-4 col-md-4 save-btn-wrapper">
+                      <div class="description">
+                        <button id="save" type="submit" ng-disabled="!state.notificationsChanged || !serverForm.$valid  || state.waitingForResponse" class="btn btn-block btn-success btn-xs submit">שמירה</button>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="row">
+                    <div class="col-xs-12 col-sm-4 col-md-4 save-btn-wrapper">
+                      <div class="description"></div>
+                    </div>
+                  </div>
+                </form>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

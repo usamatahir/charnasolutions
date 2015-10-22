@@ -1,0 +1,10 @@
+
+<form role="form">
+  <div class="modal-header">거래 수정 에러</div>
+  <div class="modal-body">
+    <div class="alert alert-danger">거래가 수정되지 않았습니다.</div><span>원거래가 취소되었지만 수정된 거래는 나타나지 않았습니다.</span><span>거래량이 수정되었습니다 {{order.qtyChangeAfterCancel | rpamount}}  거래 전 수정됩니다.</span><span>지나치게 많은양의 거래를 보호하기 위하여 새 거래가 등록되지 않았습니다.</span><span>거래 전 거래내역과 잔고를 직접 확인하세요.</span>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="cancel()" class="btn btn-default">닫기</button>
+  </div>
+</form>

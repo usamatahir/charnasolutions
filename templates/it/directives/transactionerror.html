@@ -1,0 +1,159 @@
+
+<group ng-switch="tab">
+  <!-- All fund -> individual currency tab errors-->
+  <group ng-switch-when="trust">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Collegamento del gateway al tuo account...</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Gateway connesso.</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">C'è stato un problema di connessione al gateway. Per favore riprova più tardi.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Errore: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Richiesta non riuscita</h2>
+            <p><span>La tua richiesta non è riuscita, per favore riprova ancora.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Richiesta non riuscita</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Errore: Manca l'etichetta del destinatario [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Richiesta non riuscita</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Errore: Questa richiesta non è riuscita perchè ha superato il limite massimo delle commissioni del network, per favore riprova più tardi [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Richiesta non riuscita</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Errore: Non hai nessun gateway collegato a questa valuta [terNO_LINE].</span><span ng-switch-when="tecINSUF_RESERVE_LINE">Errore: Riserva insufficiente per connettersi ad un gateway [tecINSUF_RESERVE_LINE].</span><span ng-switch-when="tecNO_LINE_INSUF_RESERVE">
+            Errore: L'ammontare della tua riserva non è sufficiente per collegarti ad un gateway
+            [tecNO_LINE_INSUF_RESERVE]. <a href="https://ripple.com/wiki/Reserves">Maggiori informazioni</a></span><span ng-switch-default="ng-switch-default">Errore: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Richiesta non riuscita</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Errore: Non hai una linea di fiducia per questa valuta [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">La tua richiesta non è riuscita: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Richiesta non riuscita</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Errore: la richiesta non può essere inviata [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Questa richiesta non è riuscita  perchè le attuali commissioni del network sono più alte del limite del tuo account. Puoi cambiare il limite massimo sulle commissioni in Impostazioni & Avanzate. <br>Errore: Commissioni del network superate [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">La tua richiesta non può essere inviata: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <!-- All send & convert errors-->
+  <group ng-switch-when="send_convert">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Pagamento pendente</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Pagamento riuscito</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Pagamento non riuscito</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Errore: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Pagamento non riuscito [tefMAX_LEDGER].</h2>
+            <p ng-switch="engine_result"><span>Il tuo pagamento non è riuscito, per favore prova di nuovo.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Pagamento non riuscito</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Errore: Manca l'etichetta del destinatario [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Pagamento non riuscito</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Errore: La transazione non è riuscita perchè supera il limite massimo delle commissioni del network, per favore riprova più tardi [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Pagamento non riuscito</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Errore: Nessun destinatario [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Errore: Non sono stati inviati abbastanza XRP al destinatario [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Errore: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Pagamento non riuscito</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Errore: Non hai una linea di fiducia per questa valuta [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Il tuo pagamento non è riuscito: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Pagamento non riuscito</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Errore: La transazione potrebbe non essere stata effettuata [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Questa transazione non è riuscita perchè le attuali commissioni del network sono più alte del limite del tuo account. Puoi cambiare il limite massimo sulle commissioni in Impostazioni & Avanzate oppure puoi riprovare più tardi. <br>Errore: Commissioni del network superate [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Non è stato possibile effettuare il tuo pagamento: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-when="trade">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">La richiesta non è valida.</h2>
+        <p>La tua richiesta è non valida, motivo: {{engine_result_message}} - {{engine_result_message}}</p>
+      </group>
+      <group ng-switch-when"tec="ng-switch-when"tec" class="result-malformed">
+        <h2 class="tx-status">Transazione non riuscita.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecUNFUNDED_ORDER">Non hai abbastanza fondi per effettuare questo ordine [tecUNFUNDED_ORDER].</span><span ng-switch-when="tecINSUF_RESERVE_OFFER">Ammontare della riserva non sufficiente per effettuare un ordine [tecINSUF_RESERVE_OFFER].</span><span ng-switch-when="tejMaxFeeExceeded">Questa transazione non è riuscita  perchè le attuali commissioni del network sono più alte del limite del tuo account. Puoi cambiare il limite massimo sulle commissioni in Impostazioni & Avanzate oppure puoi riprovare più tardi. <br>Errore: Commissioni del network superate [tejMaxFeeExceeded]. <a href="https://ripple.com/wiki/Reserves" target="_blank">Maggiori informazioni.</a></span><span ng-switch-default="ng-switch-default">Errore: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Scambio non riuscito.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Scambio non riuscito, motivo: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Transazione non riuscita.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Il server cui hai inviato la transazione era troppo occupato per trasmettere o elaborare la tua transazione alle commissioni che avevi specificato [telINSUF_FEE_P].</span></p>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Richiesta in corso</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Richiesta riuscita</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Richiesta non riuscita</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Errore: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Richiesta non riuscita</h2>
+            <p ng-switch="engine_result"><span>La tua richiesta non è riuscita, per favore riprova ancora.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Richiesta non riuscita</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Errore: Manca l'etichetta del destinatario [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Richiesta non riuscita</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Errore: Questa richiesta non è riuscita perchè ha superato il limite massimo delle commissioni del network, per favore riprova più tardi [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Richiesta non riuscita</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Errore: Nessun destinatario [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Errore: Non sono stati inviati abbastanza XRP al destinatario [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Errore: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Richiesta non riuscita</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Errore: Non hai una linea di fiducia per questa valuta [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">La tua richiesta non è riuscita: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Richiesta non riuscita</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Errore: la richiesta non può essere inviata [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Questa richiesta non è riuscita  perchè le attuali commissioni del network sono più alte del limite del tuo account. Puoi cambiare il limite massimo sulle commissioni in Impostazioni & Avanzate. <br>Errore: Commissioni del network superate [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">La tua richiesta non può essere inviata: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+</group>

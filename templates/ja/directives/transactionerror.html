@@ -1,0 +1,157 @@
+
+<group ng-switch="tab">
+  <!-- All fund -> individual currency tab errors-->
+  <group ng-switch-when="trust">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">あなたのアカウントにゲートウェイを接続する...</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">ゲートウェイを接続しました</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">ゲートウェイへの接続の際に問題が発生しました。後ほど再度お試しください。</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">エラーコード: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">リクエストは失敗しました。</h2>
+            <p><span>あなたのリクエストはタイムアウトしました、どうか再び試みてください。</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">リクエストは失敗しました。</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">エラーコード:相手先が必要です[tefDST_TAG_NEEDED]</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">リクエストは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">エラーコード: ネットワーク手数料の最大値を超過しているため、このリクエストは失敗しました。後ほど再度お試しください[telINSUF_FEE_P]。</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">リクエストは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">エラーコード:この通貨に対してゲートウェイが接続されていません [terNO_LINE]。</span><span ng-switch-when="tecINSUF_RESERVE_LINE">エラーコード：ゲートウェイに接続するために必要な準備金が不足しています[tecINSUF_RESERVE_LINE]。</span><span ng-switch-when="tecNO_LINE_INSUF_RESERVE">エラーコード：ゲートウェイに接続するために必要な準備金が不足しています [tecNO_LINE_INSUF_RESERVE]。 <a href="https://ripple.com/wiki/Reserves">詳細</a></span><span ng-switch-default="ng-switch-default">エラー:{{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">リクエストは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">エラーコード:あなたはこの通貨にトラストラインを持っていません [terNO_LINE]</span></p><span ng-switch-default="ng-switch-default">支払いは失敗した::{{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">リクエストは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">エラーコード:リクエストは出すことができませんでした [tejLost]</span><span ng-switch-when="tejMaxFeeExceeded">現在のネットワークフィーがあなたのアカウント設定限界値より高いので、このリクエストは失敗しました。 あなたの最大ネットワークフィーを高度設定の中で調整するか、後で試してください。<br>エラーコード: ネットワークフィー超過 [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">リクエストは送信できませんでした。: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <!-- All send & convert errors-->
+  <group ng-switch-when="send_convert">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">支払いは保留中です。</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">支払は成功しました。</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">支払いは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">エラーコード: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">支払いは失敗しました [tefMAX_LEDGER]</h2>
+            <p ng-switch="engine_result"><span>あなたの支払いはタイムアウトしました、どうか再び試みてください。</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">支払いは失敗しました。</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">エラーコード:相手先が必要です[tefDST_TAG_NEEDED]</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">支払いは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">エラーコード: ネットワーク手数料の最大値を超過しているため、このトランザクションは失敗しました。後ほど再度お試しください[telINSUF_FEE_P]。</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">支払いは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">エラーコード:宛先がありません[tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">エラーコード: 宛先に送金するために必要なXRPが不足しています [tecNO_DST_INSUF_XRP]。</span><span ng-switch-default="ng-switch-default">エラー:{{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">支払いは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">エラーコード:あなたはこの通貨にトラストラインを持っていません [terNO_LINE]</span></p><span ng-switch-default="ng-switch-default">支払いは失敗した:: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">支払いは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">エラーコード:取引処理は出すことができませんでした [tejLost]</span><span ng-switch-when="tejMaxFeeExceeded">現在のネットワークフィーがあなたのアカウント設定限界値より高かったので、この取引は失敗しました。 あなたの最大ネットワークフィーを高度設定の中で調整するか、後で試してください。<br>エラーコード: ネットワークフィー超過 [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">支払は送信できませんでした。: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-when="trade">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">要求は不正です。</h2>
+        <p>リクエストは無効です、理由: {{engine_result_message}} - {{engine_result_message}}</p>
+      </group>
+      <group ng-switch-when"tec="ng-switch-when"tec" class="result-malformed">
+        <h2 class="tx-status">取引は失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecUNFUNDED_ORDER">注文するのに十分な資金がありません。[tecUNFUNDED_ORDER]</span><span ng-switch-when="tecINSUF_RESERVE_OFFER">注文を出すのに準備金が不足しています[tecINSUF_RESERVE_OFFER].</span><span ng-switch-when="tejMaxFeeExceeded">現在のネットワークフィーがあなたのアカウント設定限界値より高かったので、この取引は失敗しました。 あなたの最大ネットワークフィーを高度設定の中で調整するか、後でもう一度試してください。<br>エラーコード: ネットワークフィー超過 [tejMaxFeeExceeded].<a href="https://ripple.com/wiki/Reserves" target="_blank">詳細</a></span><span ng-switch-default="ng-switch-default">エラー:{{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">取引は失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">取引に失敗しました、理由:  {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">取引は失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">取引処理を送信したサーバーは処理に追われていた為、処理することができませんでした。 [telINSUF_FEE_P]</span></p>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">リクエストは保留中です。</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">リクエストは成功しました。</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">リクエストは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">エラーコード: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">リクエストは失敗しました。</h2>
+            <p ng-switch="engine_result"><span>あなたのリクエストはタイムアウトしました、どうか再び試みてください。</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">リクエストは失敗しました。</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">エラーコード:相手先が必要です[tefDST_TAG_NEEDED]</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">リクエストは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">エラーコード: ネットワーク手数料の最大値を超過しているため、このリクエストは失敗しました。後ほど再度お試しください[telINSUF_FEE_P]。</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">リクエストは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">エラーコード:宛先がありません[tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">エラーコード: 宛先に送金するために必要なXRPが不足しています [tecNO_DST_INSUF_XRP]。</span><span ng-switch-default="ng-switch-default">エラー:{{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">リクエストは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">エラーコード:あなたはこの通貨にトラストラインを持っていません [terNO_LINE]</span></p><span ng-switch-default="ng-switch-default">支払いは失敗した::{{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">リクエストは失敗しました。</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">エラーコード:リクエストは出すことができませんでした [tejLost]</span><span ng-switch-when="tejMaxFeeExceeded">現在のネットワークフィーがあなたのアカウント設定限界値より高いので、このリクエストは失敗しました。 あなたの最大ネットワークフィーを高度設定の中で調整するか、後で試してください。<br>エラーコード: ネットワークフィー超過 [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">リクエストは送信できませんでした。: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+</group>

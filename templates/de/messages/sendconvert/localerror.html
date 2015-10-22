@@ -1,0 +1,32 @@
+
+<!-- Error messages for the send and convert tabs-->
+<group ng-switch="error_type">
+  <group ng-switch-when="noDest" class="result-error">
+    <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+    <p>Fehlercode: Das Konto, an das Sie senden wollen, existiert nicht [noDest].</p>
+  </group>
+  <group ng-switch-when="noPath" class="result-error">
+    <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+    <p>Fehlercode: Ripple konnte keinen Pfad zwischen Ihnen und dem Zielkonto finden [noPath].</p>
+  </group>
+  <group ng-switch-when="maxFeeExceeded" class="result-error">
+    <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+    <p>Fehlercode: Diese Transaktion ist fehlgeschlagen, da die maximale Netzwerkgebühr überschritten wurde. [maxFeeExceeded].</p>
+  </group>
+  <group ng-switch-when="invalidTransaction" class="result-error">
+    <h2 class="tx-status">Transaktion fehlgeschlagen</h2>
+    <p>Fehlercode: Die Transaktion wurde vom Ripple-Netzwerk zurückgewiesen [invalidTransaction].</p>
+  </group>
+  <group ng-switch-when="unlockFailed" class="result-error">
+    <h2 class="tx-status">Entsperren des Kontos fehlgeschlagen</h2>
+    <p>Your account cannot be accessed at the moment. Please try again later.</p>
+  </group>
+  <group ng-switch-when="wrongPassword" class="result-error">
+    <h2 class="tx-status">Entsperren des Kontos fehlgeschlagen</h2>
+    <p>Das eingegebene Kennwort ist falsch.</p>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <p class="literal">Es tut uns leid, bei dem Versand Ihrer Transaktion ist ein Fehler aufgetreten. Bitte stellen Sie sicher, dass Sie mit dem Internet verbunden sind und versuchen Sie es später nochmal.</p>
+    <p class="literal">Bevor Sie es erneut versuchen, bitte versichern Sie sich, dass die Transaktion nicht schon ausgeführt wurde.</p>
+  </group>
+</group>

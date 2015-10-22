@@ -1,0 +1,24 @@
+
+<section ng-controller="SuCtrl" class="col-xs-12 content">
+  <group ng-hide="connected" class="disconnected">
+    <p class="literal">해당 화면을 보려면 온라인 상태여야 합니다. </p>
+  </group>
+  <group ng-hide="!connected || loadState.account" class="disconnected">
+    <p class="literal">로딩중</p>
+  </group>
+  <div ng-show="connected &amp;&amp; loadState.account">
+    <h3>Welcome Super User</h3>
+    <p class="literal">지갑</p>
+    <hr/>
+    <form name="accountForm" ng-submit="accountSet()">
+      <div class="row">
+        <div class="col-sm-6">
+          <input name="domain" ng-model="account.domain" class="form-control"/>
+        </div>
+        <div class="col-sm-3">
+          <button type="submit" class="btn btn-block btn-success">Change Domain</button>
+        </div>
+      </div>
+    </form>
+  </div>
+</section>

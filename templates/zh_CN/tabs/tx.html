@@ -1,0 +1,67 @@
+
+<section ng-controller="TxCtrl" ng-switch="state" class="single ddpage content">
+  <group ng-switch-when="loading">
+    <p class="literal"><img src="img/button-s.png" class="loader"/><span class="loading_text">正在加载交易详情...</span></p>
+  </group>
+  <group ng-switch-when="error">
+    <p class="literal">加载交易详情时出错。</p>
+  </group>
+  <group ng-switch-when="loaded">
+    <p class="literal hash"><span>交易号</span><span ng-bind="transaction.hash"></span>
+      <div><a href="{{'https://ripplecharts.com/#/graph/' + transaction.hash}}" target="_blank">在 Ripple 图中显示</a></div>
+    </p>
+    <hr/>
+    <p class="literal type">Transaction type:<strong ng-bind="transaction.TransactionType"></strong></p>
+    <group ng-switch="transaction.TransactionType">
+      <group ng-switch-when="Payment">
+        <group class="clearfix">
+          <dl class="details half">
+            <dt><span>发自地址</span><span>:</span></dt>
+            <dd ng-bind="transaction.Account"></dd>
+            <dt><span>发出的金额</span><span>:</span></dt>
+            <dd>{{transaction.amountSent | rpamount}} {{transaction.amountSent | rpcurrency}}</dd>
+            <dt><span>发出的币种</span><span>:</span></dt>
+            <dd>{{transaction.amountSent | rpcurrencyfull}}</dd>
+          </dl>
+          <dl class="details half">
+            <dt><span>发送到的地址</span><span>:</span></dt>
+            <dd>{{transaction.Destination}}</dd>
+            <dt><span>收到的金额</span><span>:</span></dt>
+            <dd>{{transaction.Amount | rpamount}} {{transaction.Amount | rpcurrency}}</dd>
+            <dt><span>收到的币种</span><span>:</span></dt>
+            <dd>{{transaction.Amount | rpcurrencyfull}}</dd>
+          </dl>
+        </group>
+        <hr/>
+        <group class="clearfix">
+          <dl class="details half">
+            <dt><span>支付的网络费用</span><span>:</span></dt>
+            <dd>{{transaction.Fee | rpamount}} XRP</dd>
+          </dl>
+          <dl class="details half">
+            <group ng-show="transaction.DestinationTag !== null &amp;&amp; transaction.DestinationTag !== undefined">
+              <dt><span>终端标签</span><span>:</span></dt>
+              <dd ng-bind="transaction.DestinationTag"></dd>
+            </group>
+          </dl>
+        </group>
+        <hr/>
+        <dl class="details">
+          <dt><span>账本号</span><span>:</span></dt>
+          <dd ng-bind="transaction.ledger"></dd>
+        </dl>
+      </group>
+      <group ng-switch-default="ng-switch-default">
+        <group class="clearfix">
+          <dl class="details half">
+            <dt>发自地址：</dt>
+            <dd ng-bind="transaction.Account"></dd>
+          </dl>
+          <dl class="details half"></dl>
+        </group>
+        <hr/>
+        <p class="literal">不好意思，这类交易的信息页面还没有准备好。</p>
+      </group>
+    </group>
+  </group>
+</section>

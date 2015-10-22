@@ -1,0 +1,67 @@
+
+<section ng-controller="TxCtrl" ng-switch="state" class="single ddpage content">
+  <group ng-switch-when="loading">
+    <p class="literal"><img src="img/button-s.png" class="loader"/><span class="loading_text">Carregando detalhes da transação...</span></p>
+  </group>
+  <group ng-switch-when="error">
+    <p class="literal">Ocorreu um erro ao carregar detalhes da transação.</p>
+  </group>
+  <group ng-switch-when="loaded">
+    <p class="literal hash"><span>Transação #</span><span ng-bind="transaction.hash"></span>
+      <div><a href="{{'https://ripplecharts.com/#/graph/' + transaction.hash}}" target="_blank">Mostrar no graph</a></div>
+    </p>
+    <hr/>
+    <p class="literal type">Transaction type:<strong ng-bind="transaction.TransactionType"></strong></p>
+    <group ng-switch="transaction.TransactionType">
+      <group ng-switch-when="Payment">
+        <group class="clearfix">
+          <dl class="details half">
+            <dt><span>Endereço do remetente</span><span>:</span></dt>
+            <dd ng-bind="transaction.Account"></dd>
+            <dt><span>Quantia enviada</span><span>:</span></dt>
+            <dd>{{transaction.amountSent | rpamount}} {{transaction.amountSent | rpcurrency}}</dd>
+            <dt><span>Moeda enviada</span><span>:</span></dt>
+            <dd>{{transaction.amountSent | rpcurrencyfull}}</dd>
+          </dl>
+          <dl class="details half">
+            <dt><span>Endereço do destinatário</span><span>:</span></dt>
+            <dd>{{transaction.Destination}}</dd>
+            <dt><span>Quantia recebida</span><span>:</span></dt>
+            <dd>{{transaction.Amount | rpamount}} {{transaction.Amount | rpcurrency}}</dd>
+            <dt><span>moeda recebida</span><span>:</span></dt>
+            <dd>{{transaction.Amount | rpcurrencyfull}}</dd>
+          </dl>
+        </group>
+        <hr/>
+        <group class="clearfix">
+          <dl class="details half">
+            <dt><span>Taxa de rede paga</span><span>:</span></dt>
+            <dd>{{transaction.Fee | rpamount}} XRP</dd>
+          </dl>
+          <dl class="details half">
+            <group ng-show="transaction.DestinationTag !== null &amp;&amp; transaction.DestinationTag !== undefined">
+              <dt><span>Tag do destinatário</span><span>:</span></dt>
+              <dd ng-bind="transaction.DestinationTag"></dd>
+            </group>
+          </dl>
+        </group>
+        <hr/>
+        <dl class="details">
+          <dt><span>Número do Ledger</span><span>:</span></dt>
+          <dd ng-bind="transaction.ledger"></dd>
+        </dl>
+      </group>
+      <group ng-switch-default="ng-switch-default">
+        <group class="clearfix">
+          <dl class="details half">
+            <dt>Endereço do remetente:</dt>
+            <dd ng-bind="transaction.Account"></dd>
+          </dl>
+          <dl class="details half"></dl>
+        </group>
+        <hr/>
+        <p class="literal">Desculpe, nós ainda não temos uma página de informação para este tipo de transação.</p>
+      </group>
+    </group>
+  </group>
+</section>

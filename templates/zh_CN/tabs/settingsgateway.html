@@ -1,0 +1,93 @@
+
+<section ng-controller="SettingsGatewayCtrl" class="col-xs-12 content">
+  <div ng-show="debug">This page is not available in debug mode</div>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected &amp;&amp; !debug">
+    <div class="auth-attention banner">
+      <h4>Welcome to Ripple Trade! Your account needs to be activated. You can activate it in 2 ways:</h4>
+      <ul>
+        <li>Have another user send XRP to your Ripple name (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+  </div>
+  <div ng-show="!debug" class="row">
+    <div class="col-sm-12 notification-wrapper">
+      <div ng-show="success.bridge" class="alert alert-success">Your bitcoin bridge has been changed successfully.</div>
+      <div ng-show="success.advanced_feature_switch" class="alert alert-success">Trustline advanced settings have been changed successfully.</div>
+      <div ng-show="edit.defaultRippleFlagSaving" class="alert alert-info">Updating DefaultRipple flag...</div>
+      <div ng-show="notif == 'defaultRippleUpdated'" class="alert alert-success">DefaultRipple flag updated</div>
+    </div>
+    <div class="col-sm-3">
+      <div class="settingPage"><a href="#/security" ng-class="{active: $route.current.tabName == 'security'}">安全</a><a href="#/settingstrade" ng-class="{active: $route.current.tabName == 'settingstrade'}">交易</a><a href="#/advanced" ng-class="{active: $route.current.tabName == 'advanced'}">Network and servers</a><a href="#/settingsgateway" ng-class="{active: $route.current.tabName == 'settingsgateway'}">Gateways and trust lines</a>
+      </div>
+    </div>
+    <div class="col-sm-9 list">
+      <section id="gateways" class="content">
+        <h4>Settings</h4>
+        <form name="accountsAdvForm" ng-submit="save(&quot;advanced_feature_switch&quot;)" class="trust-line-form">
+          <div class="descriptor">Trust line</div>
+          <div ng-hide="edit.advanced_feature_switch" class="row advanced-form-row">
+            <div class="col-xs-6 col-sm-5 col-md-3">
+              <div class="description">Advanced settings</div>
+            </div>
+            <div class="col-xs-3 col-sm-4 col-md-4">
+              <div ng-show="options.advanced_feature_switch" class="description">显示</div>
+              <div ng-hide="options.advanced_feature_switch" class="description">隐藏</div>
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="edit.advanced_feature_switch = true" class="btn btn-cancel btn-block">编辑</a></div>
+          </div>
+          <div ng-show="edit.advanced_feature_switch" class="row row-padding-small edit-trust-line">
+            <div class="col-xs-6 col-sm-5 col-md-3">
+              <div class="description">Advanced settings</div>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-3">
+              <div class="helperInput">
+                <label>
+                  <input type="checkbox" name="acct_adv" ng-model="options.advanced_feature_switch"/><span>显示</span>
+                </label>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-4 col-md-4">
+              <button id="save" type="submit" ng-disabled="serverForm.$invalid" class="btn btn-block btn-success btn-xs submit">保存</button>
+            </div>
+            <div ng-show="hasRemove()" class="col-xs-6">
+              <button id="delete" type="button" ng-click="remove()" ng-show="hasRemove()" class="btn btn-block btn-danger btn-xs submit">删除</button>
+            </div>
+          </div>
+        </form>
+        <form name="accountsAdvForm" ng-submit="save(&quot;defaultRippleFlag&quot;)" class="trust-line-form">
+          <div class="descriptor">Gateways: Enable if you plan to issue balances</div>
+          <div ng-hide="edit.defaultRippleFlag" class="row advanced-form-row">
+            <div class="col-xs-6 col-sm-5 col-md-3">
+              <div class="description">DefaultRipple flag</div>
+            </div>
+            <div class="col-xs-3 col-sm-4 col-md-4">
+              <div ng-show="currentDefaultRipplingFlagSetting &amp;&amp; !edit.defaultRippleFlagSaving" class="description">Enabled</div>
+              <div ng-hide="currentDefaultRipplingFlagSetting || edit.defaultRippleFlagSaving" class="description">Disabled</div>
+              <div ng-show="edit.defaultRippleFlagSaving" class="description"><img src="img/button-s.png" class="loader"/></div>
+            </div>
+            <div class="col-xs-3 col-sm-3 col-md-2"><a href="" ng-click="edit.defaultRippleFlag = true" ng-hide="edit.defaultRippleFlagSaving" class="btn btn-cancel btn-block">编辑</a></div>
+          </div>
+          <div ng-show="edit.defaultRippleFlag" class="row row-padding-small edit-trust-line">
+            <div class="col-xs-6 col-sm-5 col-md-3">
+              <div class="description">DefaultRipple flag</div>
+            </div>
+            <div class="col-xs-4 col-sm-4 col-md-3">
+              <div class="helperInput">
+                <label>
+                  <input type="checkbox" name="acct_adv" ng-model="isDefaultRippleFlagEnabled"/><span>Enable</span>
+                </label>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-4 col-md-4">
+              <button id="save" type="submit" ng-disabled="serverForm.$invalid" class="btn btn-block btn-success btn-xs submit">保存</button>
+            </div>
+            <div ng-show="hasRemove()" class="col-xs-3">
+              <button id="delete" type="button" ng-click="remove()" ng-show="hasRemove()" class="btn btn-block btn-danger btn-xs submit">删除</button>
+            </div>
+          </div>
+        </form>
+      </section>
+    </div>
+  </div>
+</section>

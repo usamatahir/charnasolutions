@@ -1,0 +1,32 @@
+
+<!-- Confirmation messages for the send and convert tabs-->
+<group ng-show="tx_result==&quot;pending&quot;" class="pending">
+  <h2 class="tx-status">Transaction pending.</h2>
+</group>
+<group ng-show="tx_result==&quot;cleared&quot;" class="result-success">
+  <h2 class="tx-status">Transaction successful</h2>
+</group>
+<group ng-show="tx_result==&quot;error&quot;" class="result-error">
+  <h2 class="tx-status">Transaction failed</h2>
+  <p>Please try again later.</p>
+</group>
+<group ng-show="tx_result==&quot;malformed&quot;" class="result-malformed">
+  <h2 class="tx-status">Transaction failed</h2>
+  <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Error code: {{engine_result}} - {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failure&quot;" class="result-malformed">
+  <h2 class="tx-status">Transaction failed</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Error code: Destination tag needed [tefDST_TAG_NEEDED].</span></p>
+</group>
+<group ng-show="tx_result==&quot;claim&quot;" class="result-malformed">
+  <h2 class="tx-status">Transaction failed</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Error code: The destination account does not exist [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Error code: Insufficient XRP sent to destination [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Error: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;failed&quot;" class="result-failed">
+  <h2 class="tx-status">Transaction failed</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Error code: You have no trust line in this currency [terNO_LINE].</span><span ng-switch-default="ng-switch-default">Your transaction failed: {{engine_result_message}}</span></p>
+</group>
+<group ng-show="tx_result==&quot;local&quot;" class="result-failed">
+  <h2 class="tx-status">Transaction failed</h2>
+  <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Error code: This transaction failed because it exceeded the maximum network fee, please try again later [telINSUF_FEE_P].</span></p>
+</group>

@@ -1,0 +1,10 @@
+
+<form role="form">
+  <div class="modal-header">Modifica Ordine Errore</div>
+  <div class="modal-body">
+    <div class="alert alert-danger">Spiacenti, il tuo ordine non può essere modificato.</div><span>Il tuo precedente ordine è stato cancellato ma quello modificato non è stato piazzato. <br/></span><span>La quantità del tuo ordine è cambiata di {{order.qtyChangeAfterCancel | rpamount}} prima che l'ordine potesse essere modificato. <br/><br/></span><span>Per evitare che tu possa aver piazzato un ordine superiore al tuo saldo, il nuovo ordine non è stato piazzato. <br/><br/></span><span>Per favore controlla il tuo saldo e la cronologia prima di piazzare un nuovo ordine. <br/></span>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="cancel()" class="btn btn-default">Chiudi</button>
+  </div>
+</form>

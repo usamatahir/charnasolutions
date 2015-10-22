@@ -1,0 +1,499 @@
+
+<section ng-controller="TradeCtrl" class="col-xs-12 content">
+  <group ng-hide="connected" class="disconnected">
+    <p class="literal">Trebuie să fiţi autentificaţi pentru a vizualiza aceasta pagină</p>
+  </group>
+  <group ng-hide="!connected || loadState.offers" class="disconnected">
+    <div id="section_loader"><img src="img/sections.png" class="loader"/>
+      <div class="loading_sections">Loading Order Book</div>
+    </div>
+  </group>
+  <div ng-show="debug">This page is not available in debug mode</div>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected &amp;&amp; !debug">
+    <div class="auth-attention banner">
+      <h4>Welcome to Ripple Trade! Your account needs to be activated. You can activate it in 2 ways:</h4>
+      <ul>
+        <li>Have another user send XRP to your Ripple name (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrust">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+        最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+      </p>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrustWithRippling">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+        無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+      </p>
+    </div>
+  </div>
+  <div ng-show="connected &amp;&amp; !debug &amp;&amp; loadState.offers" class="row">
+    <div class="widgets hidden-xs col-sm-4 col-md-4 col-lg-3">
+      <div class="widget widget-balances">
+        <h4 ng-click="showWidgetBalances=!showWidgetBalances" ng-init="showWidgetBalances=true"><span>Balances</span><i ng-class="{'closed': !showWidgetBalances}" class="fa fa-fw fa-caret-down"></i></h4>
+        <div rp-slide="showWidgetBalances">
+          <ul ng-class="{'blank': !balances}" class="fa-ul">
+            <li ng-click="entry.show=!entry.show" ng-init="entry.show=true" class="currency-xrp"><i class="fa-li fa-money"></i>
+              <h5>XRP</h5>
+              <div ng-show="account.Balance"><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Balance&lt;br&gt;{{ account.Balance | rpamount }} XRP" class="balance">{{ account.Balance | rpamount:{abs_precision: 4} }}</span></div>
+              <div ng-hide="account.Balance">0.00</div>
+              <dl rp-slide="entry.show">
+                <dt><span>Reserve</span>&#32;<i rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-title="Reserve amount" rp-popover-trigger="hover" data-content="Minimum amount of XRP required to fund your account. You cannot spend the reserve." class="fa fa-question-circle"></i></dt>
+                <dd ng-show="account.reserve"><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Reserve amount&lt;br&gt;{{ account.reserve | rpamount }} XRP" class="balance">{{ account.reserve | rpamount:{abs_precision: 4} }}</span></dd>
+                <dd ng-hide="account.reserve">0.00</dd>
+                <dt><span>Available</span>&#32;<i rp-popover="rp-popover" rp-popover-placement="bottom" rp-popover-title="Available amount" rp-popover-trigger="hover" data-content="Total amount of XRP in your account minus the reserve amount." class="fa fa-question-circle"></i></dt>
+                <dd ng-show="account.max_spend"><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Available amount&lt;br&gt;{{ account.max_spend | rpamount }} XRP" class="balance">{{ account.max_spend | rpamount:{abs_precision: 4} }}</span></dd>
+                <dd ng-hide="account.max_spend">0.00</dd>
+              </dl>
+            </li>
+            <li ng-repeat="entry in balances" ng-class="'currency-' + (entry.total | rpcurrency | lowercase)" ng-click="entry.show=!entry.show" ng-init="entry.show=true"><i ng-class="'fa-' + (entry.total | rpcurrency | lowercase)" class="fa-li fa-money"></i>
+              <h5>{{ entry.total | rpcurrency }}</h5>
+              <div><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Balance&lt;br&gt;{{ entry.total | rpamount:{precision: 30, hard_precision: true} }} {{ entry.total | rpcurrency }}" class="balance">{{ entry.total | rpamount:{tiny_precision: 3} }}</span></div>
+              <dl rp-slide="entry.show">
+                <div ng-repeat="(issuer, component) in entry.components">
+                  <dt ng-show="component.gateway.app"><span rp-address-popover="component.gateway.app">{{component.gateway.app.name}}</span></dt>
+                  <dt ng-hide="component.gateway.app"><span rp-pretty-identity="issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-address-popover="issuer"></span></dt>
+                  <dd><span rp-popover="rp-popover" rp-popover-placement="top" rp-popover-trigger="hover" rp-popover-delay="rp-popover-delay" rp-popover-content="Balance&lt;br&gt;{{ component | rpamount:{precision: 30, rel_min_precision: -2, hard_precision: true} }} {{ entry.total | rpcurrency }}" class="balance">{{ component | rpamount:{tiny_precision: 3} }}</span></dd>
+                </div>
+              </dl>
+            </li>
+          </ul>
+          <p ng-show="$route.current.tabName == 'balance'"><a href="#/xrp" class="btn btn-cancel">add gateway</a></p>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-8 col-md-8 col-lg-9">
+      <group>
+        <div class="settings">
+          <div class="row">
+            <div class="col-sm-10 col-md-9 col-lg-7 col-xs-10 currency-config">
+              <input id="currency_pair" name="currency_pair" type="text" rp-combobox="pairs_query" rp-combobox-select="rp-combobox-select" ng-disabled="adding_pair" ng-model="order.currency_pair" class="form-control currency"/>
+            </div>
+            <div ng-hide="adding_pair" class="col-sm-2 col-md-3 col-lg-1 col-xs-2">
+              <button href="" ng-click="flip_issuer()" class="btn btn-cancel btn-block">flip</button>
+            </div>
+            <div ng-hide="adding_pair" class="col-md-6 col-lg-2 col-xs-6">
+              <button href="" ng-click="open_custom_currency_selector()" ng-disabled="adding_pair" class="btn btn-cancel btn-block">add pair</button>
+            </div>
+            <div ng-hide="adding_pair" class="col-md-6 col-lg-2 col-xs-6">
+              <button ng-click="gotoSettings()" class="btn btn-cancel btn-block">edit pairs</button>
+            </div>
+          </div>
+          <form id="gateway_change_form" name="gateway_change_form" ng-show="adding_pair" ng-submit="add_pair()" class="row">
+            <div class="col-sm-4 col-lg-2 col-xs-12">
+              <div class="description">Base Currency</div>
+              <input name="first_currency" type="text" rp-combobox="currencies" rp-combobox-select="rp-combobox-select" ng-model="first_currency_selected" class="form-control"/>
+            </div>
+            <div class="col-sm-6 col-lg-3 col-xs-11">
+              <div class="description">Base Gateway</div>
+              <input name="first_iss" type="text" ng-disabled="disable_first_issuer" rp-combobox="first_iss" rp-combobox-select="rp-combobox-select" rp-dest="rp-dest" rp-dest-address="rp-dest-address" rp-dest-contact="rp-dest-contact" rp-dest-ripple-name="rp-dest-ripple-name" rp-dest-ripple-name-no-tilde="rp-dest-ripple-name-no-tilde" ng-model="first_issuer_selected" class="form-control"/>
+            </div>
+            <div class="col-xs-1">
+              <div class="description slash">/</div>
+            </div>
+            <div class="col-sm-4 col-lg-2 col-xs-12">
+              <div class="description">Counter&nbsp;Currency</div>
+              <input name="second_currency" type="text" rp-combobox="currencies" rp-combobox-select="rp-combobox-select" ng-model="second_currency_selected" class="form-control"/>
+            </div>
+            <div class="col-sm-6 col-lg-3 col-xs-12">
+              <div class="description">Counter Gateway</div>
+              <input name="second_iss" type="text" ng-disabled="disable_second_issuer" rp-combobox="second_iss" rp-combobox-select="rp-combobox-select" rp-dest="rp-dest" rp-dest-address="rp-dest-address" rp-dest-contact="rp-dest-contact" rp-dest-ripple-name="rp-dest-ripple-name" rp-dest-ripple-name-no-tilde="rp-dest-ripple-name-no-tilde" ng-model="second_issuer_selected" class="form-control"/>
+            </div>
+            <div id="cancel_button" class="col-sm-4 col-lg-2 col-xs-6">
+              <button type="button" ng-click="adding_pair = false" class="btn btn-cancel btn-block">anulează</button>
+            </div>
+            <div id="add_button" class="col-sm-4 col-lg-2 col-xs-6">
+              <button type="submit" ng-disabled="gateway_change_form.$invalid || gateway_change_form.$pending" class="btn btn-success btn-block submit">Add</button>
+            </div>
+          </form>
+        </div>
+        <form name="first_issuer_form" ng-show="show_issuer_form == &quot;first&quot;" class="issuerSelector first-issuer">
+          <label for="first_issuer">Base currency issuer ({{order.first_currency | rpcurrency}})</label>
+          <div class="row">
+            <div class="col-xs-12 col-sm-8 col-md-5">
+              <input id="first_issuer" name="first_issuer" type="text" rp-combobox="issuer_query" rp-combobox-value-as-ripple-name="rp-combobox-value-as-ripple-name" placeholder="Ripple name or contact" ng-model="order.first_issuer_edit_name" rp-dest="rp-dest" rp-dest-address="rp-dest-address" rp-dest-contact="rp-dest-contact" rp-dest-ripple-name="rp-dest-ripple-name" rp-dest-model="order.first_issuer_edit" class="form-control"/>
+              <div ng-messages="first_issuer_form.first_issuer.$error" class="errorGroup">
+                <div ng-message="rpDest" class="error">Nu este o adresă Ripple sau contact valid</div>
+              </div>
+            </div>
+            <div class="col-xs-12 col-sm-4 col-md-2">
+              <button type="submit" ng-click="save_first_issuer()" ng-disabled="first_issuer_form.$invalid" class="btn btn-block btn-success submit">Confirmă</button>
+            </div>
+          </div>
+        </form>
+        <form name="second_issuer_form" ng-show="show_issuer_form == &quot;second&quot;" class="issuerSelector second-issuer">
+          <label for="second_issuer">Counter currency issuer ({{order.second_currency | rpcurrency}})</label>
+          <div class="row">
+            <div class="col-xs-9 col-sm-4 col-md-4">
+              <input id="second_issuer" name="second_issuer" type="text" rp-combobox="issuer_query" rp-combobox-value-as-ripple-name="rp-combobox-value-as-ripple-name" placeholder="Contact name or Ripple address" ng-model="order.second_issuer_edit_name" rp-dest="rp-dest" rp-dest-address="rp-dest-address" rp-dest-contact="rp-dest-contact" rp-dest-ripple-name="rp-dest-ripple-name" rp-dest-model="order.second_issuer_edit" class="form-control"/>
+              <div ng-messages="second_issuer_form.second_issuer.$error" class="errorGroup">
+                <div ng-message="rpDest" class="error">Not a valid Ripple name or address</div>
+              </div>
+            </div>
+            <div class="col-xs-3 col-sm-2 col-md-2">
+              <button type="submit" ng-click="save_second_issuer()" ng-disabled="second_issuer_form.$invalid" class="btn btn-block btn-success submit">Confirmă</button>
+            </div>
+          </div>
+        </form>
+        <div ng-hide="order.valid_settings" class="message-select-issuer">To show an orderbook, choose from the dropdown above or click "Add custom pair".</div>
+        <group ng-if="order.valid_settings">
+          <ul class="ticker">
+            <div class="row">
+              <li class="col-xs-6 col-sm-3"><span>Cerere</span><span>&#32;&#61;&#32;</span><span ng-bind="priceTicker.bid" class="value"></span></li>
+              <li class="col-xs-6 col-sm-3"><span>Ofertă</span><span>&#32;&#61;&#32;</span><span ng-bind="priceTicker.ask" class="value"></span></li>
+              <li class="col-xs-6 col-sm-3"><span>Întindere</span><span>&#32;&#61;&#32;</span><span ng-bind="priceTicker.spread" class="value"></span></li>
+              <li class="col-xs-6 col-sm-3"><span>Ultimul preţ</span><span>&#32;&#61;&#32;</span><span class="value">{{book.last_price | rpamount:{rel_precision: 5, rel_min_precision: 5} }}</span></li>
+            </div>
+          </ul>
+          <div ng-hide="account.Balance" class="unfunded">
+            <p class="literal">Aveţi nevoie de fonduri pentru a efectua un schimb</p>
+          </div>
+          <div id="widgetGroup" ng-show="account.Balance" class="row send-widgets table">
+            <div class="grid">
+              <div class="table-row">
+                <div ng-repeat="type in ['buy','sell']" class="col-xs-12 col-md-6 col-cell trade-widget">
+                  <div ng-switch="order[type].mode">
+                    <div class="head"><span ng-show="type == 'buy'">Buy&#32;<span ng-hide="order.first_currency.is_native()" rp-pretty-issuer="order.first_issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></span> {{order.first_currency | rpcurrency}}</span><span ng-show="type == 'sell'">Sell&#32;<span ng-hide="order.first_currency.is_native()" rp-pretty-issuer="order.first_issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></span> {{order.first_currency | rpcurrency}}</span><span ng-show="type == 'buy'" class="available"><span class="amount"><span ng-show="order.second_currency.is_native()">{{account.max_spend | rpamount}} XRP</span><span ng-hide="order.second_currency.is_native()">{{lines[order.second_issuer+order.second_currency.to_json()].balance || "0" | rpamount}}&#32;<span rp-pretty-issuer="order.second_issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short"></span> {{order.second_currency | rpcurrency}}</span></span> available</span><span ng-show="type == 'sell'" class="available"><span class="amount"><span ng-show="order.first_currency.is_native()">{{account.max_spend | rpamount}} XRP</span><span ng-hide="order.first_currency.is_native()">{{lines[order.first_issuer+order.first_currency.to_json()].balance || "0" | rpamount}}&#32;<span rp-pretty-issuer="order.first_issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short"></span> {{order.first_currency | rpcurrency}}</span></span> available</span></div>
+                    <div ng-switch-when="trade">
+                      <form name="tradeForm" ng-submit="place_order(type)" ng-show="order[type].showWidget" class="mode-form">
+                        <div class="row order-values">
+                          <div class="col-xs-12">
+                            <div class="value-field">
+                              <label ng-show="type == 'buy'">Amount To Buy</label>
+                              <label ng-show="type == 'sell'">Amount To Sell</label>
+                              <div class="input-group">
+                                <input name="amount" type="text" input-type="{{type}}" ng-model="order[type].first" ng-change="calc_second(type)" rp-autofill="$routeParams.type == type &amp;&amp; $routeParams.amount" rp-autofill-amount="rp-autofill-amount" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" rp-amount-xrp-limit="rp-amount-xrp-limit" rp-amount-currency="{{order.first_currency}}" required="required" class="form-control"/>
+                                <div class="input-group-addon">{{order.first_currency | rpcurrency}}
+                                  <div ng-hide="order.first_currency.is_native()" rp-pretty-issuer="order.first_issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></div>
+                                </div>
+                              </div>
+                              <div ng-messages="tradeForm.amount.$dirty &amp;&amp; tradeForm.amount.$error" class="errorGroup">
+                                <div ng-message="required" class="error">Obligatoriu</div>
+                                <div ng-message="rpAmount" class="error">Nu este o sumă validă.</div>
+                                <div ng-message="rpAmountPositive" class="error">Trebuie să fie mai mare decât zero</div>
+                                <div ng-message="rpAmountXrpLimit" class="error">Minimum amount of XRP you can send is a drop (0.000001) and the maximum is 100 billion XRPs.</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-xs-12">
+                            <div class="value-field">
+                              <label>Prețul de fiecare</label>
+                              <div class="input-group">
+                                <input name="price" type="text" input-type="{{type}}" ng-model="order[type].price" ng-change="calc_second(type)" rp-autofill="$routeParams.type == type &amp;&amp; $routeParams.price" rp-autofill-amount="rp-autofill-amount" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" rp-amount-xrp-limit="rp-amount-xrp-limit" rp-amount-currency="{{order.second_currency}}" required="required" class="form-control"/>
+                                <div class="input-group-addon">{{order.second_currency | rpcurrency}}
+                                  <div ng-hide="order.second_currency.is_native()" rp-pretty-issuer="order.second_issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></div>
+                                </div>
+                              </div>
+                              <div ng-messages="tradeForm.price.$dirty &amp;&amp; tradeForm.price.$error" class="errorGroup">
+                                <div ng-message="required" class="error">Obligatoriu</div>
+                                <div ng-message="rpAmount" class="error">Nu este o sumă validă.</div>
+                                <div ng-message="rpAmountPositive" class="error">Trebuie să fie mai mare decât zero</div>
+                                <div ng-message="rpAmountXrpLimit" class="error">Minimum amount of XRP you can send is a drop (0.000001) and the maximum is 100 billion XRPs.</div>
+                              </div>
+                            </div>
+                          </div>
+                          <div class="col-xs-12">
+                            <div class="value-field">
+                              <label>Valoarea comenzii (max)</label>
+                              <div class="input-group">
+                                <input name="value" type="text" ng-model="order[type].second" ng-change="calc_first(type)" rp-autofill="$routeParams.type == type &amp;&amp; $routeParams.max" rp-autofill-amount="rp-autofill-amount" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" rp-amount-xrp-limit="rp-amount-xrp-limit" rp-amount-currency="{{order.second_currency}}" required="required" class="form-control"/>
+                                <div class="input-group-addon">{{order.second_currency | rpcurrency}}
+                                  <div ng-hide="order.second_currency.is_native()" rp-pretty-issuer="order.second_issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></div>
+                                </div>
+                              </div>
+                              <div ng-messages="tradeForm.value.$dirty &amp;&amp; tradeForm.value.$error" class="errorGroup">
+                                <div ng-message="required" class="error">Obligatoriu</div>
+                                <div ng-message="rpAmount" class="error">Nu este o sumă validă.</div>
+                                <div ng-message="rpAmountPositive" class="error">Trebuie să fie mai mare decât zero</div>
+                                <div ng-message="rpAmountXrpLimit" class="error">Minimum amount of XRP you can send is a drop (0.000001) and the maximum is 100 billion XRPs.</div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                        <div class="message">
+                          <p ng-show="tradeForm.$valid &amp;&amp; type == 'buy'">Aţi dori să cumpăraţi <span> {{order[type].first_amount | rpamount:{abs_precision: 6} }} {{order[type].first_amount | rpcurrency}}</span> pentru <span> {{order[type].second_amount | rpamount:{abs_precision: 6} }} {{order[type].second_amount | rpcurrency}}</span> (<span>{{order[type].price_amount | rpamount:{abs_precision: 6} }} {{order[type].second_amount | rpcurrency}}</span> per <span> {{order[type].first_amount | rpcurrency}}</span>)</p>
+                          <p ng-show="tradeForm.$valid &amp;&amp; type == 'sell'">Aţi dori să vindeţi <span> {{order[type].first_amount | rpamount:{abs_precision: 6} }} {{order[type].first_amount | rpcurrency}}</span> pentru <span> {{order[type].second_amount | rpamount:{abs_precision: 6} }} {{order[type].second_amount | rpcurrency}}</span> (<span>{{order[type].price_amount | rpamount:{abs_precision: 6} }} {{order[type].second_amount | rpcurrency}}</span> per <span> {{order[type].first_amount | rpcurrency}}</span>)</p>
+                        </div>
+                        <div class="row btns-row">
+                          <div class="col-xs-12 col-md-6 col-sm-8 btns-wrapper">
+                            <button type="submit" ng-disabled="tradeForm.$invalid" btn-type="{{type}}" class="btn btn-success btn-block submit"><span ng-show="type == 'buy'">Cumpără</span><span ng-show="type == 'sell'">Vinde</span> {{order.first_currency | rpcurrency}}<span ng-hide="order.first_currency.is_native()"> (<span rp-pretty-issuer="order.first_issuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></span>)</span></button>
+                          </div>
+                        </div>
+                      </form>
+                      <div ng-hide="order[type].showWidget">
+                        <p class="literal">Nu aveţi fonduri suficiente pentru a creea o comandă.</p>
+                      </div>
+                      <group ng-show="notif[type]==&quot;pending&quot;" class="pending">
+                        <h2 class="tx-status">Comanda dvs. a fost înregistrată. </h2>
+                      </group>
+                      <group ng-show="notif[type]=='cleared' &amp;&amp; executedOnOfferCreate=='none'" class="result-success">
+                        <h2 class="tx-status">Your order is now active.</h2>
+                      </group>
+                      <group ng-show="notif[type]=='cleared' &amp;&amp; executedOnOfferCreate=='all'" class="result-success">
+                        <h2 class="tx-status">Your order has been filled.</h2>
+                      </group>
+                      <group ng-show="notif[type]=='cleared' &amp;&amp; executedOnOfferCreate=='partial'" class="result-success">
+                        <h2 class="tx-status">Your order has been partially filled. The remaining amount is now active.</h2>
+                      </group>
+                      <group ng-show="notif[type]==&quot;unknown&quot;" class="mode-ripplerror">
+                        <rp-transaction-status rp-engine-result="{{engine_result}}" rp-engine-result-message="{{engine_result_message}}" rp-accepted="{{engine_status_accepted}}" rp-current-tab="trade"></rp-transaction-status>
+                      </group>
+                    </div>
+                    <form ng-switch-when="confirm" ng-submit="order_confirmed(type, order.currency_pair)" class="mode-confirm">
+                      <div ng-show="fatFingerErr" class="alert alert-warning">
+                        <p>CAUTION: Your order is far off from the market price.</p>
+                      </div>
+                      <div class="amount_feedback">
+                        <label ng-show="type == 'buy'">Amount to buy</label>
+                        <label ng-show="type == 'sell'">Amount to sell</label>
+                        <div class="ammount-currency"><span class="value">{{order[type].first_amount | rpamount: {abs_precision: 6} }}&#32;</span><span class="currency"><sub>{{order[type].first_amount._currency._iso_code}}</sub></span>
+                        </div>
+                      </div>
+                      <div class="dest_feedback">
+                        <label>Price of each</label>
+                        <div class="each-price"><span class="value">{{order[type].price}}&#32;<sub><span class="currency">{{order[type].second_amount | rpcurrency}} per {{order[type].first_amount | rpcurrency}}</span></sub></span></div>
+                      </div>
+                      <div class="rate_feedback"> 
+                        <label>Valoarea comenzii (max)</label>
+                        <div class="max-value"><span class="rate">{{order[type].second_amount | rpamount: {abs_precision: 6} }}<sub class="pair">{{order[type].second_amount | rpcurrency}}</sub></span></div>
+                      </div>
+                      <p l10n-inc="l10n-inc" class="literal confirm-text">Are you sure? Ripple network transactions cannot be undone.</p>
+                      <div class="row row-padding-small">
+                        <div class="col-xs-6 col-sm-4 col-md-3">
+                          <button type="submit" ng-disabled="confirm_wait" class="btn btn-block btn-success submit">Confirmă</button>
+                        </div>
+                        <div class="col-xs-6 col-sm-4 col-md-3">
+                          <button type="button" ng-click="order[type].mode = 'trade'" class="btn btn-block btn-cancel back">&laquo; Înapoi</button>
+                        </div>
+                      </div>
+                    </form>
+                    <group ng-switch-when="" class="mode-sending">
+                      <p class="literal"><img src="img/button-s.png" class="loader"/><span class="loading_text">Sending order to the Ripple network...</span></p>
+                    </group>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="my-orders-title">My Orders<span>&#32;({{offersCount}})</span><small ng-hide="isEmpty(offers)" ng-click="hideOffers = !hideOffers" class="toggle">{{hideOffers ? "show" : "hide"}}</small></div>
+          <div id="myOrdersMsg"></div>
+          <group ng-show="notif !== &quot;clear&quot;" class="mode-granted wide">
+            <group ng-switch="notif">
+              <group ng-switch-when="verifying" class="pending">
+                <h2 class="tx-status">Verifying your information. Please wait...</h2>
+              </group>
+              <group ng-switch-when="replace_success" class="result-success">
+                <h2 class="tx-status">Your order has been modified.</h2>
+              </group>
+              <group ng-switch-when="cancel_success" class="result-success">
+                <h2 class="tx-status">Your order &#35;{{ cancelOrder.seq }} has been cancelled.</h2>
+              </group>
+              <group ng-switch-when="replace_error_gone" class="result-error">
+                <h2 class="tx-status">Your order could not be modified and no longer exists. Error: {{order[editOrder.type].engine_result_message}}</h2>
+              </group>
+              <group ng-switch-when="cancel_order_gone" class="result-error">
+                <h2 class="tx-status">Unable to cancel order as it no longer exists.</h2>
+              </group>
+            </group>
+          </group>
+          <div ng-show="editOrder.replacing" class="col-sm-12 alert alert-info"><span>Modifying your order (Placing new order) ...</span></div>
+          <div ng-hide="hideOffers || isEmpty(offers)" class="rp-checkbox">
+            <label>
+              <input type="checkbox" name="current_pair_only" ng-model="sortOptions.currentPairOnly"/><span>Current pair only</span>
+            </label>
+          </div>
+          <div class="rp-select hidden-md hidden-lg">
+            <div ng-hide="hideOffers || isEmpty(offers)"><span>Sort by</span>
+              <div class="rp-combobox rp-combobox-small orders-sort-select">
+                <input id="orders_sort_field" name="orders_sort_field" type="text" rp-combobox="ordersSortFieldChoices" rp-combobox-select="rp-combobox-select" rp-combobox-small="rp-combobox-small" ng-model="sortOptions.sortFieldName" class="currency form-control"/>
+              </div>
+            </div>
+          </div>
+          <div class="rp-checkbox hidden-md hidden-lg">
+            <div ng-hide="hideOffers || isEmpty(offers)">
+              <label>
+                <input type="checkbox" name="reverse" ng-model="sortOptions.reverse"/><span>reverse</span>
+              </label>
+            </div>
+          </div>
+          <div ng-hide="isEmpty(offers)">
+            <hr class="hidden-md hidden-lg"/>
+          </div>
+          <div ng-hide="hideOffers" class="listings offers">
+            <div class="my">
+              <div>
+                <div class="row head hidden-xs hidden-sm">
+                  <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="type" class="col-md-1 type"> <i class="fa fa-fw fa-caret-down"></i></div>
+                  <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="qty" class="col-md-2"><span>QTY</span><i class="fa fa-fw fa-caret-down"></i></div>
+                  <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="base" class="col-md-2"><span>Base</span><i class="fa fa-fw fa-caret-down"></i></div>
+                  <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="counter" class="col-md-2"><span>Counter</span><i class="fa fa-fw fa-caret-down"></i></div>
+                  <div rp-sort-header="sortOptions.sortField" rp-sort-header-reverse="sortOptions.reverse" rp-sort-header-field="limit" class="col-md-2"><span>Limit Price</span><i class="fa fa-fw fa-caret-down"></i></div>
+                  <div class="col-md-3">Acţiune</div>
+                </div>
+              </div>
+              <div ng-repeat="entry in offers | rpcurrentpair:sortOptions.currentPairOnly:order.prev_settings | rpvalues | rpsortmyorders:sortOptions.sortField:sortOptions.reverse track by entry.seq" ng-hide="entry.isZero" ng-class="{cancelling: entry.cancelling || (editOrder.cancelling &amp;&amp; entry.seq == editOrder.seq)}" class="row">
+                <div data-label="Tip" class="col-md-1 type"><span class="rp-hidden-md rp-hidden-lg">{{entry.type | rpucfirst}}</span><span class="rp-hidden-xs rp-hidden-sm">{{entry.type | rptruncate:1}}</span></div>
+                <div data-label="QTY" ng-hide="editOrder.seq == entry.seq" class="col-md-2 amount rpamount">{{entry.first | rpamount:{hard_precision: true, precision: 6, tiny_precision: 6} }}</div>
+                <div data-label="BASE" ng-hide="editOrder.seq == entry.seq" class="col-md-2"><a href="" ng-click="goto_order_currency()"><span>{{entry.first | rpcurrency}}</span><span ng-show="entry.first.issuer().to_json()" class="issuer">&#46;<span rp-pretty-issuer-or-short="entry.first.issuer().to_json" rp-pretty-issuer="entry.first.issuer().to_json()" rp-pretty-issuer-contacts="userBlob.data.contacts">???</span></span></a></div>
+                <div data-label="Counter" ng-hide="editOrder.seq == entry.seq" class="col-md-2"><a href="" ng-click="goto_order_currency()"><span>{{entry.second | rpcurrency}}</span><span ng-show="entry.second.issuer().to_json()" class="issuer">&#46;<span rp-pretty-issuer-or-short="entry.first.issuer().to_json" rp-pretty-issuer="entry.second.issuer().to_json()" rp-pretty-issuer-contacts="userBlob.data.contacts">???</span></span></a></div>
+                <div data-label="" ng-hide="editOrder.seq == entry.seq" class="col-md-2 price rpamount">{{entry.second | rpamountratio:entry.first | rpamount:{hard_precision: true, precision: 6, tiny_precision: 6} }}</div>
+                <div ng-hide="editOrder.seq == entry.seq" class="col-md-3 action"><img src="img/button-s.png" ng-show="entry.cancelling" class="loader"/>
+                  <rp-popup class="fa pull-right"><a rp-popup-link="rp-popup-link" ng-disabled="entry.cancelling || editOrder.replacing" class="btn btn-block btn-cancel btn-cancel-order btn-a-sm pull-right">anulează</a>
+                    <div rp-popup-content="rp-popup-content" class="rp-modal">
+                      <div class="modal-header">
+                        <div id="logo" class="navbar-brand hidden-xs modal-logo"></div>
+                        <div class="modal-title">TRADE CONFIRMATION</div>
+                      </div>
+                      <div class="modal-body">
+                        <div class="modal-prompt">
+                          <div l10n-inc="l10n-inc">Please confirm that you wish to cancel order &num;{{entry.seq}}</div>
+                        </div>
+                        <div class="modal-order">
+                          <div rp-span-spacing="rp-span-spacing"><span class="modal-order-type">{{entry.type}}:</span><span>{{entry.first | rpamount:{hard_precision: true, precision: 6, tiny_precision: 6} }} </span><span>{{entry.first | rpcurrency}}</span><span ng-show="entry.first.issuer().to_json()" class="issuer">&#46;<span rp-pretty-issuer="entry.first.issuer().to_json()" rp-pretty-issuer-contacts="userBlob.data.contacts">???</span></span><span ng-show="'buy' == entry.type"> with</span><span ng-show="'sell' == entry.type"> for</span><span> {{entry.second | rpcurrency}}</span><span ng-show="entry.second.issuer().to_json()" class="issuer">&#46;<span rp-pretty-issuer="entry.second.issuer().to_json()" rp-pretty-issuer-contacts="userBlob.data.contacts">???</span></span><span> at </span><span>{{entry.second | rpamountratio:entry.first | rpamount:{hard_precision: true, precision: 6, tiny_precision: 6} }}</span></div>
+                        </div>
+                        <div class="modal-buttons">
+                          <button data-dismiss="modal" ng-click="cancel_order()" class="modal-btn btn btn-default btn-success btn-md"><span>Cancel order</span></button>
+                          <button data-dismiss="modal" class="modal-btn btn btn-cancel btn-md btn-cancel">back</button>
+                        </div>
+                      </div>
+                    </div>
+                  </rp-popup><a href="" ng-click="beginEditOrder()" ng-hide="entry.cancelling" ng-disabled="entry.cancelling || editOrder.replacing || editOrder.cancelling" class="pull-right btn btn-cancel btn-a-sm">editează</a>
+                </div>
+                <div ng-show="editOrder.seq == entry.seq">
+                  <form novalidate="novalidate" name="editOrderForm" ng-show="editOrder.seq == entry.seq">
+                    <div class="value-field col-md-4">
+                      <div class="input-group">
+                        <input name="editQuantity" type="text" ng-model="editOrder.newQuantity" ng-readonly="editOrder.cancelling || editOrder.replacing" ng-disabled="editOrder.quantityFilled" ng-class="{changed: editOrder.quantityChanged}" ng-change="quantityEdited()" required="required" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" class="form-control"/>
+                        <div class="input-group-addon inline-inputs-group">
+                          <currency>{{entry.first | rpcurrency | rptruncate:3}}</currency>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="value-field col-md-4">
+                      <div class="input-group">
+                        <input name="editPrice" type="text" ng-model="editOrder.newPrice" ng-readonly="editOrder.cancelling || editOrder.replacing" ng-class="{changed: editOrder.priceChanged}" ng-change="priceEdited()" required="required" rp-amount="rp-amount" rp-amount-positive="rp-amount-positive" class="form-control"/>
+                        <div class="input-group-addon inline-inputs-group">
+                          <currency>{{entry.second | rpcurrency | rptruncate:3}}</currency>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="col-md-3 action"><img src="img/button-s.png" ng-show="(editOrder.cancelling || editOrder.replacing) &amp;&amp; entry.seq == editOrder.seq" class="loader"/><a href="" ng-click="cancelEditOrder()" ng-disabled="editOrder.cancelling || editOrder.replacing" class="pull-right btn btn-cancel btn-a-sm">back</a>
+                      <rp-confirm rp-show="fatFingerShouldWarn()" action-text="CAUTION: Your new order is far off from the current market price. &lt;br/&gt; Do you still want to replace your order ?" action-button-text="Confirmă" action-button-css="btn btn-default btn-success" action-function="modifyOrder()" cancel-button-css="btn btn-default" cancel-button-text="&amp;laquo; Înapoi"><a href="" ng-click="prepareOrderModify()" ng-disabled="editOrderForm.$invalid || ! editOrder.orderbookReady || editOrder.cancelling || editOrder.replacing || ! (editOrder.priceChanged || editOrder.quantityChanged) || editOrder.quantityFilled" class="pull-right btn btn-cancel btn-a-sm">submit</a></rp-confirm>
+                    </div>
+                  </form>
+                </div>
+                <div ng-show="notif === 'cancel_error'" class="col-md-12 alert alert-danger"><span>Unable to cancel order. Error: {{entry.errorMsg}}</span></div>
+                <div ng-show="editOrder.seq == entry.seq &amp;&amp; notif === 'quantity_filled_warn'" class="col-md-12 alert alert-warning"><span>Your order amount has been updated by Ripple. Please go back and edit again to modify this order.</span></div>
+                <div ng-show="editOrder.seq == entry.seq &amp;&amp; notif === 'replace_error'" class="col-md-12 alert alert-danger"><span>Your order could not be modified. Error: {{order[editOrder.type].engine_result_message}}</span><a href="" ng-click="editOrder.replaceError = false" class="dismiss pull-right">X</a></div>
+              </div>
+              <div ng-hide="isEmpty(offers)" class="row">
+                <div class="col-md-10"></div>
+                <div class="col-md-2">
+                  <rp-popup><a href="" rp-popup-link="rp-popup-link" class="pull-right btn btn-cancel btn-a">cancel all</a>
+                    <div rp-popup-content="rp-popup-content" class="rp-modal">
+                      <div class="modal-header">
+                        <div id="logo" class="navbar-brand hidden-xs modal-logo"></div>
+                        <div class="modal-title">TRADE CONFIRMATION</div>
+                      </div>
+                      <div class="modal-body">
+                        <div class="modal-prompt">
+                          <div l10n-inc="l10n-inc">Please confirm that you wish to cancel all orders.</div>
+                        </div>
+                        <div class="modal-buttons">
+                          <button data-dismiss="modal" ng-click="cancel_all_orders()" class="modal-btn btn btn-default btn-success btn-md"><span>Cancel all orders</span></button>
+                          <button data-dismiss="modal" ng-hide="loading" class="modal-btn btn btn-cancel btn-md btn-cancel">back</button>
+                        </div>
+                      </div>
+                    </div>
+                  </rp-popup>
+                </div>
+              </div>
+            </div>
+            <div ng-show="isEmpty(offers) &amp;&amp; ! editOrder.replacing" class="emptyMessage">
+              <p class="rp-base">No current orders. <a href="" ng-click="view_orders_history()">View orders history</a></p>
+            </div>
+          </div>
+          <div class="row row-padding-small orderbookupdate">
+            <div class="col-xs-12 col-sm-6">
+              <div class="orderbook-title">Orderbook</div>
+            </div>
+            <div ng-show="lastUpdate" class="col-xs-12 col-sm-6 last-update">Last updated&#32;<span ng-bind="lastUpdate"></span><span ng-show="lastUpdate &gt; '1'" l10n-inc="l10n-inc"> seconds</span><span ng-show="lastUpdate == '1'" l10n-inc="l10n-inc"> second</span> ago</div>
+          </div>
+        </group>
+        <div ng-if="order.valid_settings" ng-hide="visualState.hideOrderBook" class="orderbook-wrapper">
+          <group ng-hide="!load_orderbook" class="disconnected">
+            <div id="orderbook_loader"><img src="img/sections.png" class="loader"/>
+              <div class="loading_sections">Loading Order Book</div>
+            </div>
+          </group>
+          <div ng-class="load_orderbook ? 'loading' : ' '" class="orderlists">
+            <div class="listings orders">
+              <div class="row orderbook">
+                <div class="bids col-xs-12 col-lg-6">
+                  <div class="title">Oferte</div>
+                  <div ng-show="bookShow.bids.length" class="row head">
+                    <div class="col-xs-4 sum">Suma
+                      <div class="currency">{{bookShow.bids[0].TakerPays | rpcurrency}}</div>
+                      <div ng-show="(bookShow.bids[0].TakerPays | rpcurrency) !== 'XRP'" rp-pretty-issuer="bookShow.bids[0].TakerPays | rpissuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></div>
+                    </div>
+                    <div class="col-xs-4 size">Cantitatea
+                      <div class="currency">{{bookShow.bids[0].TakerPays | rpcurrency}}</div>
+                      <div ng-show="(bookShow.bids[0].TakerPays | rpcurrency) !== 'XRP'" rp-pretty-issuer="bookShow.bids[0].TakerPays | rpissuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></div>
+                    </div>
+                    <div class="col-xs-4 price">Preţ ofertă
+                      <div class="currency">{{bookShow.bids[0].TakerGets | rpcurrency}}</div>
+                      <div ng-show="(bookShow.bids[0].TakerGets | rpcurrency) !== 'XRP'" rp-pretty-issuer="bookShow.bids[0].TakerGets | rpissuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></div>
+                    </div>
+                  </div>
+                  <div ng-repeat="order in bookShow.bids track by order.BookDirectory" ng-class="{my: order.my, cancelling: cancelling, new: order.isNew, changed: order.isChanged}" class="row">
+                    <div class="col-xs-4 rpamount sum"><a href="" ng-click="fill_widget('sell', order, true)"><span rp-bind-color-amount="order.showSum"></span></a></div>
+                    <div rp-bind-color-amount="order.showTakerPays" class="col-xs-4 rpamount size"></div>
+                    <div class="col-xs-4 rpamount price"><a href="" ng-click="fill_widget('sell', order, true)" ng-bind="order.showPrice"></a></div>
+                  </div>
+                  <div ng-show="!bookShow.bids.length &amp;&amp; book.ready" class="message">Momentan nu sunt oferte pentru această pereche.</div>
+                  <div ng-show="!book.ready &amp;&amp; !bookShow.bids.length" class="message"><img src="img/button-s.png" class="loader"/><span class="loading_text">Încărcare</span></div>
+                </div>
+                <div class="asks col-xs-12 col-lg-6">
+                  <div class="title">Cereri</div>
+                  <div ng-show="bookShow.asks.length" class="row head">
+                    <div class="col-xs-4 price">Preţ cerere
+                      <div class="currency">{{bookShow.asks[0].TakerPays | rpcurrency}}</div>
+                      <div ng-show="(bookShow.asks[0].TakerPays | rpcurrency) !== 'XRP'" rp-pretty-issuer="bookShow.asks[0].TakerPays | rpissuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></div>
+                    </div>
+                    <div class="col-xs-4 size">Cantitatea
+                      <div class="currency">{{bookShow.asks[0].TakerGets | rpcurrency}}</div>
+                      <div ng-show="(bookShow.asks[0].TakerGets | rpcurrency) !== 'XRP'" rp-pretty-issuer="bookShow.asks[0].TakerGets | rpissuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></div>
+                    </div>
+                    <div class="col-xs-4 sum">Suma
+                      <div class="currency">{{bookShow.asks[0].TakerGets | rpcurrency}}</div>
+                      <div ng-show="(bookShow.asks[0].TakerGets | rpcurrency) !== 'XRP'" rp-pretty-issuer="bookShow.asks[0].TakerGets | rpissuer" rp-pretty-issuer-contacts="userBlob.data.contacts" rp-pretty-issuer-or-short="rp-pretty-issuer-or-short" class="issuer"></div>
+                    </div>
+                  </div>
+                  <div ng-repeat="order in bookShow.asks track by order.BookDirectory" ng-class="{my: order.my, cancelling: cancelling, new: order.isNew, changed: order.isChanged}" class="row">
+                    <div class="col-xs-4 rpamount price"><a href="" ng-click="fill_widget('buy', order, true)" ng-bind="order.showPrice"></a></div>
+                    <div rp-bind-color-amount="order.showTakerGets" class="col-xs-4 rpamount size"></div>
+                    <div class="col-xs-4 rpamount sum"><a href="" ng-click="fill_widget('buy', order, true)"><span rp-bind-color-amount="order.showSum"></span></a></div>
+                  </div>
+                  <div ng-show="!bookShow.asks.length &amp;&amp; book.ready" class="message">Momentan nu sunt cereri pentru această pereche.</div>
+                  <div ng-show="!book.ready &amp;&amp; !bookShow.asks.length" class="message"><img src="img/button-s.png" class="loader"/><span class="loading_text">Încărcare</span></div>
+                </div>
+              </div>
+            </div>
+            <div class="foot"><a ng-show="orderbookState=='ready' &amp;&amp; (bookShow.asks.length || bookShow.bids.length)" href="" ng-click="loadMore()" class="loadmore">Încarcă mai mult</a>
+              <div ng-show="orderbookState=='full'">No more orders</div>
+            </div>
+          </div>
+        </div>
+      </group>
+    </div>
+  </div>
+</section>

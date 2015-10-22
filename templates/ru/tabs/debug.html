@@ -1,0 +1,23 @@
+
+<section ng-controller="DebugPretendCtrl" class="col-xs-12 content"><span>Debug as {{pretend.pretendAs}}</span>
+  <form name="debugPretendForm" id="debugPretendForm" ng-show="connected" ng-submit="pretend()" class="mode-form">
+    <div class="form-group">
+      <label for="pretendAddr">Ripple name or address:</label>
+      <div class="row row-padding-small amount">
+        <div class="col-xs-12 col-sm-9 col-md-6">
+          <input id="pretendAddr" name="pretendAddr" type="text" rp-combobox="pretend_query" rp-combobox-value-as-ripple-name="rp-combobox-value-as-ripple-name" placeholder="" ng-model="pretend.pretendAs" required="required" rp-dest="rp-dest" rp-dest-address="rp-dest-address" rp-dest-ripple-name="rp-dest-ripple-name" rp-dest-contact="rp-dest-contact" rp-spinner="rp-spinner" class="value form-control"/>
+        </div>
+      </div>
+      <div ng-messages="debugPretendForm.pretendAddr.$error" class="errorGroup">
+        <div ng-show="debugPretendForm.pretendAddr.$valid &amp;&amp; pretend.pretendAs != pretend.address" ng-bind="pretend.address" class="success"></div>
+        <div ng-message="required" class="error">Please enter an address.</div>
+        <div ng-message="rpDest" class="error">Некорректный адрес.</div>
+      </div>
+      <div class="row row-padding-small amount">
+        <div class="col-xs-12 col-sm-9 col-md-6">
+          <button type="submit" ng-disabled="debugPretendForm.$invalid || debugPretendForm.$pending" class="btn btn-block btn-success">Turn on debug mode</button>
+        </div>
+      </div>
+    </div>
+  </form>
+</section>

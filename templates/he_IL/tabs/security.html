@@ -1,0 +1,134 @@
+
+<section ng-controller="SecurityCtrl" class="col-xs-12 content">
+  <div ng-show="debug">This page is not available in debug mode</div>
+  <div ng-show="!debug" class="row">
+    <div ng-hide="isUnlocked" class="col-xs-12">
+      <div class="auth-attention sessionUnlock">
+        <h5>התהליך הופסק</h5>
+        <div class="status">כדי להציג או לערוך את הגדרות האבטחה שלכם, עליכם להיות במצב פעיל.</div>
+        <div class="row">
+          <div class="col-xs-12 col-sm-5">
+            <form ng-submit="restoreSession()">
+              <label for="sessionPassword">ססמה</label>
+              <input id="sessionPassword" type="password" name="sessionPassword" ng-model="sessionPassword" rp-focus="rp-focus" class="form-control"/>
+              <button type="submit" ng-disabled="isConfirming" class="btn btn-primary btn-block"><img src="img/button-s.png" ng-show="isConfirming" class="loader"/><span>שיחזור פעילות </span></button>
+            </form>
+          </div>
+        </div>
+      </div>
+      <div ng-show="unlockError" class="alert alert-danger"><span>הססמה שהוגשה אינה נכונה.</span></div>
+    </div>
+    <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected" class="col-xs-12">
+      <div class="auth-attention banner">
+        <h4>Welcome to Ripple Trade! Your account needs to be activated. You can activate it in 2 ways:</h4>
+        <ul>
+          <li>Have another user send XRP to your Ripple name (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+          <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+        </ul>
+      </div>
+    </div>
+    <div ng-show="hasRTJapanTrust">
+      <div class="warning-attention banner">
+        <h4>警告</h4>
+        <p>
+          リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+          最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+        </p>
+      </div>
+    </div>
+    <div ng-show="hasRTJapanTrustWithRippling">
+      <div class="warning-attention banner">
+        <h4>警告</h4>
+        <p>
+          資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+          無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+        </p>
+      </div>
+    </div>
+    <div class="col-sm-12 notification-wrapper">
+      <div ng-show="errorSetPasswordProtection" class="alert alert-danger">Error saving password protection settings.</div>
+      <div ng-show="success.enableRequirePassword" class="alert alert-success">Password protection has been successfully enabled.</div>
+      <div ng-show="success.disableRequirePassword" class="alert alert-success">Password protection has been successfully disabled.</div>
+    </div>
+    <div ng-show="isUnlocked" class="col-sm-4 col-md-3 col-xs-12">
+      <div class="settingPage"><a href="#/security" ng-class="{active: $route.current.tabName == 'security'}">אבטחה</a><a href="#/settingstrade" ng-class="{active: $route.current.tabName == 'settingstrade'}">סחר</a><a href="#/advanced" ng-class="{active: $route.current.tabName == 'advanced'}">Network and servers</a><a href="#/settingsgateway" ng-class="{active: $route.current.tabName == 'settingsgateway'}">Gateways and trust lines</a>
+      </div>
+    </div>
+    <div ng-show="isUnlocked" class="col-sm-8 col-md-9 col-xs-12 list">
+      <div ng-show="settingsPage == 'security'" class="show-security">
+        <div>
+          <h4>הגדרות אבטחה</h4>
+          <div class="section">
+            <div class="descriptor">Identity Verification</div>
+            <div class="row"></div>
+            <label>
+              Ripple Trade will verify you by matching information from your
+               online account to an official ID or through third party agents.&nbsp;<a href="https://ripple.com/knowledge_center/ripple-trade-launches-identity-verification" target="_blank">Learn more.</a>
+            </label>
+            <div class="row row-padding-small-xs">
+              <div class="col-xs-0 col-sm-4 col-md-6"></div>
+              <div class="col-xs-12 col-sm-8 col-md-6 save-btn-wrapper">
+                <div class="description"><a href="{{globalOptions.ids_url}}/identity" target="_blank" class="btn btn-block btn-success btn-xs submit">Verify or Check Status of Identity</a></div>
+              </div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="descriptor">הגדרות אבטחה</div>
+            <div class="row"></div>
+            <label>
+              You can now manage your security settings such as secret key,
+               password, and two-factor authentication by clicking edit.
+            </label>
+            <div class="row row-padding-small-xs">
+              <div class="col-xs-9 col-sm-8 col-md-8"></div>
+              <div class="col-xs-3 col-sm-4 col-md-4"><a href="{{globalOptions.ids_url}}/identity" target="_blank" class="btn btn-cancel btn-block">לערוך</a></div>
+            </div>
+          </div>
+          <div class="section">
+            <div class="descriptor">הגנת עסקאות בססמה</div>
+            <div class="row row-padding-small-xs">
+              <div class="col-xs-12">
+                <div class="description">אם תבטלו בקשת ססמה, אתם עדיין תצטרכו להזין ססמה לאחר כל רענון דף.</div>
+                <div class="helperInput">
+                  <form name="persistUnlock" ng-submit="setPasswordProtection()">
+                    <div ng-hide="editUnlock" class="row">
+                      <div class="col-xs-6 col-sm-5 col-md-4">
+                        <div class="description">Require password</div>
+                      </div>
+                      <div class="col-xs-3 col-sm-3 col-md-4">
+                        <div class="description">
+                          <div ng-show="requirePassword">כן</div>
+                          <div ng-hide="requirePassword">לא</div>
+                        </div>
+                      </div>
+                      <div class="col-xs-3 col-sm-4 col-md-4">
+                        <div><a id="edit" href="" ng-click="editUnlock = true" class="btn btn-cancel btn-block">לערוך</a></div>
+                      </div>
+                    </div>
+                    <div ng-show="editUnlock" class="row edit-security-pswd">
+                      <div class="col-xs-6 col-sm-5 col-md-4">
+                        <div class="description">Require password</div>
+                      </div>
+                      <div class="col-xs-6 col-sm-3 col-md-2">
+                        <div class="helperInput description">
+                          <label>
+                            <input type="checkbox" name="unlock" ng-checked="requirePassword" ng-click="requirePasswordChanged = true"/>
+                          </label>
+                        </div>
+                      </div>
+                      <div class="col-xs-12 col-sm-4 col-md-4 save-btn-wrapper">
+                        <div class="description">
+                          <button id="save" type="submit" ng-disabled="serverForm.$invalid" class="btn btn-block btn-success btn-xs submit">שמירה</button>
+                        </div>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>

@@ -1,0 +1,67 @@
+
+<section ng-controller="TxCtrl" ng-switch="state" class="single ddpage content">
+  <group ng-switch-when="loading">
+    <p class="literal"><img src="img/button-s.png" class="loader"/><span class="loading_text">Se încarcă detaliile tranzacţiei...</span></p>
+  </group>
+  <group ng-switch-when="error">
+    <p class="literal">A apărut o eroare în timpul încărcării detaliilor tranzacţiei.</p>
+  </group>
+  <group ng-switch-when="loaded">
+    <p class="literal hash"><span>Tranzacţia #</span><span ng-bind="transaction.hash"></span>
+      <div><a href="{{'https://ripplecharts.com/#/graph/' + transaction.hash}}" target="_blank">Arată în grafic</a></div>
+    </p>
+    <hr/>
+    <p class="literal type">Transaction type:<strong ng-bind="transaction.TransactionType"></strong></p>
+    <group ng-switch="transaction.TransactionType">
+      <group ng-switch-when="Payment">
+        <group class="clearfix">
+          <dl class="details half">
+            <dt><span>Adresă trimisă de la</span><span>:</span></dt>
+            <dd ng-bind="transaction.Account"></dd>
+            <dt><span>Suma trimisă</span><span>:</span></dt>
+            <dd>{{transaction.amountSent | rpamount}} {{transaction.amountSent | rpcurrency}}</dd>
+            <dt><span>Valuta trimisă</span><span>:</span></dt>
+            <dd>{{transaction.amountSent | rpcurrencyfull}}</dd>
+          </dl>
+          <dl class="details half">
+            <dt><span>Adresă trimisă către</span><span>:</span></dt>
+            <dd>{{transaction.Destination}}</dd>
+            <dt><span>Suma primită</span><span>:</span></dt>
+            <dd>{{transaction.Amount | rpamount}} {{transaction.Amount | rpcurrency}}</dd>
+            <dt><span>Valuta primită</span><span>:</span></dt>
+            <dd>{{transaction.Amount | rpcurrencyfull}}</dd>
+          </dl>
+        </group>
+        <hr/>
+        <group class="clearfix">
+          <dl class="details half">
+            <dt><span>Comisionul platit reţelei</span><span>:</span></dt>
+            <dd>{{transaction.Fee | rpamount}} XRP</dd>
+          </dl>
+          <dl class="details half">
+            <group ng-show="transaction.DestinationTag !== null &amp;&amp; transaction.DestinationTag !== undefined">
+              <dt><span>Eticheta destinaţiei</span><span>:</span></dt>
+              <dd ng-bind="transaction.DestinationTag"></dd>
+            </group>
+          </dl>
+        </group>
+        <hr/>
+        <dl class="details">
+          <dt><span>Număr registru</span><span>:</span></dt>
+          <dd ng-bind="transaction.ledger"></dd>
+        </dl>
+      </group>
+      <group ng-switch-default="ng-switch-default">
+        <group class="clearfix">
+          <dl class="details half">
+            <dt>Adresă trimisă de la:</dt>
+            <dd ng-bind="transaction.Account"></dd>
+          </dl>
+          <dl class="details half"></dl>
+        </group>
+        <hr/>
+        <p class="literal">Ne pare rău, însă nu avem deocamdată un aranjament pentru o pagină de informaţii specifică acestui tip de tranzacţie.</p>
+      </group>
+    </group>
+  </group>
+</section>

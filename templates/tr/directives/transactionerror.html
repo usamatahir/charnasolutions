@@ -1,0 +1,170 @@
+
+<group ng-switch="tab">
+  <!-- All fund -> individual currency tab errors-->
+  <group ng-switch-when="trust">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Connecting gateway to your account...</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Geçit bağlantısı sağlandı.</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">There was a problem connecting to the gateway. Please try again later.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Hata kodu:  {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Request failed</h2>
+            <p><span>Your request timed out, please try again.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Request failed</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Hata kodu: Hedef etiketi gerekli  [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Request failed</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Error code: This request failed because it exceeded the maximum network fee, please try again later [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Request failed</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Error code: You have no gateway connected in this currency [terNO_LINE].</span><span ng-switch-when="tecINSUF_RESERVE_LINE">Error code: Insufficient reserve to connect gateway [tecINSUF_RESERVE_LINE].</span><span ng-switch-when="tecNO_LINE_INSUF_RESERVE">Error code: You have an insufficient reserve amount to connect a gateway [tecNO_LINE_INSUF_RESERVE].&#32;<a href="https://ripple.com/wiki/Reserves">Daha fazla bilgi</a></span><span ng-switch-default="ng-switch-default">Hata: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Request failed</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Hata kodu: Bu para birimi için güven ilişkiniz bulunmuyor [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Your request failed: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Request failed</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Error code: request could not be submitted [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">
+            This request failed because the current network fee is higher than your account limit. You can adjust your maximum network fee in Settings &gt Advanced, or try again later. <br>
+            Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Your request could not be submitted: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <!-- All send & convert errors-->
+  <group ng-switch-when="send_convert">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Beklemedeki ödeme </h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Başarılı ödeme</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Ödeme başarısız </h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Hata kodu:  {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Payment failed [tefMAX_LEDGER].</h2>
+            <p ng-switch="engine_result"><span>Ödemeniz zaman aşımına uğradı, lütfen tekrar deneyin.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Ödeme başarısız </h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Hata kodu: Hedef etiketi gerekli  [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Ödeme başarısız </h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Hata kodu: Maksimum ağ ücretini aşması nedeniyle bu işlem başarısız oldu, lütfen tekrar deneyiniz  [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Ödeme başarısız </h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Hata kodu: Hedef yok  [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Hata kodu: Hedefe gönderilen XRP yetersiz [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Hata: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Ödeme başarısız </h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Hata kodu: Bu para birimi için güven ilişkiniz bulunmuyor [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Ödemeniz başarısız oldu: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Ödeme başarısız </h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Hata kodu: İşlem gönderilemedi [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">
+            This transaction failed because the current network fee is higher than your account limit. You can adjust your maximum network fee in Settings &gt Advanced, or try again later. <br>
+            Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Ödemeniz gönderilemedi: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-when="trade">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Talep hatalı.</h2>
+        <p>
+          Your request is invalid, reason: {{engine_result_message}}
+           - {{engine_result_message}}
+        </p>
+      </group>
+      <group ng-switch-when"tec="ng-switch-when"tec" class="result-malformed">
+        <h2 class="tx-status">İşlem başarısız oldu.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecUNFUNDED_ORDER">You do not have enough funds to create this order [tecUNFUNDED_ORDER].</span><span ng-switch-when="tecINSUF_RESERVE_OFFER">Insufficient reserve amount to submit an order [tecINSUF_RESERVE_OFFER].&#32;</span><span ng-switch-when="tejMaxFeeExceeded">
+            This transaction failed because the current network fee is higher than your account limit. You can adjust your maximum network fee in Settings &gt Advanced, or try again later. <br>
+            Error code: Network fee exceeded [tejMaxFeeExceeded].&#32;<a href="https://ripple.com/wiki/Reserves" target="_blank">Daha fazla bilgi.</a></span><span ng-switch-default="ng-switch-default">Hata: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Alım satım başarısız oldu.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Trade failed, reason: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">İşlem başarısız oldu.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">
+            The particular server you sent the transaction to was too busy to forward or process
+             your transaction at the fee you included in it [telINSUF_FEE_P].</span></p>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Request pending</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Request successful</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Request failed</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Hata kodu:  {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Request failed</h2>
+            <p ng-switch="engine_result"><span>Your request timed out, please try again.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Request failed</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Hata kodu: Hedef etiketi gerekli  [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Request failed</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Error code: This request failed because it exceeded the maximum network fee, please try again later [telINSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Request failed</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Hata kodu: Hedef yok  [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Hata kodu: Hedefe gönderilen XRP yetersiz [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Hata: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Request failed</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Hata kodu: Bu para birimi için güven ilişkiniz bulunmuyor [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Your request failed: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Request failed</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Error code: request could not be submitted [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">
+            This request failed because the current network fee is higher than your account limit. You can adjust your maximum network fee in Settings &gt Advanced, or try again later. <br>
+            Error code: Network fee exceeded [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Your request could not be submitted: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+</group>

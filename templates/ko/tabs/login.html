@@ -1,0 +1,90 @@
+
+<section ng-controller="LoginCtrl" class="col-xs-12 content">
+  <div ng-show="showAnnouncement" class="auth-attention banner">
+    <h4 id="announcement">	<strong>NOTICE:</strong> Ripple Trade encourages customer identification but it is optional until October 30, 2015. Existing users have through October 30, 2015 to verify their identity details in order to access Ripple Trade. <strong>Users who have submitted required documents can still use Ripple Trade and access funds while we review your information.</strong> For more information, please visit the<a href="https://ripple.com/knowledge_center/ripple-trade-launches-identity-verification" target="_blank" l10n-inc="l10n-inc"> Knowledge Center.</a><br/><br/>リップルトレードでは、セキュリティー強化の為、本人確認を推奨致します(ただし、２０１５年10月３０日までは、必須ではありません)。 既存のユーザー様は、リップルトレードを引き続きご利用されるためには、*10月３０日までに個人情報を登録していただきます。<strong>必要書類をご提出頂きました方は、こちらで本人書類確認をしている間も引き続きRipple Tradeをご利用頂けます。</strong> 詳細は<a href="https://ripple.com/knowledge_center/ripple-trade-launches-identity-verification" target="_blank" l10n-inc="l10n-inc"> ノレッジセンター</a> に記載されております。<br/><br/>Ripple Trade 실명제 도입으로. 기존회원님들께선 2015년 10월 30일까지 실명확인을 해주셔야 합니다. <strong>필요한 서류를 제출 한 사용자는 여전히 리플 무역 및 액세스 자금을 사용할 수 있습니다. 우리는 귀하의 정보를 검토 할 것.</strong> 자세한 내용은<a href="https://ripple.com/knowledge_center/ripple-trade-launches-identity-verification" target="_blank" l10n-inc="l10n-inc"> 지식센터</a> 에서 확인하여 주시기 바랍니다.<br/><br/>尊敬的Ripple Trade用户，届时2015年10月30日起，所有用户将必须通过实名身份验证，否则将无法继续使用Ripple Trade账户。在我们审核您信息的同时，您仍可以使用<strong>Ripple Trade</strong>以及您的资金账户。</h4>
+    <!--a.dismiss#hide(href="", ng-click="dismissBanner()")  ×--><br/>
+  </div>
+  <div ng-hide="$routeParams.to" class="row auth-form-container">
+    <div class="col-xs-12 hidden-xs">
+      <div class="welcomeText">리플 트레이드에 오신 것을 환영합니다</div>
+      <hr/>
+      <p class="heroText">XRP로 수백가지의 자산, 가상화폐, 금, 모든 종류의 화폐를거래하세요.</p>
+    </div>
+    <div class="auth-form-wrapper col-xs-12 col-sm-6 col-md-4">
+      <div ng-show="loggingIn" class="loginOverlay"><img src="img/main.png" alt="" title="" class="loader"/></div>
+      <div ng-show="status" class="text-status"><span ng-bind="status" class="loggingIn"></span><br/>
+        <div ng-repeat="message in backendMessages" class="backend error"><span ng-bind="message" class="error"></span></div>
+      </div>
+      <form name="loginForm" action="{{authAction}}">
+        <div class="submit-btn-container">
+          <button id="loginBtn" type="submit" ng-click="submitForm('login')" class="btn btn-submit btn-block btn-success"><span>로그인</span></button>
+          <button id="registerBtn" type="submit" ng-click="submitForm('register')" class="btn btn-submit btn-block btn-success"><span>가입하기</span></button>
+          <input name="redirect_to" type="hidden" value="{{redirectTo}}"/>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div ng-if="$routeParams.to" class="row action-login">
+    <div class="col-xs-12 col-sm-6 col-md-6 uri-form-container">
+      <div ng-show="'send' == $route.current.tabName" class="info">
+        <p ng-bind="$routeParams.label" class="literal"></p>
+        <div ng-hide="$routeParams.amount">
+          <p l10n-inc="l10n-inc">You're sending money to</p>
+          <div class="address">{{ $routeParams.to | rpripplenamefull:{tilde:true} }}</div>.
+        </div>
+        <div ng-show="$routeParams.amount">
+          <p l10n-inc="l10n-inc">You're sending</p>
+          <div ng-show="$routeParams.amount" class="amount"><span class="number">{{$routeParams.amount | rpamount:{xrp_human: true} }}</span><span class="currency">{{$routeParams.amount | rpcurrency}}</span></div>
+          <p l10n-inc="l10n-inc">&#32;to&#32;</p>
+          <div class="address">{{ $routeParams.to | rpripplenamefull:{tilde:true} }}</div>.
+        </div>
+        <p l10n-inc="l10n-inc">
+          Log in to your Ripple Trade account to continue. You
+          will be able to confirm this transaction on the next page.
+        </p>
+      </div>
+      <div ng-show="'trust' == $route.current.tabName" class="info">
+        <p class="literal">{{$routeParams.label}}</p>
+        <div>
+          <p l10n-inc="l10n-inc">You're connecting to the gateway</p>
+          <div class="address">{{ $routeParams.to | rpripplenamefull:{tilde:true} }}</div>
+          <div ng-show="$routeParams.currency" l10n-inc="l10n-inc">for
+            <div class="amount"><span ng-bind="$routeParams.currency" class="currency"></span></div>
+          </div>
+          <div ng-show="$routeParams.amount" l10n-inc="l10n-inc">with a limit of
+            <div class="amount"><span class="currency">{{$routeParams.amount | rpamount}} {{$routeParams.amount | rpcurrency}}</span></div>
+          </div>.
+        </div>
+        <p l10n-inc="l10n-inc">
+          Log in to your Ripple Trade account to continue. You
+          will be able to confirm this transaction on the next page.
+        </p>
+      </div>
+      <div ng-show="'contacts' == $route.current.tabName" class="info">
+        <p ng-bind="$routeParams.label" class="literal"></p><span>
+          <p l10n-inc="l10n-inc">You're adding</p>
+          <div class="address">{{ $routeParams.to | rpripplenamefull:{tilde:true} }}</div>
+          <p l10n-inc="l10n-inc">to your contacts list</p></span>
+        <p l10n-inc="l10n-inc">
+          Log in to your Ripple Trade account to continue. You
+          will be able to confirm this transaction on the next page.
+        </p>
+      </div>
+    </div>
+    <div class="col-xs-12 col-sm-6 col-md-5 col-lg-4 col-lg-offset-1 auth-form-container">
+      <div class="auth-form-wrapper">
+        <div ng-show="loggingIn" class="loginOverlay"><img src="img/main.png" alt="" title="" class="loader"/></div>
+        <div ng-show="status" class="text-status"><span ng-bind="status" class="loggingIn"></span><br/>
+          <div ng-repeat="message in backendMessages" class="backend error"><span ng-bind="message" class="error"></span></div>
+        </div>
+        <form name="loginForm" action="{{authAction}}">
+          <div class="submit-btn-container">
+            <button id="loginBtn" type="submit" ng-click="submitForm('login')" class="btn btn-submit btn-block btn-success"><span>로그인</span></button>
+            <button id="registerBtn" type="submit" ng-click="submitForm('register')" class="btn btn-submit btn-block btn-success"><span>가입하기</span></button>
+            <input name="redirect_to" type="hidden" value="{{redirectTo}}"/>
+          </div>
+        </form>
+      </div>
+    </div>
+  </div>
+</section>

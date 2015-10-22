@@ -1,0 +1,157 @@
+
+<group ng-switch="tab">
+  <!-- All fund -> individual currency tab errors-->
+  <group ng-switch-when="trust">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Gateway wird mit Ihrem Konto verbunden…</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Gateway verbunden.</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Beim Verbinden des Gateways ist ein Problem aufgetreten. Bitte versuchen Sie es später erneut.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Fehlercode: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Anfrage gescheitert</h2>
+            <p><span>Zeitüberschreitung bei Ihrer Anfrage, bitte erneut versuchen.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Anfrage gescheitert</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Fehlercode: Zielmarker erforderlich [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Anfrage gescheitert</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Fehlercode: Diese Anfrage ist gescheitert, da die maximale Netzwerkgebühr überschritten wird, bitte später erneut versuchen [tellNSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Anfrage gescheitert</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Fehlercode: Sie haben kein Gateway in dieser Währung verbunden [terNO_LINE].</span><span ng-switch-when="tecINSUF_RESERVE_LINE">Fehlercode: Ungenügende Reserve zum Verbinden des Gateways [tecINSUF_RESERVE_LINE].</span><span ng-switch-when="tecNO_LINE_INSUF_RESERVE">Fehlercode: Ihre Reserve reicht nicht aus, um ein Gateway zu verbinden [tecNO_LINE_INSUF_RESERVE]. <a href="https://ripple.com/wiki/Reserves">Mehr Infos</a></span><span ng-switch-default="ng-switch-default">Fehler: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Anfrage gescheitert</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Fehlercode: Sie haben keine Vertrauens-Linie in dieser Währung [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Ihre Anfrage ist gescheitert: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Anfrage gescheitert</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Fehlercode: Anfrage konnte nicht übermittelt werden [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Diese Anfrage ist fehlgeschlagen, da die aktuelle Netzwerkgebühr höher ist als das Limit Ihres Accounts. Sie können Ihre maximale Netzwerkgebühr in Einstellungen &gt; Erweitert anpassen, oder Sie versuchen es später erneut. <br>Fehlercode: Netzwerkgebühr überschritten [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Ihre Anfrage konnte nicht übermittelt werden: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <!-- All send & convert errors-->
+  <group ng-switch-when="send_convert">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Zahlung ausstehend</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Zahlung erfolgreich</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Zahlung fehlgeschlagen</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Fehlercode: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Zahlung fehlgeschlagen [tefMAX_LEDGER].</h2>
+            <p ng-switch="engine_result"><span>Zeitüberschreitung bei Ihrer Zahlung, bitte versuchen Sie es erneut.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Zahlung fehlgeschlagen</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Fehlercode: Zielmarker erforderlich [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Zahlung fehlgeschlagen</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Fehlercode: Diese Transaktion ist fehlgeschlagen, da die maximale Netzwerkgebühr überschritten wurde, bitte versuchen Sie es später erneut [tellNSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Zahlung fehlgeschlagen</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Fehlercode: Kein Ziel [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Fehlercode: Nicht ausreichende XRP an Ziel gesendet [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Fehler: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Zahlung fehlgeschlagen</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Fehlercode: Sie haben keine Vertrauens-Linie in dieser Währung [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Ihre Zahlung ist fehlgeschlagen: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Zahlung fehlgeschlagen</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Fehlercode: Transaktion konnte nicht übermittelt werden [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Diese Transaktion ist fehlgeschlagen, da die aktuelle Netzwerkgebühr höher ist als das Limit Ihres Kontos. Sie können Ihre maximale Netzwerkgebühr in Einstellungen &gt; Erweitert anpassen, oder Sie versuchen es später erneut. <br>Fehlercode: Netzwerkgebühr überschritten [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Ihre Zahlung konnte nicht übermittelt werden: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-when="trade">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Anfrage ist nicht korrekt formatiert.</h2>
+        <p>Ihre Anfrage ist ungültig, Grund: {{engine_result}} - {{engine_result_message}}</p>
+      </group>
+      <group ng-switch-when"tec="ng-switch-when"tec" class="result-malformed">
+        <h2 class="tx-status">Transaktion gescheitert.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecUNFUNDED_ORDER">Sie haben nicht genug Mittel, um diese Order aufzugeben [tecUNFUNDED_ORDER].</span><span ng-switch-when="tecINSUF_RESERVE_OFFER">Fehlercode: Ihre Reserve reicht nicht aus, um eine Order aufzugeben [tecINSUF_RESERVE_OFFER].</span><span ng-switch-when="tejMaxFeeExceeded">Diese Transaktion ist fehlgeschlagen, da die aktuelle Netzwerkgebühr höher ist als das Limit Ihres Accounts. Sie können Ihre maximale Netzwerkgebühr in Einstellungen &gt; Erweitert anpassen, oder Sie versuchen es später erneut. <br>Fehlercode: Netzwerkgebühr überschritten [tejMaxFeeExceeded]. <a href="https://ripple.com/wiki/Reserves" target="_blank">Mehr Infos.</a></span><span ng-switch-default="ng-switch-default">Fehler: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Wechsel gescheitert.</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Handel fehlgeschlagen, Grund: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Transaktion gescheitert.</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Der Server, an den die Transaktion gesendet wurde, ist im Moment zu beschäftigt, um sie für die inkludierte Gebühr weiterzuverarbeiten oder weiterzuleiten [telINSUF_FEE_P].</span></p>
+      </group>
+    </div>
+  </group>
+  <group ng-switch-default="ng-switch-default">
+    <div ng-switch="engine_result | rptruncate:3" class="transaction-error">
+      <group ng-switch-when="tes">
+        <group ng-hide="accepted" class="pending">
+          <h2 class="tx-status">Anfrage ausstehend</h2>
+        </group>
+        <group ng-show="accepted" class="result-success">
+          <h2 class="tx-status">Anfrage erfolgreich</h2>
+        </group>
+      </group>
+      <group ng-switch-when="tem" class="result-malformed">
+        <h2 class="tx-status">Anfrage gescheitert</h2>
+        <p ng-switch="engine_result"><span ng-switch-default="ng-switch-default">Fehlercode: {{engine_result}} - {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="tef" class="result-malformed">
+        <div ng-switch="engine_result">
+          <div ng-switch-when="tefMAX_LEDGER">
+            <h2 class="tx-status">Anfrage gescheitert</h2>
+            <p ng-switch="engine_result"><span>Zeitüberschreitung bei Ihrer Anfrage, bitte erneut versuchen.</span></p>
+          </div>
+          <div ng-switch-default="ng-switch-default">
+            <h2 class="tx-status">Anfrage gescheitert</h2>
+            <p ng-switch="engine_result"><span ng-switch-when="tefDST_TAG_NEEDED">Fehlercode: Zielmarker erforderlich [tefDST_TAG_NEEDED].</span></p>
+          </div>
+        </div>
+      </group>
+      <group ng-switch-when="tel" class="result-failed">
+        <h2 class="tx-status">Anfrage gescheitert</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="telINSUF_FEE_P">Fehlercode: Diese Anfrage ist gescheitert, da die maximale Netzwerkgebühr überschritten wird, bitte später erneut versuchen [tellNSUF_FEE_P].</span></p>
+      </group>
+      <group ng-switch-when="tec" class="result-malformed">
+        <h2 class="tx-status">Anfrage gescheitert</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tecNO_DST">Fehlercode: Kein Ziel [tecNO_DST].</span><span ng-switch-when="tecNO_DST_INSUF_XRP">Fehlercode: Nicht ausreichende XRP an Ziel gesendet [tecNO_DST_INSUF_XRP].</span><span ng-switch-default="ng-switch-default">Fehler: {{engine_result_message}}</span></p>
+      </group>
+      <group ng-switch-when="ter" class="result-failed">
+        <h2 class="tx-status">Anfrage gescheitert</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="terNO_LINE">Fehlercode: Sie haben keine Vertrauens-Linie in dieser Währung [terNO_LINE].</span></p><span ng-switch-default="ng-switch-default">Ihre Anfrage ist gescheitert: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+      <group ng-switch-when="tej" class="result-failed">
+        <h2 class="tx-status">Anfrage gescheitert</h2>
+        <p ng-switch="engine_result"><span ng-switch-when="tejLost">Fehlercode: Anfrage konnte nicht übermittelt werden [tejLost].</span><span ng-switch-when="tejMaxFeeExceeded">Diese Anfrage ist fehlgeschlagen, da die aktuelle Netzwerkgebühr höher ist als das Limit Ihres Accounts. Sie können Ihre maximale Netzwerkgebühr in Einstellungen &gt; Erweitert anpassen, oder Sie versuchen es später erneut. <br>Fehlercode: Netzwerkgebühr überschritten [tejMaxFeeExceeded].</span></p><span ng-switch-default="ng-switch-default">Ihre Anfrage konnte nicht übermittelt werden: {{engine_result}} - {{engine_result_message}}</span>
+      </group>
+    </div>
+  </group>
+</group>

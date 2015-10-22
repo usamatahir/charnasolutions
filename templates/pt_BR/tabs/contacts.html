@@ -1,0 +1,168 @@
+
+<section ng-controller="ContactsCtrl" class="col-xs-12 content">
+  <div ng-show="debug">This page is not available in debug mode</div>
+  <div ng-show="!loadingAccount &amp;&amp; !account.Balance &amp;&amp; loadState.account &amp;&amp; connected &amp;&amp; !debug">
+    <div class="auth-attention banner">
+      <h4>Bem-vindo ao Ripple Trade! Sua conta precisa ser ativada. Você pode ativá-la de 2 maneiras:</h4>
+      <ul>
+        <li>Pedir a um outro usuário enviar XRP para o seu nome Ripple (~{{userCredentials.username}}).&#32<a href="https://ripple.com/knowledge_center/activating-your-wallet/" target="_blank">Suggestions for getting XRP.&#32</a></li>
+        <li><a href="#/btc">Deposit BTC (only the btc2ripple option works for activating accounts).</a></li>
+      </ul>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrust">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        リップルトレードジャパンをゲイトウェイとして使用しないことをお勧めします。
+        最近の出来事から判断しまして、リップルトレードジャパンを使用すると、資金が失われる可能性があります。
+      </p>
+    </div>
+  </div>
+  <div ng-show="hasRTJapanTrustWithRippling">
+    <div class="warning-attention banner">
+      <h4>警告</h4>
+      <p>
+        資金を保護するために、リップルトレードジャパンへのリップリングを無効にすることをお勧めします。
+        無効化するには<a href="#/advanced">設定 &#62; 詳細</a>をクリックし、与信限度額の「Advanced Settings」が「表示」になっていることを確認して下さい。その後、<a href="#/trust">資金 &#62; ゲイトウェイ</a>ページで、リップルトレードジャパン(rMAz5ZnK73nyNUL4foAvaxdreczCkG3vA6)との Rippling がオフになっていることをご確認下さい。
+      </p>
+    </div>
+  </div>
+  <div ng-hide="debug">
+    <div class="row">
+      <group ng-show="notif !== &quot;clear&quot;" class="col-sm-12 notification-wrapper">
+        <group ng-switch="notif">
+          <group ng-switch-when="createContactSuccess" class="result-success">
+            <h2 class="tx-status">Um novo servidor foi adicionado com sucesso.</h2>
+          </group>
+          <group ng-switch-when="updateContactSuccess" class="result-success">
+            <h2 class="tx-status">Seu contato foi alterado com sucesso.</h2>
+          </group>
+          <group ng-switch-when="removeContactSuccess" class="result-success">
+            <h2 class="tx-status">O contato foi removido com sucesso.</h2>
+          </group>
+        </group>
+      </group>
+    </div>
+    <form class="row-padding-small">
+      <div class="row form-group">
+        <div class="col-xs-12 col-sm-8 col-md-6">
+          <label>Filter contacts</label>
+          <input name="contacts_filter" type="text" ng-model="contacts_filter" class="form-control"/>
+        </div>
+      </div>
+    </form>
+    <div class="row head hidden-xs">
+      <div rp-sort-header="sort_options.sort_field" rp-sort-header-reverse="sort_options.reverse" rp-sort-header-field="contact" class="col-xs-3 col-sm-3 col-md-3">Contact<i class="fa fa-fw fa-caret-down"></i></div>
+      <div rp-sort-header="sort_options.sort_field" rp-sort-header-reverse="sort_options.reverse" rp-sort-header-field="address" class="col-xs-6 col-sm-5 col-md-6">Ripple name or address<i class="fa fa-fw fa-caret-down"></i></div>
+      <div class="col-xs-12 col-sm-4 col-sm-offset-1 col-md-2 col-md-offset-1 text-right"><a ng-click="toggle_form()" ng-disabled="addform_visible" class="btn btn-block btn-success btn-sm sign">Adicionar contato</a></div>
+    </div>
+  </div>
+  <hr/>
+  <div ng-show="!debug" class="row head visible-xs">
+    <div class="col-xs-12 col-sm-2"><a ng-click="toggle_form()" ng-disabled="addform_visible" class="btn btn-success btn-block btn-sm sign custom-btn">Adicionar contato</a></div>
+  </div>
+  <div ng-show="addform_visible &amp;&amp; !debug" class="row row-padding-small addForm">
+    <div class="col-xs-12 col-md-6 col-sm-8">
+      <form id="addForm" name="addForm" ng-submit="create()" rp-unique-scope="rp-unique-scope">
+        <div class="form-group">
+          <label for="Name">Contato</label>
+          <input id="name" name="name" type="text" step="any" maxlength="70" ng-model="contact.name" rp-unique="userBlob.data.contacts" rp-unique-field="name" rp-autofill="$routeParams.name" rp-autofill-on="addform_visible = true" required="required" rp-focus="rp-focus" class="form-control input-lg name"/>
+          <div ng-messages="addForm.name.$dirty &amp;&amp; addForm.name.$error" class="errorGroup">
+            <div ng-message="required" class="error">Por favor insira um contato.</div>
+            <div ng-message="rpUnique" class="error">Este contato já existe.</div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div>
+            <label for="address_web">Nome ou endereço Ripple</label>
+            <div class="spinnerEnabledInput">
+              <input id="address_web" name="address_web" type="text" step="any" ng-model="contact.view" rp-dest="rp-dest" rp-dest-address="rp-dest-address" rp-dest-bitcoin="rp-dest-bitcoin" rp-dest-ripple-name="rp-dest-ripple-name" rp-dest-ripple-name-no-tilde="rp-dest-ripple-name-no-tilde" rp-dest-email="rp-dest-email" rp-dest-check-federation="rp-dest-check-federation" rp-dest-federation-model="contact.federation" rp-dest-model="contact.address" rp-unique="userBlob.data.contacts" rp-unique-field="address" rp-unique-group="address-dt-web" rp-spinner="rp-spinner" rp-autofill="$routeParams.to" rp-autofill-on="addform_visible = true" required="required" class="form-control input-lg address"/>
+            </div>
+            <div ng-messages="addForm.address_web.$dirty &amp;&amp; addForm.address_web.$error" class="errorGroup">
+              <div ng-message="required" class="error">Por favor insira um nome Ripple.</div>
+              <div ng-message="rpUnique" class="error">Você já tem um contato com o mesmo nome Ripple e/ou mesma tag do destinatário.</div>
+              <div ng-message="rpDest" class="error">Nome ou endereço ripple inválido.</div>
+            </div>
+          </div>
+        </div>
+        <div class="form-group">
+          <div ng-hide="contact.federation">
+            <label for="dt_web">Tag do destinatário</label>
+            <input id="dt_web" name="dt_web" type="text" step="any" placeholder="Deixar em branco se não aplicável" ng-model="contact.dt" rp-unique="userBlob.data.contacts" rp-unique-field="dt" rp-unique-group="address-dt-web" rp-stdt="rp-stdt" rp-autofill="$routeParams.dt" class="form-control input-lg dt"/>
+            <div ng-messages="addForm.dt_web.$error" class="errorGroup">
+              <div ng-message="rpStdt" class="error">Tag do destinatário inválida</div>
+              <div ng-message="rpUnique" class="error">Você já tem um contato com o mesmo nome Ripple e/ou mesma tag do destinatário.</div>
+            </div>
+          </div>
+        </div>
+        <div class="row">
+          <div class="col-xs-8 col-sm-8 col-md-9 text-left">
+            <button type="submit" ng-disabled="addForm.$invalid || addForm.$pending" class="btn btn-success btn-block submit custom-btn">Adicionar contato</button>
+          </div>
+          <div class="col-xs-4 col-sm-4 col-md-3 text-center">
+            <button type="button" ng-click="addform_visible = false" class="btn btn-default btn-block custom-btn btn-cancel">cancelar</button>
+          </div>
+        </div>
+      </form>
+    </div>
+  </div>
+  <div ng-repeat="entry in userBlob.data.contacts | rpsortcontacts:sort_options.sort_field:sort_options.reverse" ng-if="!contacts_filter || entry.name.toLowerCase().indexOf(contacts_filter.toLowerCase()) &gt; -1" ng-class="{editing: editing}" ng-controller="ContactRowCtrl" ng-show="!debug" class="row contact">
+    <div ng-hide="editing" class="col-xs-3 col-md-3 col-sm-3"><span ng-hide="editing" ng-bind="entry.name" class="name"> </span></div>
+    <div ng-hide="editing" class="col-xs-12 col-sm-6 col-md-6">
+      <div class="hidden-xs"><b>{{entry.address | rpaddressorigin}}: </b><b rp-ripple-name="entry.address">???</b></div>
+    </div>
+    <div ng-hide="editing" class="col-xs-6 col-sm-3 col-md-3 text-right pull-right">
+      <div class="row">
+        <div ng-hide="editing" class="col-xs-4 col-md-4 col-sm-4">
+          <button ng-click="edit($index)" class="edit btn btn-block btn-default btn-sm btn-link">editar</button>
+        </div>
+        <div ng-hide="editing" class="col-xs-8 col-md-8 col-sm-8">
+          <button ng-click="send($index)" class="send btn btn-block btn-primary btn-sm">Enviar</button>
+        </div>
+      </div>
+    </div>
+    <div class="col-xs-12">
+      <div ng-show="editing" class="row">
+        <div class="col-md-3 col-sm-4 col-xs-12 contact-input-wrapper">
+          <ng-form name="inlineName" class="inline-name-form">
+            <input name="editname" type="text" maxlength="70" ng-model="editname" rp-unique="userBlob.data.contacts" rp-unique-field="name" rp-unique-orig="entry.name" ng-enter="update($index)" class="form-control inline"/>
+            <div ng-messages="inlineName.editname.$error" class="errorGroup">
+              <div ng-message="rpUnique" class="error">Você já possui um contato com o mesmo nome.</div>
+            </div>
+          </ng-form>
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12 address-wrapper">
+          <ng-form name="inlineAddress">
+            <input name="editaddress" type="text" ng-model="editaddress" rp-unique="userBlob.data.contacts" rp-unique-field="address" rp-unique-orig="entry.address" rp-dest="rp-dest" rp-dest-address="rp-dest-address" rp-dest-bitcoin="rp-dest-bitcoin" rp-dest-email="rp-dest-email" rp-dest-check-federation="rp-dest-check-federation" rp-dest-federation-model="entry.federation" ng-enter="update($index)" class="form-control inline"/>
+            <div ng-messages="inlineAddress.editaddress.$error" class="errorGroup">
+              <div ng-message="rpUnique" class="error">Você já possui este endereço.</div>
+              <div ng-message="rpDest" class="error">Não é um endereço válido.</div>
+            </div>
+            <div ng-hide="entry.federation" class="form-group">
+              <label for="contact_dt">Tag do destinatário</label>
+              <input id="contact_dt" name="dt" type="text" step="any" placeholder="Leave blank if not applicable" ng-model="editdt" rp-stdt="rp-stdt" rp-autofill="$routeParams.dt" ng-enter="update($index)" class="form-control dt inline"/>
+              <div ng-messages="inlineAddress.dt.$error" class="errorGroup">
+                <div ng-message="rpStdt" class="error">Tag do destinatário inválida.</div>
+              </div>
+            </div>
+          </ng-form>
+        </div>
+        <div class="col-md-5 col-sm-4 col-xs-12">
+          <div class="row">
+            <div class="col-xs-4 col-md-4">
+              <button ng-disabled="inlineAddress.editaddress.$error.rpUnique || inlineName.editname.$error.rpUnique || inlineAddress.editaddress.$error.rpDest" ng-click="update($index)" class="save btn btn-block btn-success">Salvar</button>
+            </div>
+            <div class="col-xs-4 col-md-4">
+              <rp-confirm action-text="Are you sure you want to delete this contact?" action-button-text="Delete" action-button-css="btn btn-default btn-danger delete-contact-btn" action-function="remove($index)" cancel-button-css="btn btn-default cancel-btn btn-cancel" cancel-button-text="Cancel" ng-hide="showPassword==true"><a href="" class="btn btn-danger btn-block">Apagar</a></rp-confirm>
+            </div>
+            <div ng-show="editing" class="col-xs-4 col-md-4">
+              <button ng-click="cancel($index)" class="editing btn-block btn btn-default btn-sm btn-cancel">cancelar</button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  <div ng-hide="userBlob.data.contacts.length || debug">Você não tem contatos ainda. Clique em "Adicionar Contato" no alto à direita para adicionar um contato novo.</div>
+</section>

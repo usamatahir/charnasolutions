@@ -1,0 +1,10 @@
+
+<form role="form">
+  <div class="modal-header">Erreur Modification Ordre</div>
+  <div class="modal-body">
+    <div class="alert alert-danger">Désolé, votre ordre n'a pas pu être modifié.</div><span>Votre ordre initial a été annulé mais l'ordre modifié n'a pas été placé. <br/></span><span>La quantité de votre ordre a changé de {{order.qtyChangeAfterCancel | rpamount}} avant que l'ordre puisse être modifié. <br/><br/></span><span>Pour protéger contre la possibilité de dépassement un nouvel ordre n'a pas été placé. <br/></span><span>Veuillez vérifier votre solde et historique avant de placer le nouvel ordre manuellement. <br/></span>
+  </div>
+  <div class="modal-footer">
+    <button type="button" ng-click="cancel()" class="btn btn-default">Fermer</button>
+  </div>
+</form>
